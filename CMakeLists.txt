@@ -18,6 +18,11 @@ list(APPEND CMAKE_MODULE_PATH
 	"${CMAKE_SOURCE_DIR}/cmake"
 )
 
+
+# Ensure that the NEW behavior for LTO is used - GoogleTest is not quite up-to-date when
+# it comes to cmake versions and policies
+set(CMAKE_POLICY_DEFAULT_CMP0069 "NEW" CACHE BOOL "")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(compiler)
