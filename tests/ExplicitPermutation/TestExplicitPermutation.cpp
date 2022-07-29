@@ -5,23 +5,21 @@
 
 #include <libperm/details/ExplicitPermutation.hpp>
 
+#include "PermutationTest.hpp"
+
 #include <gtest/gtest.h>
 
 TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm(4);
 
-	ASSERT_EQ(perm.size(), 4);
-	ASSERT_EQ(perm.sign(), 1);
+	ASSERT_EQ(perm.order(), 4);
 
-	for (std::size_t i = 0; i < perm.size(); ++i) {
-		ASSERT_EQ(perm[i], i);
-	}
+	ASSERT_TRUE(perm.isIdentity());
 
-	perm = perm::ExplicitPermutation({ 1, 0, 2 }, -1);
+	perm = perm::ExplicitPermutation({ 1, 0, 2 });
 
-	ASSERT_EQ(perm.size(), 3);
-	ASSERT_EQ(perm.sign(), -1);
-	std::vector< perm::ExplicitPermutation::image_type > expectedImage = { 1, 0, 2 };
+	ASSERT_EQ(perm.order(), 3);
+	std::vector< perm::Permutation::value_type > expectedImage = { 1, 0, 2 };
 	ASSERT_EQ(perm.image(), expectedImage);
 }
 
@@ -30,20 +28,18 @@ TEST(ExplicitPermutation, equality) {
 	perm::ExplicitPermutation p2(4);
 	perm::ExplicitPermutation p3({ 1, 2, 0, 3 });
 	perm::ExplicitPermutation p4({ 0, 1, 2, 3 });
-	perm::ExplicitPermutation p5({ 0, 1, 2, 3 }, -1);
 
 	ASSERT_EQ(p1, p2);
 	ASSERT_NE(p1, p3);
 	ASSERT_EQ(p1, p4);
-	ASSERT_NE(p1, p5);
 }
 
 TEST(ExplicitPermutation, multiplication) {
 	perm::ExplicitPermutation id(4);
 	perm::ExplicitPermutation p1({ 2, 0, 1, 3 });
-	perm::ExplicitPermutation p2({ 0, 1, 3, 2 }, -1);
+	perm::ExplicitPermutation p2({ 0, 1, 3, 2 });
 
-	perm::ExplicitPermutation r1({ 3, 0, 1, 2 }, -1);
+	perm::ExplicitPermutation r1({ 3, 0, 1, 2 });
 
 	ASSERT_NE(id, p1);
 	ASSERT_NE(p1, p2);
@@ -56,4 +52,8 @@ TEST(ExplicitPermutation, multiplication) {
 	ASSERT_EQ(p2 * id, p2);
 
 	ASSERT_EQ(p1 * p2, r1);
+}
+
+TEST(ExplicitPermutation, permutationInterface) {
+	perm::test::testPermutationInterface<perm::ExplicitPermutation>();
 }

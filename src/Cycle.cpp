@@ -85,4 +85,16 @@ bool operator!=(const Cycle &lhs, const Cycle &rhs) {
 	return !(lhs == rhs);
 }
 
+std::ostream &operator<<(std::ostream &stream, const Cycle &cycle) {
+	for (const std::vector< Cycle::value_type > &currentCycle : cycle.m_cycles) {
+		stream << "( ";
+		for (Cycle::value_type currentValue : currentCycle) {
+			stream << currentValue << " ";
+		}
+		stream << ")";
+	}
+
+	return stream;
+}
+
 } // namespace perm
