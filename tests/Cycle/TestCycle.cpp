@@ -10,9 +10,9 @@
 TEST(Cycle, construction) {
 	perm::Cycle c1(4);
 	// (1,2)
-	perm::Cycle c2(4, { 1, 2 });
+	perm::Cycle c2(4, { 0, 1 });
 	// (1,2)(3,4)
-	perm::Cycle c3(4, { { 1, 2 }, { 3, 4 } });
+	perm::Cycle c3(4, { { 0, 1 }, { 2, 3 } });
 
 	ASSERT_EQ(c1.begin(), c1.end());
 	ASSERT_EQ(*c2.begin(), *c3.begin());
@@ -21,11 +21,11 @@ TEST(Cycle, construction) {
 TEST(Cycle, toImage) {
 	// This simply represents the identity ()
 	perm::Cycle c1(4);
-	perm::Cycle c2(4, { 1, 2 });
-	perm::Cycle c3(4, { 3, 2, 4 });
-	perm::Cycle c4(4, { { 1, 2 }, { 3, 4 } });
+	perm::Cycle c2(4, { 0, 1 });
+	perm::Cycle c3(4, { 2, 1, 3 });
+	perm::Cycle c4(4, { { 0, 1 }, { 2, 3 } });
 	// This is a quirky (read: non-disjoint) way of writing down (1,2,3)
-	perm::Cycle c5(4, { { 1, 2 }, { 2, 3 } });
+	perm::Cycle c5(4, { { 0, 1 }, { 1, 2 } });
 
 	std::vector< unsigned int > expectedImage = { 0, 1, 2, 3 };
 	ASSERT_EQ(c1.toImage< unsigned int >(), expectedImage);
@@ -48,11 +48,11 @@ TEST(Cycle, equality) {
 	ASSERT_NE(perm::Cycle(3), perm::Cycle(4));
 	ASSERT_NE(perm::Cycle(4), perm::Cycle(5));
 
-	perm::Cycle c1(4, { 1, 2 });
-	perm::Cycle c2(4, { 2, 1 });
+	perm::Cycle c1(4, { 0, 1 });
+	perm::Cycle c2(4, { 1, 0 });
 	ASSERT_EQ(c1, c2);
 
-	c1 = perm::Cycle(4, { { 1, 2 }, { 2, 3 } });
-	c2 = perm::Cycle(4, { 1, 2, 3 });
+	c1 = perm::Cycle(4, { { 0, 1 }, { 1, 2 } });
+	c2 = perm::Cycle(4, { 0, 1, 2 });
 	ASSERT_EQ(c1, c2);
 }

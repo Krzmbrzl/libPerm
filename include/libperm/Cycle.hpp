@@ -38,8 +38,7 @@ public:
 	const_iterator cend() const;
 
 	/**
-	 * @returns The size n of the set of points {1...n} that this permutation acts on
-	 * TODO: find better name
+	 * @returns The size n of the set of points {0,...,n-1} that this permutation acts on
 	 */
 	value_type order() const;
 	/**
@@ -67,18 +66,18 @@ public:
 			assert(std::set< value_type >(currentCycle.begin(), currentCycle.end()).size() == currentCycle.size());
 
 			// Save the original value of this before it is potentially modified
-			image_type temp = image[currentCycle[0] - 1];
+			image_type temp = image[currentCycle[0]];
 
 			for (std::size_t i = 0; i < currentCycle.size() - 1; ++i) {
-				// Perform element reassignments according to current cycle (remember that cycles are 1-based)
-				assert(currentCycle[i] > 0);
-				assert(currentCycle[i + 1] > 0);
+				// Perform element reassignments according to current cycle
+				assert(currentCycle[i] >= 0);
+				assert(currentCycle[i + 1] >= 0);
 
-				image[currentCycle[i] - 1] = image[currentCycle[i + 1] - 1];
+				image[currentCycle[i]] = image[currentCycle[i + 1]];
 			}
 
 			// Close the cycle by performing the last -> first switch
-			image[currentCycle[currentCycle.size() - 1] - 1] = temp;
+			image[currentCycle[currentCycle.size() - 1]] = temp;
 		}
 
 		return image;
