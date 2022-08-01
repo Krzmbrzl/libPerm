@@ -45,4 +45,5 @@ if(LIBPERM_TESTS)
 
 	add_subdirectory(ExplicitPermutation)
 	add_subdirectory(Cycle)
+	add_subdirectory(PermutationContainer)
 endif()
