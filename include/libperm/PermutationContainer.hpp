@@ -25,8 +25,8 @@ namespace perm {
 class PermutationContainer {
 public:
 	using value_type     = Permutation;
-	using iterator       = ContiguousIterator<value_type>;
-	using const_iterator = ContiguousIterator<const value_type>;
+	using iterator       = ContiguousIterator< value_type >;
+	using const_iterator = ContiguousIterator< const value_type >;
 
 	virtual iterator begin()              = 0;
 	virtual iterator end()                = 0;
@@ -37,6 +37,14 @@ public:
 
 	virtual std::size_t size() const = 0;
 	virtual void clear()             = 0;
+
+	void add(const value_type &permutation) {
+		// This will allocate a new permutation object of the underlying representation type
+		value_type &newPerm = newIdentity(permutation.order());
+
+		// Since Id * a = a, the overall effect here is as if we had added permutation to this container
+		newPerm *= permutation;
+	}
 
 	virtual value_type &operator[](std::size_t index)             = 0;
 	virtual const value_type &operator[](std::size_t index) const = 0;
@@ -109,6 +117,10 @@ public:
 	std::size_t size() const override { return m_permutations.size(); }
 
 	void clear() override { m_permutations.clear(); }
+
+	void add(const value_type &permutation) { m_permutations.emplace_back(permutation); }
+
+	void add(value_type &&permutation) { m_permutations.push_back(std::move(permutation)); }
 
 protected:
 	std::vector< value_type > m_permutations;
