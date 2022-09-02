@@ -40,7 +40,7 @@ public:
 	virtual value_type &operator[](std::size_t index)             = 0;
 	virtual const value_type &operator[](std::size_t index) const = 0;
 
-	virtual value_type &createIdentity(typename value_type::value_type order) = 0;
+	virtual value_type &newIdentity(typename value_type::value_type order) = 0;
 
 	bool operator==(const PermutationContainer &other) const {
 		return size() == other.size() && std::is_permutation(cbegin(), cend(), other.cbegin());
@@ -98,7 +98,7 @@ public:
 		return m_permutations[index];
 	}
 
-	value_type &createIdentity(typename value_type::value_type order) override {
+	value_type &newIdentity(typename value_type::value_type order) override {
 		m_permutations.push_back(value_type(order));
 
 		// Return reference to newly created permutation object

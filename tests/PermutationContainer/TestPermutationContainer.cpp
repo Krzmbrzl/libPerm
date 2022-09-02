@@ -19,14 +19,14 @@ TEST(PermutationContainer, permutation_creation) {
 
 	ASSERT_TRUE(refIdentity.isIdentity());
 
-	perm::Permutation &identity = container.createIdentity(4);
+	perm::Permutation &identity = container.newIdentity(4);
 
 	ASSERT_EQ(identity, refIdentity);
 
 	ASSERT_FALSE(container.empty());
 	ASSERT_EQ(container.size(), 1);
 
-	container.createIdentity(4);
+	container.newIdentity(4);
 	ASSERT_EQ(container.size(), 2);
 }
 
