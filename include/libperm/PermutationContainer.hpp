@@ -7,6 +7,7 @@
 #define LIBPERM_PERMUTATION_CONTAINER_HPP_
 
 #include "libperm/Permutation.hpp"
+#include "libperm/details/ContiguousIterator.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -24,8 +25,8 @@ namespace perm {
 class PermutationContainer {
 public:
 	using value_type     = Permutation;
-	using iterator       = value_type *;
-	using const_iterator = const value_type *;
+	using iterator       = ContiguousIterator<value_type>;
+	using const_iterator = ContiguousIterator<const value_type>;
 
 	virtual iterator begin()              = 0;
 	virtual iterator end()                = 0;
