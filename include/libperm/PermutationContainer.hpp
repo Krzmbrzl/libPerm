@@ -57,9 +57,7 @@ public:
  */
 template< typename PermutationImpl > class PermutationContainerImpl : public PermutationContainer {
 public:
-	using value_type     = PermutationImpl;
-	using iterator       = value_type *;
-	using const_iterator = const value_type *;
+	using value_type = PermutationImpl;
 
 
 	PermutationContainerImpl()                                      = default;
