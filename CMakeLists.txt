@@ -14,8 +14,8 @@ project(libperm,
 	LANGUAGES "CXX"
 )
 
-list(APPEND CMAKE_MODULE_PATH
-	"${CMAKE_SOURCE_DIR}/cmake"
+set(CMAKE_MODULE_PATH
+	"${PROJECT_SOURCE_DIR}/cmake"
 )
 
 
