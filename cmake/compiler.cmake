@@ -4,6 +4,7 @@
 # <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 include(CheckIPOSupported)
+include(CompilerFlags)
 
 check_ipo_supported(RESULT LTO_DEFAULT)
 
@@ -23,20 +24,17 @@ cmake_policy(SET CMP0069 NEW)
 
 
 # Configure warning-related options
-if (MSVC)
-	add_compile_options(/W4 /Wall)
-
-	if (LIBPERM_DISABLE_WARNINGS)
-		add_compile_options(/w)
-	elseif (LIBPERM_WARNINGS_AS_ERRORS)
-		add_compile_options(/WX)
-	endif()
-else()
-	add_compile_options(-Wpedantic -Wall -Wextra)
-
-	if (LIBPERM_DISABLE_WARNINGS)
-		add_compile_options(-w)
-	elseif (LIBPERM_WARNINGS_AS_ERRORS)
-		add_compile_options(-Werror)
-	endif()
+set(FLAGS_TO_ENABLE "ENABLE_MOST_WARNINGS")
+if (LIBPERM_WARNINGS_AS_ERRORS)
+	list(APPEND FLAGS_TO_ENABLE "ENABLE_WARNINGS_AS_ERRORS")
 endif()
+if (LIBPERM_DISABLE_WARNINGS)
+	list(APPEND FLAGS_TO_ENABLE "DISABLE_ALL_WARNINGS")
+endif()
+
+get_compiler_flags(
+	${FLAGS_TO_ENABLE}
+	OUTPUT_VARIABLE COMPILER_FLAGS
+)
+
+add_compile_options(${COMPILER_FLAGS})

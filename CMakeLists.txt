@@ -25,6 +25,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0069 "NEW" CACHE BOOL "")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(dependencies)
 include(compiler)
 include(CTest)
 
