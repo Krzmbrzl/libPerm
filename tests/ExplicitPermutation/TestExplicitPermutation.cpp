@@ -55,5 +55,5 @@ TEST(ExplicitPermutation, multiplication) {
 }
 
 TEST(ExplicitPermutation, permutationInterface) {
-	perm::test::testPermutationInterface<perm::ExplicitPermutation>();
+	perm::test::testPermutationInterface< perm::ExplicitPermutation >();
 }

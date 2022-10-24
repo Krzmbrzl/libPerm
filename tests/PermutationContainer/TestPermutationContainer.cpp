@@ -40,7 +40,7 @@ TEST(PermutationContainer, add) {
 	perm::PermutationContainerImpl< perm::ExplicitPermutation > containerImpl3;
 	perm::PermutationContainer &container3 = containerImpl3;
 
-	perm::ExplicitPermutation permutation({0, 2, 1});
+	perm::ExplicitPermutation permutation({ 0, 2, 1 });
 
 	// Add via the generic add-method in the PermutationContainer interface
 	container1.add(permutation);
@@ -57,4 +57,3 @@ TEST(PermutationContainer, add) {
 
 	ASSERT_EQ(container2, container3);
 }
-
