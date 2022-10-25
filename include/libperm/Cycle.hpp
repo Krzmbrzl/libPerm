@@ -65,7 +65,7 @@ public:
 			}
 		}
 
-		return Cycle(image.size(), std::move(cycles));
+		return Cycle(static_cast< value_type >(image.size()), std::move(cycles));
 	}
 
 	explicit Cycle(value_type order);
