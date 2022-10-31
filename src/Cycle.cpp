@@ -86,12 +86,23 @@ bool operator!=(const Cycle &lhs, const Cycle &rhs) {
 }
 
 std::ostream &operator<<(std::ostream &stream, const Cycle &cycle) {
+	bool isIdentity = true;
 	for (const std::vector< Cycle::value_type > &currentCycle : cycle.m_cycles) {
+		if (currentCycle.size() == 1) {
+			continue;
+		}
+
+		isIdentity = false;
+
 		stream << "( ";
 		for (Cycle::value_type currentValue : currentCycle) {
 			stream << currentValue << " ";
 		}
 		stream << ")";
+	}
+
+	if (isIdentity) {
+		stream << "()";
 	}
 
 	return stream;
