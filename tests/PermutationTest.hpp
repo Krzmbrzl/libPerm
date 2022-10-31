@@ -29,7 +29,7 @@ template< typename PermutationImpl > void testPermutationInterface() {
 	Permutation &r2          = result2;
 	Permutation &id          = identity;
 
-	ASSERT_EQ(p1.order(), 4);
+	ASSERT_EQ(p1.order(), static_cast< std::size_t >(4));
 
 	std::vector< Permutation::value_type > expectedImage = { 1, 2, 3, 0 };
 	for (Permutation::value_type i = 0; i < p1.order(); ++i) {

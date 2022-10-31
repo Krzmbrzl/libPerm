@@ -12,13 +12,13 @@
 TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm(4);
 
-	ASSERT_EQ(perm.order(), 4);
+	ASSERT_EQ(perm.order(), static_cast< std::size_t >(4));
 
 	ASSERT_TRUE(perm.isIdentity());
 
 	perm = perm::ExplicitPermutation({ 1, 0, 2 });
 
-	ASSERT_EQ(perm.order(), 3);
+	ASSERT_EQ(perm.order(), static_cast< std::size_t >(3));
 	std::vector< perm::Permutation::value_type > expectedImage = { 1, 0, 2 };
 	ASSERT_EQ(perm.image(), expectedImage);
 }
