@@ -115,8 +115,11 @@ public:
 
 			for (std::size_t i = 0; i < currentCycle.size() - 1; ++i) {
 				// Perform element reassignments according to current cycle
-				assert(currentCycle[i] >= 0);
-				assert(currentCycle[i + 1] >= 0);
+
+				// Assert that the elements in currentCycle are >= 0. In order to not create a warning that this
+				// comparison is always true when using unsigned types, we use the +1 > 0 trick.
+				assert(currentCycle[i] + 1 > 0);
+				assert(currentCycle[i + 1] + 1 > 0);
 
 				image[currentCycle[i]] = image[currentCycle[i + 1]];
 			}
