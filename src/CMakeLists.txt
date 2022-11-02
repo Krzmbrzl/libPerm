@@ -9,4 +9,5 @@ target_sources(libperm
 		"Cycle.cpp"
 		"DiminoAlgorithm.cpp"
 		"ExplicitPermutation.cpp"
+		"PrimitivePermutationGroup.cpp"
 )
