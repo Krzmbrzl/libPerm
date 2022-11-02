@@ -3,8 +3,8 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-#ifndef LIBPERM_DETAILS_PERMUTATION_HPP_
-#define LIBPERM_DETAILS_PERMUTATION_HPP_
+#ifndef LIBPERM_EXPLICITPERMUTATION_HPP_
+#define LIBPERM_EXPLICITPERMUTATION_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
 #include "libperm/Cycle.hpp"
@@ -51,4 +51,4 @@ protected:
 
 } // namespace perm
 
-#endif // LIBPERM_DETAILS_PERMUTATION_HPP_
+#endif // LIBPERM_EXPLICITPERMUTATION_HPP_
