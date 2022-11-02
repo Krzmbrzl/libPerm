@@ -23,6 +23,9 @@ public:
 	 */
 	using value_type = unsigned int;
 
+	AbstractPermutation()          = default;
+	virtual ~AbstractPermutation() = default;
+
 	/**
 	 * @returns The image of the given value under the operation of this permutation
 	 */
