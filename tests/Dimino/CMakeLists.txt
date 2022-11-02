@@ -3,10 +3,10 @@
 # LICENSE file at the root of the libPerm source tree or at
 # <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-target_sources(libperm
-	PRIVATE
-		"AbstractPermutation.cpp"
-		"Cycle.cpp"
-		"DiminoAlgorithm.cpp"
-		"ExplicitPermutation.cpp"
+add_executable(TestDiminoAlgorithm
+	TestDiminoAlgorithm.cpp
 )
+
+target_link_libraries(TestDiminoAlgorithm PUBLIC libperm)
+
+register_test(TARGETS TestDiminoAlgorithm)
