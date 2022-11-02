@@ -45,7 +45,7 @@ public:
 
 	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);
 
-	// protected:
+protected:
 	std::vector< value_type > m_image;
 };
 
