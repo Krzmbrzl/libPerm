@@ -145,6 +145,23 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 	ASSERT_TRUE(std::is_permutation(elements.begin(), elements.end(), expectedElements.begin()));
 }
 
+TEST(DiminoAlgorithm, generateGroupElementsSigned) {
+	std::vector< perm::Permutation > generators;
+
+	generators = { perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle(4, { 0, 1, 2, 3 }), -1)) };
+
+	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
+	std::vector< perm::ExplicitPermutation > expectedElements = {
+		perm::ExplicitPermutation::fromCycle(perm::Cycle(4)),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle(4, { 0, 1, 2, 3 }), -1),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle(4, { { 0, 2 }, { 1, 3 } })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle(4, { 0, 3, 2, 1 }), -1),
+	};
+
+	ASSERT_EQ(elements.size(), expectedElements.size());
+	ASSERT_TRUE(std::is_permutation(elements.begin(), elements.end(), expectedElements.begin()));
+}
+
 TEST(DiminoAlgorithm, generateGroupOrder) {
 	// The groups tested in here are too large to list their individual elements in a reasonable way. Therefore, we only
 	// check the order of the generated group and assume that if the order is correct, the elements in the group are as

@@ -10,4 +10,6 @@ target_sources(libperm
 		"DiminoAlgorithm.cpp"
 		"ExplicitPermutation.cpp"
 		"PrimitivePermutationGroup.cpp"
+
+		"details/SignedPermutation.cpp"
 )

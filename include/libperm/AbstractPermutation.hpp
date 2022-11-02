@@ -15,6 +15,10 @@ namespace perm {
 /**
  * Abstract base class for everything that represents a permutation. This class is meant to be used as a
  * general Permutation interface.
+ * Technically, this interface goes beyond a simple permutation, but can actually be used to represent
+ * elements of a group that is the result of the direct product of a regular permutation group and {-1, +1}.
+ * That means, that permutations represented through this interface also have a sign associated with them
+ * that can be read out and manipulated as an orthogonal property to the standard permutation properties.
  */
 class AbstractPermutation {
 public:
@@ -72,6 +76,20 @@ public:
 	 * Inverts this permutation in-place
 	 */
 	virtual void invert() = 0;
+
+	/**
+	 * Gets the sign associated with this permutation.
+	 *
+	 * @returns Either -1 or +1
+	 */
+	virtual int sign() const = 0;
+
+	/**
+	 * Sets the sign for this permutation
+	 *
+	 * @param sign The sign to use. Must be either -1 or +1
+	 */
+	virtual void setSign(int sign) = 0;
 
 	/**
 	 * Multiplies this permutation by other, modifying this permutation in-place

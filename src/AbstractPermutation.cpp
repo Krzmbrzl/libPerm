@@ -35,6 +35,10 @@ std::ostream &operator<<(std::ostream &stream, const AbstractPermutation &perm) 
 }
 
 bool AbstractPermutation::isIdentity() const {
+	if (sign() < 0) {
+		return false;
+	}
+
 	// Check whether every point i in the set 0..n-1 is mapped to itself
 	for (value_type i = 0; i < n(); ++i) {
 		if (image(i) != i) {
@@ -46,7 +50,7 @@ bool AbstractPermutation::isIdentity() const {
 }
 
 bool AbstractPermutation::equals(const AbstractPermutation &other) const {
-	if (n() != other.n()) {
+	if (n() != other.n() || sign() != other.sign()) {
 		return false;
 	}
 

@@ -6,23 +6,26 @@
 #ifndef LIBPERM_EXPLICITPERMUTATION_HPP_
 #define LIBPERM_EXPLICITPERMUTATION_HPP_
 
-#include "libperm/AbstractPermutation.hpp"
 #include "libperm/Cycle.hpp"
+#include "libperm/details/SignedPermutation.hpp"
 
 #include <vector>
 
 namespace perm {
 
-class ExplicitPermutation : public AbstractPermutation {
+class ExplicitPermutation : public details::SignedPermutation {
 public:
 	/**
 	 * Construct an ExplicitPermutation object off the given (disjoint) cycle notation.
+	 *
+	 * @param cycle The Cycle to construct this perm from
+	 * @param sign The sign associated with the to-be-constructed perm
 	 */
-	static ExplicitPermutation fromCycle(const Cycle &cycle);
+	static ExplicitPermutation fromCycle(const Cycle &cycle, int sign = 1);
 
-	explicit ExplicitPermutation(std::size_t n);
-	explicit ExplicitPermutation(const std::vector< value_type > &image);
-	explicit ExplicitPermutation(std::vector< value_type > &&image);
+	explicit ExplicitPermutation(std::size_t n, int sign = 1);
+	explicit ExplicitPermutation(const std::vector< value_type > &image, int sign = 1);
+	explicit ExplicitPermutation(std::vector< value_type > &&image, int sign = 1);
 	ExplicitPermutation(const ExplicitPermutation &other) = default;
 	ExplicitPermutation(ExplicitPermutation &&other)      = default;
 	~ExplicitPermutation();
