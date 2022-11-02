@@ -38,6 +38,8 @@ set_target_properties(libperm PROPERTIES OUTPUT_NAME "libperm")
 target_include_directories(libperm PUBLIC "${CMAKE_SOURCE_DIR}/include")
 target_include_directories(libperm PRIVATE "${CMAKE_SOURCE_DIR}/include/libperm/")
 
+target_link_libraries(libperm PUBLIC polymorphic_variant)
+
 enable_testing()
 
 add_subdirectory(src)

@@ -4,39 +4,39 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 
-#include "Permutation.hpp"
+#include "AbstractPermutation.hpp"
 
 #include <sstream>
 
 namespace perm {
 
-Permutation::value_type Permutation::operator[](value_type value) const {
+AbstractPermutation::value_type AbstractPermutation::operator[](value_type value) const {
 	return image(value);
 }
 
-bool operator==(const Permutation &lhs, const Permutation &rhs) {
+bool operator==(const AbstractPermutation &lhs, const AbstractPermutation &rhs) {
 	return lhs.equals(rhs);
 }
 
-bool operator!=(const Permutation &lhs, const Permutation &rhs) {
+bool operator!=(const AbstractPermutation &lhs, const AbstractPermutation &rhs) {
 	return !(lhs == rhs);
 }
 
-Permutation &operator*=(Permutation &lhs, const Permutation &rhs) {
+AbstractPermutation &operator*=(AbstractPermutation &lhs, const AbstractPermutation &rhs) {
 	lhs.multiply(rhs);
 
 	return lhs;
 }
 
-std::ostream &operator<<(std::ostream &stream, const Permutation &perm) {
+std::ostream &operator<<(std::ostream &stream, const AbstractPermutation &perm) {
 	perm.insertIntoStream(stream);
 
 	return stream;
 }
 
-bool Permutation::isIdentity() const {
+bool AbstractPermutation::isIdentity() const {
 	// Check whether every point i in the set 0..n-1 is mapped to itself
-	for (value_type i = 0; i < order(); ++i) {
+	for (value_type i = 0; i < n(); ++i) {
 		if (image(i) != i) {
 			return false;
 		}
@@ -45,12 +45,12 @@ bool Permutation::isIdentity() const {
 	return true;
 }
 
-bool Permutation::equals(const Permutation &other) const {
-	if (order() != other.order()) {
+bool AbstractPermutation::equals(const AbstractPermutation &other) const {
+	if (n() != other.n()) {
 		return false;
 	}
 
-	for (value_type i = 0; i < order(); ++i) {
+	for (value_type i = 0; i < n(); ++i) {
 		if (image(i) != other.image(i)) {
 			return false;
 		}
@@ -59,7 +59,7 @@ bool Permutation::equals(const Permutation &other) const {
 	return true;
 }
 
-std::string Permutation::toString() const {
+std::string AbstractPermutation::toString() const {
 	std::stringstream sstream;
 
 	insertIntoStream(sstream);

@@ -3,7 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-#include <libperm/details/ExplicitPermutation.hpp>
+#include <libperm/ExplicitPermutation.hpp>
 
 #include "PermutationTest.hpp"
 
@@ -12,14 +12,14 @@
 TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm(4);
 
-	ASSERT_EQ(perm.order(), static_cast< std::size_t >(4));
+	ASSERT_EQ(perm.n(), static_cast< std::size_t >(4));
 
 	ASSERT_TRUE(perm.isIdentity());
 
 	perm = perm::ExplicitPermutation({ 1, 0, 2 });
 
-	ASSERT_EQ(perm.order(), static_cast< std::size_t >(3));
-	std::vector< perm::Permutation::value_type > expectedImage = { 1, 0, 2 };
+	ASSERT_EQ(perm.n(), static_cast< std::size_t >(3));
+	std::vector< perm::AbstractPermutation::value_type > expectedImage = { 1, 0, 2 };
 	ASSERT_EQ(perm.image(), expectedImage);
 }
 

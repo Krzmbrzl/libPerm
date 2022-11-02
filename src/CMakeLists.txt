@@ -5,7 +5,7 @@
 
 target_sources(libperm
 	PRIVATE
+		"AbstractPermutation.cpp"
 		"Cycle.cpp"
-		"Permutation.cpp"
-		"details/ExplicitPermutation.cpp"
+		"ExplicitPermutation.cpp"
 )
