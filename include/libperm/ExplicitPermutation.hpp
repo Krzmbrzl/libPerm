@@ -23,8 +23,8 @@ public:
 	explicit ExplicitPermutation(std::size_t n);
 	explicit ExplicitPermutation(const std::vector< value_type > &image);
 	explicit ExplicitPermutation(std::vector< value_type > &&image);
-	explicit ExplicitPermutation(const ExplicitPermutation &other) = default;
-	ExplicitPermutation(ExplicitPermutation &&other)               = default;
+	ExplicitPermutation(const ExplicitPermutation &other) = default;
+	ExplicitPermutation(ExplicitPermutation &&other)      = default;
 	~ExplicitPermutation();
 	ExplicitPermutation &operator=(const ExplicitPermutation &other) = default;
 
