@@ -8,11 +8,11 @@
 #include <gtest/gtest.h>
 
 TEST(Cycle, construction) {
-	perm::Cycle c1(4);
+	perm::Cycle c1;
 	// (1,2)
-	perm::Cycle c2(4, { 0, 1 });
+	perm::Cycle c2({ 0, 1 });
 	// (1,2)(3,4)
-	perm::Cycle c3(4, { { 0, 1 }, { 2, 3 } });
+	perm::Cycle c3({ { 0, 1 }, { 2, 3 } });
 
 	ASSERT_EQ(c1.begin(), c1.end());
 	ASSERT_EQ(*c2.begin(), *c3.begin());
@@ -20,17 +20,17 @@ TEST(Cycle, construction) {
 
 TEST(Cycle, toImage) {
 	// This simply represents the identity ()
-	perm::Cycle c1(4);
-	perm::Cycle c2(4, { 0, 1 });
-	perm::Cycle c3(4, { 2, 1, 3 });
-	perm::Cycle c4(4, { { 0, 1 }, { 2, 3 } });
+	perm::Cycle c1;
+	perm::Cycle c2({ 0, 1 });
+	perm::Cycle c3({ 2, 1, 3 });
+	perm::Cycle c4({ { 0, 1 }, { 2, 3 } });
 	// This is a quirky (read: non-disjoint) way of writing down (1,2,3)
-	perm::Cycle c5(4, { { 0, 1 }, { 1, 2 } });
+	perm::Cycle c5({ { 0, 1 }, { 1, 2 } });
 
-	std::vector< unsigned int > expectedImage = { 0, 1, 2, 3 };
+	std::vector< unsigned int > expectedImage = { 0 };
 	ASSERT_EQ(c1.toImage< unsigned int >(), expectedImage);
 
-	expectedImage = { 1, 0, 2, 3 };
+	expectedImage = { 1, 0 };
 	ASSERT_EQ(c2.toImage< unsigned int >(), expectedImage);
 
 	expectedImage = { 0, 3, 1, 2 };
@@ -39,20 +39,18 @@ TEST(Cycle, toImage) {
 	expectedImage = { 1, 0, 3, 2 };
 	ASSERT_EQ(c4.toImage< unsigned int >(), expectedImage);
 
-	expectedImage = { 1, 2, 0, 3 };
+	expectedImage = { 1, 2, 0 };
 	ASSERT_EQ(c5.toImage< unsigned int >(), expectedImage);
 }
 
 TEST(Cycle, equality) {
-	ASSERT_EQ(perm::Cycle(4), perm::Cycle(4));
-	ASSERT_NE(perm::Cycle(3), perm::Cycle(4));
-	ASSERT_NE(perm::Cycle(4), perm::Cycle(5));
+	ASSERT_EQ(perm::Cycle(), perm::Cycle());
 
-	perm::Cycle c1(4, { 0, 1 });
-	perm::Cycle c2(4, { 1, 0 });
+	perm::Cycle c1({ 0, 1 });
+	perm::Cycle c2({ 1, 0 });
 	ASSERT_EQ(c1, c2);
 
-	c1 = perm::Cycle(4, { { 0, 1 }, { 1, 2 } });
-	c2 = perm::Cycle(4, { 0, 1, 2 });
+	c1 = perm::Cycle({ { 0, 1 }, { 1, 2 } });
+	c2 = perm::Cycle({ 0, 1, 2 });
 	ASSERT_EQ(c1, c2);
 }

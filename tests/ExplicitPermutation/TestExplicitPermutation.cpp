@@ -10,22 +10,26 @@
 #include <gtest/gtest.h>
 
 TEST(ExplicitPermutation, construction) {
-	perm::ExplicitPermutation perm(4);
+	perm::ExplicitPermutation perm;
 
-	ASSERT_EQ(perm.n(), static_cast< std::size_t >(4));
+	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::value_type >(0));
 
 	ASSERT_TRUE(perm.isIdentity());
 
-	perm = perm::ExplicitPermutation({ 1, 0, 2 });
+	perm = perm::ExplicitPermutation({ 1, 2, 0 });
 
-	ASSERT_EQ(perm.n(), static_cast< std::size_t >(3));
-	std::vector< perm::AbstractPermutation::value_type > expectedImage = { 1, 0, 2 };
+	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::value_type >(2));
+	std::vector< perm::AbstractPermutation::value_type > expectedImage = { 1, 2, 0 };
+	ASSERT_EQ(perm.image(), expectedImage);
+
+	perm          = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2, 3 }));
+	expectedImage = { 1, 2, 3, 0 };
 	ASSERT_EQ(perm.image(), expectedImage);
 }
 
 TEST(ExplicitPermutation, equality) {
-	perm::ExplicitPermutation p1(4);
-	perm::ExplicitPermutation p2(4);
+	perm::ExplicitPermutation p1;
+	perm::ExplicitPermutation p2;
 	perm::ExplicitPermutation p3({ 1, 2, 0, 3 });
 	perm::ExplicitPermutation p4({ 0, 1, 2, 3 });
 
@@ -35,11 +39,14 @@ TEST(ExplicitPermutation, equality) {
 }
 
 TEST(ExplicitPermutation, multiplication) {
-	perm::ExplicitPermutation id(4);
+	perm::ExplicitPermutation id;
 	perm::ExplicitPermutation p1({ 2, 0, 1, 3 });
 	perm::ExplicitPermutation p2({ 0, 1, 3, 2 });
+	perm::ExplicitPermutation p3 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2, 3 }));
+	perm::ExplicitPermutation p4 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }));
 
 	perm::ExplicitPermutation r1({ 3, 0, 1, 2 });
+	perm::ExplicitPermutation r2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2, 3 }));
 
 	ASSERT_NE(id, p1);
 	ASSERT_NE(p1, p2);
@@ -52,6 +59,7 @@ TEST(ExplicitPermutation, multiplication) {
 	ASSERT_EQ(p2 * id, p2);
 
 	ASSERT_EQ(p1 * p2, r1);
+	ASSERT_EQ(p3 * p4, r2);
 }
 
 TEST(ExplicitPermutation, permutationInterface) {

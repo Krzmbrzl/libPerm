@@ -10,27 +10,11 @@
 
 namespace perm {
 
-Cycle::Cycle(Cycle::value_type order) : m_cycles(), m_order(order) {
-}
-
-Cycle::Cycle(Cycle::value_type order, const std::vector< Cycle::value_type > &cycle) : m_order(order) {
-	m_cycles.push_back(cycle);
-	assert(m_order >= computeOrder());
-}
-
-Cycle::Cycle(Cycle::value_type order, std::vector< Cycle::value_type > &&cycle) : m_order(order) {
+Cycle::Cycle(std::vector< Cycle::value_type > cycle) {
 	m_cycles.push_back(std::move(cycle));
-	assert(m_order >= computeOrder());
 }
 
-Cycle::Cycle(Cycle::value_type order, const std::vector< std::vector< Cycle::value_type > > &cycles)
-	: m_cycles(cycles), m_order(order) {
-	assert(m_order >= computeOrder());
-}
-
-Cycle::Cycle(Cycle::value_type order, std::vector< std::vector< Cycle::value_type > > &&cycles)
-	: m_cycles(std::move(cycles)), m_order(order) {
-	assert(m_order >= computeOrder());
+Cycle::Cycle(std::vector< std::vector< Cycle::value_type > > cycles) : m_cycles(std::move(cycles)) {
 }
 
 Cycle::iterator Cycle::begin() {
@@ -57,28 +41,8 @@ Cycle::const_iterator Cycle::cend() const {
 	return m_cycles.cend();
 }
 
-Cycle::value_type Cycle::order() const {
-	return m_order;
-}
-
-Cycle::value_type Cycle::computeOrder() const {
-	Cycle::value_type max = 0;
-
-	for (const std::vector< Cycle::value_type > &currentCycle : m_cycles) {
-		auto maxElement = std::max_element(currentCycle.begin(), currentCycle.end());
-
-		if (maxElement == currentCycle.end()) {
-			continue;
-		}
-
-		max = std::max(max, *maxElement);
-	}
-
-	return max;
-}
-
 bool operator==(const Cycle &lhs, const Cycle &rhs) {
-	return lhs.order() == rhs.order() && lhs.toImage< unsigned int >() == rhs.toImage< unsigned int >();
+	return lhs.maxElement() == rhs.maxElement() && lhs.toImage< unsigned int >() == rhs.toImage< unsigned int >();
 }
 
 bool operator!=(const Cycle &lhs, const Cycle &rhs) {
@@ -107,5 +71,22 @@ std::ostream &operator<<(std::ostream &stream, const Cycle &cycle) {
 
 	return stream;
 }
+
+Cycle::value_type Cycle::maxElement() const {
+	Cycle::value_type max = 0;
+
+	for (const std::vector< Cycle::value_type > &currentCycle : m_cycles) {
+		auto maxElement = std::max_element(currentCycle.begin(), currentCycle.end());
+
+		if (maxElement == currentCycle.end()) {
+			continue;
+		}
+
+		max = std::max(max, *maxElement);
+	}
+
+	return max;
+}
+
 
 } // namespace perm

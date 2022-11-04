@@ -23,20 +23,20 @@ public:
 	 */
 	static ExplicitPermutation fromCycle(const Cycle &cycle, int sign = 1);
 
-	explicit ExplicitPermutation(std::size_t n, int sign = 1);
-	explicit ExplicitPermutation(const std::vector< value_type > &image, int sign = 1);
-	explicit ExplicitPermutation(std::vector< value_type > &&image, int sign = 1);
+	explicit ExplicitPermutation(int sign = 1);
+	explicit ExplicitPermutation(std::vector< value_type > image, int sign = 1);
 	ExplicitPermutation(const ExplicitPermutation &other) = default;
 	ExplicitPermutation(ExplicitPermutation &&other)      = default;
 	~ExplicitPermutation();
 	ExplicitPermutation &operator=(const ExplicitPermutation &other) = default;
 
-	value_type n() const override;
+	value_type maxElement() const override;
 
 	value_type image(value_type value) const override;
 
 	/**
-	 * @returns The image of the set 0..n-1 under this permutation where n is its size
+	 * @returns The image of the set 0..n under this permutation where n is the largest number that this permutation
+	 * actually permutes.
 	 */
 	const std::vector< value_type > &image() const;
 
@@ -50,6 +50,17 @@ public:
 
 protected:
 	std::vector< value_type > m_image;
+
+	/**
+	 * Removes redundant entries from the currently stored image. Entries in the image are
+	 * redundant, if they just map a number to itself and this mapping happens at the end
+	 * of the image. Thus, in {0, 2, 1, 3}, only 3 is redundant, even though 0 also maps to
+	 * itself. The reason is that we always want to retain an image representation from 0
+	 * to some highest number that is still permuted.
+	 * The zero entry itself is never redundant, even in  { 0 }. That is: we always retain
+	 * at least a single entry.
+	 */
+	void reduceImageRepresentation();
 };
 
 } // namespace perm

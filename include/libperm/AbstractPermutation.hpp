@@ -56,11 +56,10 @@ public:
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const AbstractPermutation &perm);
 
-
 	/**
-	 * @returns The size n of the set {0,...,n-1} this permutation is working on
+	 * @returns The biggest element that this permutation acts on
 	 */
-	virtual value_type n() const = 0;
+	virtual value_type maxElement() const = 0;
 
 	/**
 	 * @returns The image of the given value under the operation of this permutation

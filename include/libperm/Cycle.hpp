@@ -26,8 +26,7 @@ public:
 	using const_iterator = std::vector< std::vector< value_type > >::const_iterator;
 
 	/**
-	 * Decomposes the permutation given by representing it as the image it creates when acting on
-	 * the set {0,..,n-1} where n is the order of the permutation, into disjoint cycles.
+	 * Decomposes the permutation given into disjoint cycles.
 	 *
 	 * @return The corresponding disjoint cycle representation
 	 */
@@ -65,14 +64,12 @@ public:
 			}
 		}
 
-		return Cycle(static_cast< value_type >(image.size()), std::move(cycles));
+		return Cycle(std::move(cycles));
 	}
 
-	explicit Cycle(value_type order);
-	explicit Cycle(value_type order, const std::vector< value_type > &cycle);
-	explicit Cycle(value_type order, std::vector< value_type > &&cycle);
-	explicit Cycle(value_type order, const std::vector< std::vector< value_type > > &cycle);
-	explicit Cycle(value_type order, std::vector< std::vector< value_type > > &&cycle);
+	explicit Cycle() = default;
+	explicit Cycle(std::vector< value_type > cycle);
+	explicit Cycle(std::vector< std::vector< value_type > > cycle);
 	~Cycle() = default;
 
 	iterator begin();
@@ -82,23 +79,13 @@ public:
 	const_iterator cbegin() const;
 	const_iterator cend() const;
 
-	/**
-	 * @returns The size n of the set of points {0,...,n-1} that this permutation acts on
-	 */
-	value_type order() const;
-	/**
-	 * Computes the order of this permutation
-	 */
-	value_type computeOrder() const;
-
 	friend bool operator==(const Cycle &lhs, const Cycle &rhs);
 	friend bool operator!=(const Cycle &lhs, const Cycle &rhs);
 
 	template< typename image_type > std::vector< image_type > toImage(image_type startValue = 0) const {
 		static_assert(std::is_integral_v< image_type >, "Can only create images with integral types");
-		assert(m_order >= computeOrder());
 
-		std::vector< image_type > image(order());
+		std::vector< image_type > image(maxElement() + 1);
 
 		std::iota(image.begin(), image.end(), startValue);
 
@@ -135,7 +122,11 @@ public:
 
 protected:
 	std::vector< std::vector< value_type > > m_cycles;
-	value_type m_order;
+
+	/**
+	 * @returns The maximum element referenced in this Cycle
+	 */
+	value_type maxElement() const;
 };
 
 } // namespace perm
