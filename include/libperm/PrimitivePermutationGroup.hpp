@@ -18,7 +18,7 @@ namespace perm {
 
 class PrimitivePermutationGroup : public AbstractPermutationGroup {
 public:
-	PrimitivePermutationGroup() : AbstractPermutationGroup(PermutationGroupType::Primitive){};
+	PrimitivePermutationGroup();
 	PrimitivePermutationGroup(std::vector< Permutation > generators);
 
 	template< typename Iterator > PrimitivePermutationGroup(Iterator begin, Iterator end) {

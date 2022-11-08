@@ -6,11 +6,18 @@
 #include "libperm/PrimitivePermutationGroup.hpp"
 #include "libperm/AbstractPermutation.hpp"
 #include "libperm/DiminoAlgorithm.hpp"
+#include "libperm/ExplicitPermutation.hpp"
 
 #include <algorithm>
 #include <cassert>
 
 namespace perm {
+
+PrimitivePermutationGroup::PrimitivePermutationGroup() : AbstractPermutationGroup(PermutationGroupType::Primitive) {
+	// Add the identity element as a generator (this is the least a group can contain - aka: There is no such thing as
+	// an empty group)
+	setGenerators({ Permutation(ExplicitPermutation()) });
+}
 
 PrimitivePermutationGroup::PrimitivePermutationGroup(std::vector< Permutation > generators)
 	: AbstractPermutationGroup(PermutationGroupType::Primitive) {
