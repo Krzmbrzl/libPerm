@@ -27,3 +27,7 @@ TEST(PrimitivePermutationGroup, construction) {
 TEST(PrimitivePermutationGroup, permutationGroupInterface) {
 	perm::test::testPermutationGroupInterface< perm::PrimitivePermutationGroup >();
 }
+
+TEST(PrimitivePermutationGroup, cosetRepresentative) {
+	perm::test::testCosetRepresentative< perm::PrimitivePermutationGroup >();
+}

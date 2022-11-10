@@ -56,6 +56,10 @@ public:
 
 	virtual void getElementsTo(std::vector< Permutation > &permutations) const override final;
 
+	virtual Permutation getCanonicalCosetRepresentative(const Permutation &perm) const override;
+
+	virtual const Permutation &getCanonicalCosetRepresentative() const override;
+
 protected:
 	std::vector< Permutation > m_generators;
 	std::vector< Permutation > m_elements;
