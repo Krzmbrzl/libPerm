@@ -21,22 +21,22 @@ template< typename PermutationGroupImpl > void testPermutationGroupInterface() {
 	AbstractPermutationGroup &group = groupImpl;
 
 	// Group only contains identity
-	ASSERT_EQ(group.order(), 1);
+	ASSERT_EQ(group.order(), static_cast< std::size_t >(1));
 	std::vector< AbstractPermutation::value_type > orbit = group.orbit(3);
-	ASSERT_EQ(orbit.size(), 1);
-	ASSERT_EQ(orbit[0], 3);
+	ASSERT_EQ(orbit.size(), static_cast< std::size_t >(1));
+	ASSERT_EQ(orbit[0], static_cast< AbstractPermutation::value_type >(3));
 
 
 	group.addGenerator(perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }))));
-	ASSERT_EQ(group.order(), 2);
+	ASSERT_EQ(group.order(), static_cast< std::size_t >(2));
 	orbit = group.orbit(3);
-	ASSERT_EQ(orbit.size(), 1);
-	ASSERT_EQ(orbit[0], 3);
+	ASSERT_EQ(orbit.size(), static_cast< std::size_t >(1));
+	ASSERT_EQ(orbit[0], static_cast< AbstractPermutation::value_type >(3));
 
 
 
 	group.addGenerator(perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 3, 1 }))));
-	ASSERT_EQ(group.order(), 6);
+	ASSERT_EQ(group.order(), static_cast< std::size_t >(6));
 	orbit                                                        = group.orbit(3);
 	std::vector< AbstractPermutation::value_type > expectedOrbit = { 3, 1, 0 };
 	ASSERT_EQ(orbit.size(), expectedOrbit.size());
@@ -46,7 +46,7 @@ template< typename PermutationGroupImpl > void testPermutationGroupInterface() {
 
 	group.setGenerators({ perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }))),
 						  perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3, 4, 5 }))) });
-	ASSERT_EQ(group.order(), 8);
+	ASSERT_EQ(group.order(), static_cast< std::size_t >(8));
 	orbit         = group.orbit(3);
 	expectedOrbit = { 3, 4, 5, 2 };
 	ASSERT_EQ(orbit.size(), expectedOrbit.size());
