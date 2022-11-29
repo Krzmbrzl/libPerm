@@ -77,7 +77,7 @@ public:
 	 * @param perm The permutation g to use to generate the coset.
 	 * @returns The canonical coset representative
 	 */
-	virtual Permutation getCanonicalCosetRepresentative(const Permutation &perm) const = 0;
+	virtual Permutation getCanonicalCosetRepresentative(const AbstractPermutation &perm) const = 0;
 
 	/**
 	 * Same as getCanonicalCosetRepresentative(const Permutation &perm), but the element g used to generate

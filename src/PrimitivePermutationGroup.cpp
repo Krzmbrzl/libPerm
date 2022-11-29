@@ -115,8 +115,8 @@ Permutation &getCanonicalRepresentative(std::vector< Permutation > &elements) {
 		getCanonicalRepresentative(const_cast< const std::vector< Permutation > & >(elements)));
 }
 
-Permutation PrimitivePermutationGroup::getCanonicalCosetRepresentative(const Permutation &perm) const {
-	if (perm->isIdentity() || contains(perm)) {
+Permutation PrimitivePermutationGroup::getCanonicalCosetRepresentative(const AbstractPermutation &perm) const {
+	if (perm.isIdentity() || contains(perm)) {
 		// If perm is contained in this group (which is guaranteed, if perm == identity), the resulting coset
 		// will just be the group itself, so there is no point in explicitly calculating the coset.
 		return getCanonicalCosetRepresentative();

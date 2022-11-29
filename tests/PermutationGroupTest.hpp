@@ -86,12 +86,11 @@ template< typename PermutationGroupImpl > void testCosetRepresentative() {
 		// Since the group is the full Sym(6), any coset with the group with a permutation acting on the
 		// elements [0, 5] will necessarily be the group itself again and therefore the coset representative
 		// must still be the same as well.
-		for (const perm::Permutation &currentPerm : {
-				 perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2, 3 }))),
-				 perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 5 }))),
-				 perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 4, 5 } }))),
-				 perm::Permutation(
-					 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 5, 1 }, { 2, 5 }, { 0, 2, 3 } }))),
+		for (const perm::AbstractPermutation &currentPerm : {
+				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2, 3 })),
+				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 5 })),
+				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 4, 5 } })),
+				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 5, 1 }, { 2, 5 }, { 0, 2, 3 } })),
 			 }) {
 			ASSERT_EQ(group.getCanonicalCosetRepresentative(currentPerm), representative);
 		}
@@ -113,13 +112,13 @@ template< typename PermutationGroupImpl > void testCosetRepresentative() {
 		},
 	};
 
-	const std::vector< perm::Permutation > cosetGenerators{
-		perm::Permutation(perm::ExplicitPermutation()),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 3 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 1, 3 } }))),
+	const std::vector< perm::ExplicitPermutation > cosetGenerators{
+		perm::ExplicitPermutation(),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 3 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
 	};
 
 	std::vector< perm::Permutation > representatives;
@@ -134,7 +133,7 @@ template< typename PermutationGroupImpl > void testCosetRepresentative() {
 
 		// Each of the coset generators should generate a different coset, which in turn should have a unique
 		// canonical coset representative
-		for (const perm::Permutation &currentCosetPerm : cosetGenerators) {
+		for (const perm::ExplicitPermutation &currentCosetPerm : cosetGenerators) {
 			representative = group.getCanonicalCosetRepresentative(currentCosetPerm);
 
 			if (std::find(representatives.begin(), representatives.end(), representative) != representatives.end()) {
