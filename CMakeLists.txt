@@ -29,9 +29,12 @@ include(dependencies)
 include(compiler)
 include(CTest)
 
-add_library(libperm STATIC)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-set_target_properties(libperm PROPERTIES OUTPUT_NAME "libperm")
+add_library(libperm STATIC)
+set_target_properties(libperm PROPERTIES PREFIX "")
 
 # Make sure that outside projects have to prefix all includes with libperm, but don't burden
 # ourselves with this.
