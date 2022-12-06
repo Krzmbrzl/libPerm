@@ -19,9 +19,9 @@ unmaintained at this point). Additionally the following literature has been used
 - [cmake](https://cmake.org/) v3.15 or more recent
 
 All other dependencies will be fetched automatically while running cmake (requires an active internet connection). These dependencies are
-- [cmake-compiler-flags](https://github.com/Krzmbrzl/cmake-compiler-flags)
-- [polymorphic\_variant](https://github.com/Krzmbrzl/polymorphic_variant)
-- [GoogleTest](https://github.com/google/googletest)
+- [cmake-compiler-flags](https://github.com/Krzmbrzl/cmake-compiler-flags) (BSD-3-Clause)
+- [polymorphic\_variant](https://github.com/Krzmbrzl/polymorphic_variant) (BSD-3-Clause)
+- [GoogleTest](https://github.com/google/googletest) (BSD-3-Clause)
 
 
 ### Build `libPerm`
