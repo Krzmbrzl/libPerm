@@ -1,5 +1,7 @@
 # libPerm
 
+[![CI](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml/badge.svg)](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml)
+
 A C++17 library for representing and handling of permutation groups.
 
 This library has been heavily inspired by https://github.com/tremlin/PermLib (which seems to aim at solving essentially the same problem but targeting
