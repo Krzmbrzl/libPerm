@@ -14,6 +14,7 @@ unmaintained at this point). Additionally the following literature has been used
 ### Requirements
 
 - An ISO C++17 conform compiler and standard library implementation
+- [cmake](https://cmake.org/) v3.15 or more recent
 
 All other dependencies will be fetched automatically while running cmake (requires an active internet connection). These dependencies are
 - [cmake-compiler-flags](https://github.com/Krzmbrzl/cmake-compiler-flags)
