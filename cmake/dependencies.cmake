@@ -19,6 +19,13 @@ FetchContent_Declare(
 	GIT_SHALLOW    true
 )
 
+FetchContent_Declare(
+	GoogleTest
+	GIT_REPOSITORY https://github.com/google/googletest
+	GIT_TAG        v1.12.0
+	GIT_SHALLOW    true
+)
+
 message(STATUS "Fetching and building dependencies...")
 FetchContent_MakeAvailable(cmake_compiler_flags polymorphic_variant)
 message(STATUS "Done fetching dependencies")
