@@ -38,8 +38,8 @@ set_target_properties(libperm PROPERTIES PREFIX "")
 
 # Make sure that outside projects have to prefix all includes with libperm, but don't burden
 # ourselves with this.
-target_include_directories(libperm PUBLIC "${CMAKE_SOURCE_DIR}/include")
-target_include_directories(libperm PRIVATE "${CMAKE_SOURCE_DIR}/include/libperm/")
+target_include_directories(libperm PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(libperm PRIVATE "${PROJECT_SOURCE_DIR}/include/libperm/")
 
 target_link_libraries(libperm PUBLIC polymorphic_variant)
 
