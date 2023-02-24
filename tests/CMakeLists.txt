@@ -32,7 +32,7 @@ endfunction()
 if(LIBPERM_TESTS)
 	# Setup Google test
 	include(FetchContent)
-	FetchContent_MakeAvailable(GoogleTest)
+	FetchContent_MakeAvailable(googletest)
 
 	include(GoogleTest)
 
