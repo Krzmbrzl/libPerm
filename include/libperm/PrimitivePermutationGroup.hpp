@@ -13,6 +13,7 @@
 #include <iterator>
 #include <type_traits>
 #include <vector>
+#include <iosfwd>
 
 namespace perm {
 
@@ -59,6 +60,8 @@ public:
 	virtual Permutation getCanonicalCosetRepresentative(const AbstractPermutation &perm) const override;
 
 	virtual const Permutation &getCanonicalCosetRepresentative() const override;
+
+	friend std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &group);
 
 protected:
 	std::vector< Permutation > m_generators;
