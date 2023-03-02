@@ -64,6 +64,10 @@ void PrimitivePermutationGroup::setGenerators(std::vector< Permutation > generat
 	regenerateGroup();
 }
 
+const std::vector< Permutation > &PrimitivePermutationGroup::getGenerators() const {
+	return m_generators;
+}
+
 void PrimitivePermutationGroup::getElementsTo(std::vector< Permutation > &permutations) const {
 	permutations.clear();
 	permutations.reserve(m_elements.size());

@@ -10,10 +10,10 @@
 #include "libperm/AbstractPermutationGroup.hpp"
 #include "libperm/Permutation.hpp"
 
+#include <iosfwd>
 #include <iterator>
 #include <type_traits>
 #include <vector>
-#include <iosfwd>
 
 namespace perm {
 
@@ -54,6 +54,8 @@ public:
 	virtual bool addGenerator(Permutation perm) override final;
 
 	virtual void setGenerators(std::vector< Permutation > generators) override final;
+
+	virtual const std::vector< Permutation > &getGenerators() const override final;
 
 	virtual void getElementsTo(std::vector< Permutation > &permutations) const override final;
 

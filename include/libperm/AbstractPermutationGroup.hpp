@@ -60,6 +60,13 @@ public:
 	virtual void setGenerators(std::vector< Permutation > generators) = 0;
 
 	/**
+	 * @returns A list of generators for this group. Note that there is no guarantee that these are the same generators
+	 * that were used to construct this object with (the implementation is free to choose them differently as long as
+	 * the generated group stays the same)
+	 */
+	virtual const std::vector< Permutation > &getGenerators() const = 0;
+
+	/**
 	 * Explicitly obtains all elements contained in this group. Note that depending on the group, this could
 	 * be a very large amount.
 	 *
@@ -85,6 +92,16 @@ public:
 	 * canonical representative of this group.
 	 */
 	virtual const Permutation &getCanonicalCosetRepresentative() const = 0;
+
+	/**
+	 * @returns Whether the two given groups are equal
+	 */
+	friend bool operator==(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
+
+	/**
+	 * @returns Whether the two given groups are unequal
+	 */
+	friend bool operator!=(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
 
 protected:
 	PermutationGroupType m_type;

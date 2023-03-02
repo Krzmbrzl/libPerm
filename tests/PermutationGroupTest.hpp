@@ -148,6 +148,60 @@ template< typename PermutationGroupImpl > void testCosetRepresentative() {
 	}
 }
 
+template< typename PermutationGroupImpl > void testEquality() {
+	std::vector< perm::ExplicitPermutation > firstList = {
+		perm::ExplicitPermutation(),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 })),
+	};
+	std::vector< perm::ExplicitPermutation > secondList = {
+		perm::ExplicitPermutation(),
+		firstList[1],
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 3, 5 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 5, 4 })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 2 }, { 4, 5 } })),
+	};
+	std::vector< perm::ExplicitPermutation > thirdList = {
+		perm::ExplicitPermutation(),
+		firstList[1],
+		secondList[2],
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 6, 7 }, { 4, 8 } })),
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 7 })),
+	};
+
+	std::vector< PermutationGroupImpl > groups;
+
+	for (const perm::ExplicitPermutation &first : firstList) {
+		for (const perm::ExplicitPermutation &second : secondList) {
+			for (const perm::ExplicitPermutation &third : thirdList) {
+				PermutationGroupImpl group;
+				group.addGenerator(perm::Permutation{ first });
+				group.addGenerator(perm::Permutation{ second });
+				group.addGenerator(perm::Permutation{ third });
+
+				groups.push_back(std::move(group));
+			}
+		}
+	}
+
+	for (const PermutationGroupImpl &outer : groups) {
+		std::vector< perm::Permutation > outerElements;
+		outer.getElementsTo(outerElements);
+
+		for (const PermutationGroupImpl &inner : groups) {
+			std::vector< perm::Permutation > innerElements;
+			inner.getElementsTo(innerElements);
+
+			const bool groupsAreEqual =
+				outerElements.size() == innerElements.size()
+				&& std::is_permutation(outerElements.begin(), outerElements.end(), innerElements.begin());
+
+			ASSERT_EQ(outer == inner, groupsAreEqual) << "outer: " << outer << " - inner: " << inner;
+		}
+	}
+}
+
 } // namespace perm::test
 
 #endif // LIBPERM_TESTS_PERMUTATIONGROUPTEST_HPP_

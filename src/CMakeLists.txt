@@ -6,6 +6,7 @@
 target_sources(libperm
 	PRIVATE
 		"AbstractPermutation.cpp"
+		"AbstractPermutationGroup.cpp"
 		"Cycle.cpp"
 		"DiminoAlgorithm.cpp"
 		"ExplicitPermutation.cpp"

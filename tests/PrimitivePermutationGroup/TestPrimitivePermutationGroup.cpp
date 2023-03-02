@@ -31,3 +31,7 @@ TEST(PrimitivePermutationGroup, permutationGroupInterface) {
 TEST(PrimitivePermutationGroup, cosetRepresentative) {
 	perm::test::testCosetRepresentative< perm::PrimitivePermutationGroup >();
 }
+
+TEST(PrimitivePermutationGroup, equality) {
+	perm::test::testEquality< perm::PrimitivePermutationGroup >();
+}
