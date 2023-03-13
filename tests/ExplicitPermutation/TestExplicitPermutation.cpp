@@ -13,8 +13,16 @@ TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm;
 
 	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::value_type >(0));
-
 	ASSERT_TRUE(perm.isIdentity());
+	ASSERT_EQ(perm.sign(), 1);
+
+	perm = perm::ExplicitPermutation(std::vector< perm::ExplicitPermutation::value_type >{});
+	ASSERT_TRUE(perm.isIdentity());
+	ASSERT_EQ(perm.sign(), 1);
+
+	perm = perm::ExplicitPermutation(-1);
+	ASSERT_TRUE(!perm.isIdentity());
+	ASSERT_EQ(perm.sign(), -1);
 
 	perm = perm::ExplicitPermutation({ 1, 2, 0 });
 

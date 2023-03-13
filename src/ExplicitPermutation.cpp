@@ -27,7 +27,12 @@ ExplicitPermutation::ExplicitPermutation(std::vector< value_type > image, int si
 	assert(std::accumulate(m_image.begin(), m_image.end(), static_cast< std::size_t >(0))
 		   == m_image.size() * (m_image.size() - 1) / 2);
 
-	reduceImageRepresentation();
+	if (!m_image.empty()) {
+		reduceImageRepresentation();
+	} else {
+		// We don't want to deal with empty images
+		m_image = { 0 };
+	}
 }
 
 ExplicitPermutation::~ExplicitPermutation() {
