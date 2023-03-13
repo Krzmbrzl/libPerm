@@ -56,7 +56,9 @@ public:
 				j = image[j];
 			}
 
-			cycles.push_back(std::move(currentCycle));
+			if (currentCycle.size() > 1) {
+				cycles.push_back(std::move(currentCycle));
+			}
 
 			if (visited.size() == image.size()) {
 				// All elements have been visited -> we can abort the loop

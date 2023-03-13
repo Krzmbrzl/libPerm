@@ -54,3 +54,23 @@ TEST(Cycle, equality) {
 	c2 = perm::Cycle({ 0, 1, 2 });
 	ASSERT_EQ(c1, c2);
 }
+
+TEST(Cycle, fromImage) {
+	std::vector< perm::Cycle::value_type > image = {};
+	perm::Cycle expected;
+	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
+
+	image = { 0, 1 };
+	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
+
+	image    = { 1, 0 };
+	expected = perm::Cycle({ 0, 1 });
+	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
+
+	image = { 1, 0, 2 };
+	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
+
+	image    = { 1, 2, 0 };
+	expected = perm::Cycle({ 0, 1, 2 });
+	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
+}
