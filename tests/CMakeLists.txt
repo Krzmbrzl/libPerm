@@ -5,30 +5,6 @@
 
 option(LIBPERM_TESTS "Whether to also build the libterm tests" ON)
 
-
-# Helper function for registering test-cases
-function(register_test)
-	set(options "")
-	set(oneValueArgs "")
-	set(multiValueArgs TARGETS)
-
-	cmake_parse_arguments(LIBPERM_TEST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-	if(LIBPERM_TEST_UNPARSED_ARGUMENTS)
-		message(FATAL_ERROR "Unrecognized arguments: ${LIBPERM_TEST_UNPARSED_ARGUMENTS}")
-	endif()
-
-	foreach(CURRENT IN LISTS LIBPERM_TEST_TARGETS)
-		if(NOT TARGET "${CURRENT}")
-			message(FATAL_ERROR "\"${CURRENT} is not a target")
-		endif()
-
-		target_link_libraries("${CURRENT}" PRIVATE gmock gtest_main)
-		gtest_discover_tests("${CURRENT}")
-	endforeach()
-endfunction()
-
-
 if(LIBPERM_TESTS)
 	# Setup Google test
 	include(FetchContent)
@@ -36,11 +12,17 @@ if(LIBPERM_TESTS)
 
 	include(GoogleTest)
 
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+	add_executable(libPermTest
+		"TestCycle.cpp"
+		"TestDiminoAlgorithm.cpp"
+		"TestExplicitPermutation.cpp"
+		"TestPrimitivePermutationGroup.cpp"
+		"TestUtils.cpp"
+	)
 
-	add_subdirectory(ExplicitPermutation)
-	add_subdirectory(Cycle)
-	add_subdirectory(Dimino)
-	add_subdirectory(PrimitivePermutationGroup)
-	add_subdirectory(Misc)
+	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm)
+
+	target_include_directories(libPermTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+
+	gtest_discover_tests(libPermTest)
 endif()
