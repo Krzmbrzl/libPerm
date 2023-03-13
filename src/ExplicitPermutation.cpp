@@ -88,6 +88,10 @@ void ExplicitPermutation::multiply(const AbstractPermutation &other) {
 	reduceImageRepresentation();
 }
 
+Cycle ExplicitPermutation::toCycle() const {
+	return Cycle::fromImage(m_image);
+}
+
 void ExplicitPermutation::insertIntoStream(std::ostream &stream) const {
 	// Represent this object in disjoint cycle notation
 	stream << (sign() < 0 ? "-" : "+") << Cycle::fromImage(m_image);

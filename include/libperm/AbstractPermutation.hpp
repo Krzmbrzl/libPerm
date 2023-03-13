@@ -6,6 +6,8 @@
 #ifndef LIBPERM_ABSTRACTPERMUTATION_HPP_
 #define LIBPERM_ABSTRACTPERMUTATION_HPP_
 
+#include "libperm/Cycle.hpp"
+
 #include <ostream>
 #include <string>
 #include <vector>
@@ -104,6 +106,11 @@ public:
 	 * @returns A string representation of this permutation
 	 */
 	virtual std::string toString() const;
+
+	/**
+	 * @returns A Cycle representation of this permutation
+	 */
+	virtual Cycle toCycle() const = 0;
 
 	/**
 	 * Inserts a string representation of this permutation into the given stream object.

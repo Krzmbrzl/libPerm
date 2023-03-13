@@ -44,6 +44,8 @@ public:
 
 	void multiply(const AbstractPermutation &other) override;
 
+	virtual Cycle toCycle() const override;
+
 	void insertIntoStream(std::ostream &stream) const override;
 
 	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);

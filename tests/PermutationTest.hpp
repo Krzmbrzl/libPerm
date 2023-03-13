@@ -16,12 +16,17 @@
 namespace perm::test {
 
 template< typename PermutationImpl > void testPermutationInterface() {
-	PermutationImpl permObj1 = PermutationImpl::fromCycle(perm::Cycle({ 0, 1, 2, 3 }));
-	PermutationImpl permObj2 = PermutationImpl::fromCycle(perm::Cycle({ { 0, 1 }, { 2, 3 } }));
+	perm::Cycle cycle1 = perm::Cycle({ 0, 1, 2, 3 });
+	perm::Cycle cycle2 = perm::Cycle({ { 0, 1 }, { 2, 3 } });
+	perm::Cycle cycle3 = perm::Cycle({ 0, 1 });
+	perm::Cycle cycle4 = perm::Cycle({ 1, 3 });
+
+	PermutationImpl permObj1 = PermutationImpl::fromCycle(cycle1);
+	PermutationImpl permObj2 = PermutationImpl::fromCycle(cycle2);
 	PermutationImpl permObj3 = permObj1;
 	PermutationImpl permObj4 = permObj1;
-	PermutationImpl permObj5 = PermutationImpl::fromCycle(perm::Cycle({ 0, 1 }));
-	PermutationImpl result1  = PermutationImpl::fromCycle(perm::Cycle({ 1, 3 }));
+	PermutationImpl permObj5 = PermutationImpl::fromCycle(cycle3);
+	PermutationImpl result1  = PermutationImpl::fromCycle(cycle4);
 	PermutationImpl result2  = [permObj3]() {
         if constexpr (PermutationImpl::is_signed) {
             // For signed permutations, inversion leads to a sign change
@@ -42,6 +47,13 @@ template< typename PermutationImpl > void testPermutationInterface() {
 	AbstractPermutation &r2 = result2;
 	AbstractPermutation &r3 = result3;
 	AbstractPermutation &id = identity;
+
+	ASSERT_EQ(p1.toCycle(), cycle1);
+	ASSERT_EQ(p2.toCycle(), cycle2);
+	ASSERT_EQ(p3.toCycle(), cycle1);
+	ASSERT_EQ(p4.toCycle(), cycle1);
+	ASSERT_EQ(p5.toCycle(), cycle3);
+	ASSERT_EQ(r1.toCycle(), cycle4);
 
 	ASSERT_EQ(p1.maxElement(), static_cast< AbstractPermutation::value_type >(3));
 	ASSERT_EQ(p1.sign(), 1);
