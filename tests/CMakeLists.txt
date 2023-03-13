@@ -20,7 +20,7 @@ if(LIBPERM_TESTS)
 		"TestUtils.cpp"
 	)
 
-	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm)
+	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm::libperm)
 
 	target_include_directories(libPermTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 

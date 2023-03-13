@@ -36,6 +36,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 add_library(libperm STATIC)
 set_target_properties(libperm PROPERTIES PREFIX "")
 
+add_library(libperm::libperm ALIAS libperm)
+
 # Make sure that outside projects have to prefix all includes with libperm, but don't burden
 # ourselves with this.
 target_include_directories(libperm PUBLIC "${PROJECT_SOURCE_DIR}/include")
