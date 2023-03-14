@@ -70,6 +70,29 @@ TEST(ExplicitPermutation, multiplication) {
 	ASSERT_EQ(p3 * p4, r2);
 }
 
+TEST(ExplicitPermutation, invert) {
+	perm::ExplicitPermutation inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }));
+	inverse.invert();
+	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }), -1));
+
+
+	inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }));
+	inverse.invert();
+	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 1 }), -1));
+
+
+	inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1, 2 }, { 3, 4 } }));
+	inverse.invert();
+	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2, 1 }, { 3, 4 } }), -1));
+
+
+	perm::ExplicitPermutation p1 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3, 4 }));
+	perm::ExplicitPermutation p2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
+	inverse                      = p1 * p2;
+	inverse.invert();
+	ASSERT_EQ(p1 * p2 * inverse, perm::ExplicitPermutation(-1));
+}
+
 TEST(ExplicitPermutation, permutationInterface) {
 	perm::test::testPermutationInterface< perm::ExplicitPermutation >();
 }
