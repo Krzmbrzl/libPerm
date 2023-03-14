@@ -9,6 +9,7 @@
 #include "libperm/AbstractPermutation.hpp"
 #include "libperm/Cycle.hpp"
 #include "libperm/ExplicitPermutation.hpp"
+#include "libperm/Permutation.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -22,6 +23,8 @@ namespace perm {
 /**
  * Computes the permutation that, applied to the given container, will bring the elements in the provided
  * container into sorted order.
+ * Given a position i in the provided container, the image of i under the returned permutation describes
+ * the location of the ith element in the sorted version of this container.
  *
  * @tparam Container The container whose elements shall be considered (must provide random-access to its elements)
  * @tparam Compare The comparator to use in order to determine the sorted order
@@ -48,11 +51,22 @@ ExplicitPermutation computeSortPermutation(const Container &container, Compare c
 				  return cmp(begin[lhs], begin[rhs]);
 			  });
 
-	return ExplicitPermutation(image);
+	// The image that we have created above describes what element of the original container have to appear at a given
+	// position in the sorted container. However, by definition, our permutation is supposed to indicate to which
+	// position in the sorted container, a given entry in the original container has to go to.
+	// That's exactly the inverse information.
+	ExplicitPermutation p(std::move(image));
+	p.invert();
+	// Inversion is likely to change the sign, which doesn't make sense for our case
+	p.setSign(1);
+	return p;
 }
 
 /**
- * Applies the given permutation to the elements of the provided container.
+ * Applies the given permutation to the elements of the provided container. The permutation
+ * is interpreted to describe where a given element in the container shall end up at.
+ * E.g. the image of i under the given permutation describes to which location the ith
+ * element in the container shall be moved to.
  *
  * @tparam Container The type of the container to operate on
  * @tparam Permutation The type of permutation that shall act on the container
@@ -61,12 +75,21 @@ ExplicitPermutation computeSortPermutation(const Container &container, Compare c
  */
 template< typename Container, typename Permutation >
 void applyPermutation(Container &container, const Permutation &perm) {
-	static_assert(std::is_base_of_v< AbstractPermutation, Permutation >, "Can only use actual Permutation classes");
+	if constexpr (!std::is_base_of_v< AbstractPermutation, Permutation >) {
+		static_assert(std::is_same_v< Permutation, perm::Permutation >, "Can only use actual Permutation classes");
+	}
 	static_assert(std::is_same_v< typename std::iterator_traits< typename Container::iterator >::iterator_category,
 								  std::random_access_iterator_tag >,
 				  "Can only work with random-access iterators");
 
-	Cycle cycles = perm.toCycle();
+	Cycle cycles = [&]() {
+		if constexpr (std::is_same_v< Permutation, perm::Permutation >) {
+			// When using perm::Permutation, we have to use operator-> to access member functions
+			return perm->toCycle();
+		} else {
+			return perm.toCycle();
+		}
+	}();
 
 	auto begin = container.begin();
 
@@ -81,7 +104,6 @@ void applyPermutation(Container &container, const Permutation &perm) {
 			assert(currentIndex < container.size());
 
 			std::swap(begin[baseIndex], begin[currentIndex]);
-			baseIndex = currentIndex;
 		}
 	}
 }
