@@ -40,7 +40,7 @@ public:
 	 */
 	const std::vector< value_type > &image() const;
 
-	void invert() override;
+	void invert(bool invertSign = true) override;
 
 	void multiply(const AbstractPermutation &other) override;
 

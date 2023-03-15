@@ -55,8 +55,8 @@ const std::vector< ExplicitPermutation::value_type > &ExplicitPermutation::image
 	return m_image;
 }
 
-void ExplicitPermutation::invert() {
-	details::SignedPermutation::invert();
+void ExplicitPermutation::invert(bool invertSign) {
+	details::SignedPermutation::invert(invertSign);
 
 	std::vector< value_type > inverseImage(m_image.size());
 

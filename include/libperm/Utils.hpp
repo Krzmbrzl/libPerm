@@ -56,9 +56,7 @@ ExplicitPermutation computeSortPermutation(const Container &container, Compare c
 	// position in the sorted container, a given entry in the original container has to go to.
 	// That's exactly the inverse information.
 	ExplicitPermutation p(std::move(image));
-	p.invert();
-	// Inversion is likely to change the sign, which doesn't make sense for our case
-	p.setSign(1);
+	p.invert(false);
 	return p;
 }
 

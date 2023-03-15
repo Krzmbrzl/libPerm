@@ -23,8 +23,10 @@ void SignedPermutation::setSign(int sign) {
 	m_negative = sign < 0;
 }
 
-void SignedPermutation::invert() {
-	m_negative = !m_negative;
+void SignedPermutation::invert(bool invertSign) {
+	if (invertSign) {
+		m_negative = !m_negative;
+	}
 }
 
 void SignedPermutation::multiply(const AbstractPermutation &other) {

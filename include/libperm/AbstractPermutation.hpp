@@ -76,7 +76,7 @@ public:
 	/*
 	 * Inverts this permutation in-place
 	 */
-	virtual void invert() = 0;
+	virtual void invert(bool invertSign = true) = 0;
 
 	/**
 	 * Gets the sign associated with this permutation.

@@ -144,9 +144,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 	const perm::ExplicitPermutation shufflePermutation = GetParam();
 	// Sorting is the inverse of shuffling
 	perm::ExplicitPermutation expectedSortPerm = shufflePermutation;
-	expectedSortPerm.invert();
-	// Negative signs don't make sense in this context
-	expectedSortPerm.setSign(+1);
+	expectedSortPerm.invert(false);
 
 	perm::applyPermutation(sequence, shufflePermutation);
 
@@ -158,8 +156,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 
 	expectedSortPerm = shufflePermutation;
 	expectedSortPerm *= secondShuffle;
-	expectedSortPerm.invert();
-	expectedSortPerm.setSign(+1);
+	expectedSortPerm.invert(false);
 
 	ASSERT_EQ(perm::computeSortPermutation(sequence), expectedSortPerm) << "Sequence to sort: " << sequence;
 }

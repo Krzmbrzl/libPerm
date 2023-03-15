@@ -28,7 +28,7 @@ public:
 
 	void setSign(int sign) override final;
 
-	void invert() override;
+	void invert(bool invertSign = true) override;
 
 	void multiply(const AbstractPermutation &other) override;
 
