@@ -10,8 +10,6 @@
 #include <cassert>
 #include <set>
 
-#include <iostream>
-
 namespace perm {
 
 ExplicitPermutation ExplicitPermutation::fromCycle(const Cycle &cycle, int sign) {
