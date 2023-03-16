@@ -4,43 +4,20 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 #include "libperm/AbstractPermutation.hpp"
+#include "libperm/Cycle.hpp"
 #include "libperm/ExplicitPermutation.hpp"
+#include "libperm/PrimitivePermutationGroup.hpp"
 #include "libperm/Utils.hpp"
+
+#include "StreamOperators.hpp"
 
 #include <gtest/gtest.h>
 
 #include <array>
 #include <functional>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
-
-
-namespace std {
-template< typename T > stringstream &operator<<(stringstream &stream, const vector< T > &vec) {
-	static_cast< ostream & >(stream) << vec;
-	return stream;
-}
-
-template< typename T > ostream &operator<<(ostream &stream, const vector< T > &vec) {
-	stream << "{ ";
-	for (std::size_t i = 0; i < vec.size(); ++i) {
-		stream << vec[i];
-
-		if (i + 1 < vec.size()) {
-			stream << ",";
-		}
-
-		stream << " ";
-	}
-
-	stream << "}";
-
-	return stream;
-}
-} // namespace std
-
 
 
 TEST(Utils, applyPermutation) {
