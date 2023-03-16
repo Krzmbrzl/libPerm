@@ -23,7 +23,7 @@ bool operator!=(const AbstractPermutation &lhs, const AbstractPermutation &rhs) 
 }
 
 AbstractPermutation &operator*=(AbstractPermutation &lhs, const AbstractPermutation &rhs) {
-	lhs.multiply(rhs);
+	lhs.postMultiply(rhs);
 
 	return lhs;
 }
@@ -48,6 +48,10 @@ bool AbstractPermutation::isIdentity() const {
 	}
 
 	return true;
+}
+
+void AbstractPermutation::multiply(const AbstractPermutation &other) {
+	postMultiply(other);
 }
 
 bool AbstractPermutation::equals(const AbstractPermutation &other) const {

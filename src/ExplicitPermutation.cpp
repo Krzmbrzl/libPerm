@@ -67,25 +67,56 @@ void ExplicitPermutation::invert(bool invertSign) {
 	m_image = inverseImage;
 }
 
-void ExplicitPermutation::multiply(const AbstractPermutation &other) {
-	details::SignedPermutation::multiply(other);
+void ExplicitPermutation::preMultiply(const AbstractPermutation &other) {
+	details::SignedPermutation::preMultiply(other);
 
-	// We need to create a copy, in case &other == this
-	value_type overallMaxElement = std::max(maxElement(), other.maxElement());
+	if (this == &other) {
+		selfMultiply();
+		return;
+	}
+
+	const value_type overallMaxElement = std::max(maxElement(), other.maxElement());
 
 	decltype(m_image) transformedImage(overallMaxElement + 1);
 
-	// First, transform elements in our image
-	for (value_type i = 0; i <= maxElement(); ++i) {
-		transformedImage[i] = other.image(m_image[i]);
-	}
-	// Then, potentially add additional image points describing transformation of higher elements
-	// (that were so far untouched by this permutation)
-	for (value_type i = maxElement() + 1; i <= overallMaxElement; ++i) {
-		transformedImage[i] = other.image(i);
+	for (value_type i = 0; i <= overallMaxElement; ++i) {
+		transformedImage[i] = image(other.image(i));
 	}
 
 	m_image = std::move(transformedImage);
+
+	// Assert that multiplication has not created any duplicate entries
+	assert(std::set< value_type >(m_image.begin(), m_image.end()).size() == m_image.size());
+
+	reduceImageRepresentation();
+}
+
+void ExplicitPermutation::postMultiply(const AbstractPermutation &other) {
+	details::SignedPermutation::postMultiply(other);
+
+	if (this == &other) {
+		// If we are multiplying this perm by itself, our in-place algorithm below
+		// will get into trouble as it overrides image entries that might be needed
+		// later, due to the two-step nature of computing the product of two perms
+		// by means of their images.
+		selfMultiply();
+		return;
+	}
+
+	const value_type ownMax            = maxElement();
+	const value_type overallMaxElement = std::max(ownMax, other.maxElement());
+
+	m_image.resize(overallMaxElement + 1);
+
+	// First, transform elements in our image
+	for (value_type i = 0; i <= ownMax; ++i) {
+		m_image[i] = other.image(m_image[i]);
+	}
+	// Then, potentially add additional image points describing transformation of higher elements
+	// (that were so far untouched by this permutation)
+	for (value_type i = ownMax + 1; i <= overallMaxElement; ++i) {
+		m_image[i] = other.image(i);
+	}
 
 	// Assert that multiplication has not created any duplicate entries
 	assert(std::set< value_type >(m_image.begin(), m_image.end()).size() == m_image.size());
@@ -102,12 +133,45 @@ void ExplicitPermutation::insertIntoStream(std::ostream &stream) const {
 	stream << (sign() < 0 ? "-" : "+") << Cycle::fromImage(m_image);
 }
 
-ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs) {
+ExplicitPermutation operator*(const ExplicitPermutation &lhs, const AbstractPermutation &rhs) {
 	ExplicitPermutation result(lhs);
 
-	result *= rhs;
+	result.postMultiply(rhs);
 
 	return result;
+}
+
+ExplicitPermutation operator*(const AbstractPermutation &lhs, const ExplicitPermutation &rhs) {
+	ExplicitPermutation result(rhs);
+
+	result.preMultiply(lhs);
+
+	return result;
+}
+
+ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs) {
+	// Post-multiplication is currently implemented more efficiently (in-place for most cases)
+	ExplicitPermutation result(lhs);
+
+	result.postMultiply(rhs);
+
+	return result;
+}
+
+void ExplicitPermutation::selfMultiply() {
+	decltype(m_image) transformedImage;
+	transformedImage.resize(m_image.size());
+
+	for (std::size_t i = 0; i < m_image.size(); ++i) {
+		transformedImage[i] = m_image[m_image[i]];
+	}
+
+	m_image = std::move(transformedImage);
+
+	// Assert that multiplication has not created any duplicate entries
+	assert(std::set< value_type >(m_image.begin(), m_image.end()).size() == m_image.size());
+
+	reduceImageRepresentation();
 }
 
 void ExplicitPermutation::reduceImageRepresentation() {

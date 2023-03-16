@@ -30,7 +30,9 @@ public:
 
 	void invert(bool invertSign = true) override;
 
-	void multiply(const AbstractPermutation &other) override;
+	void preMultiply(const AbstractPermutation &other) override;
+
+	void postMultiply(const AbstractPermutation &other) override;
 
 protected:
 	bool m_negative = false;

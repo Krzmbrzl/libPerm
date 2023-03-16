@@ -49,7 +49,12 @@ public:
 	/**
 	 * Multiplies the lhs permutation with rhs and modifies lhs in-place.
 	 *
+	 * The multiplication is performed in such a way that the result represents the permutation
+	 * that arises from FIRST applying lhs and THEN applying rhs.
+	 *
 	 * @returns The modified lhs
+	 *
+	 * @see postMultiply
 	 */
 	friend AbstractPermutation &operator*=(AbstractPermutation &lhs, const AbstractPermutation &rhs);
 
@@ -73,6 +78,12 @@ public:
 	 */
 	virtual bool isIdentity() const;
 
+	/**
+	 * @see postMultiply
+	 */
+	[[deprecated("Prefer using the more explicit postMultiply function")]] void
+		multiply(const AbstractPermutation &other);
+
 	/*
 	 * Inverts this permutation in-place
 	 */
@@ -93,9 +104,20 @@ public:
 	virtual void setSign(int sign) = 0;
 
 	/**
-	 * Multiplies this permutation by other, modifying this permutation in-place
+	 * Multiplies this permutation by the provided one, modifying the represented perm in-place.
+	 *
+	 * The multiplication is performed in such a way that the result represents the permutation
+	 * that arises from FIRST applying the provided perm and THEN applying the represented perm.
 	 */
-	virtual void multiply(const AbstractPermutation &other) = 0;
+	virtual void preMultiply(const AbstractPermutation &other) = 0;
+
+	/**
+	 * Multiplies this permutation by the provided one, modifying the represented perm in-place.
+	 *
+	 * The multiplication is performed in such a way that the result represents the permutation
+	 * that arises from FIRST applying the represented perm and THEN applying the provided perm.
+	 */
+	virtual void postMultiply(const AbstractPermutation &other) = 0;
 
 	/**
 	 * @returns Whether this permutation is considered equal to other

@@ -29,7 +29,12 @@ void SignedPermutation::invert(bool invertSign) {
 	}
 }
 
-void SignedPermutation::multiply(const AbstractPermutation &other) {
+void SignedPermutation::preMultiply(const AbstractPermutation &other) {
+	// As far as the sign is concerned, there is no difference between pre and post multiplication
+	SignedPermutation::postMultiply(other);
+}
+
+void SignedPermutation::postMultiply(const AbstractPermutation &other) {
 	// XOR to mimick a sign extraction for the multiplication of signed integers
 	m_negative = (m_negative ^ (other.sign() < 0));
 }

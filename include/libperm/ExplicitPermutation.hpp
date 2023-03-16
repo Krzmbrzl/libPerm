@@ -42,16 +42,25 @@ public:
 
 	void invert(bool invertSign = true) override;
 
-	void multiply(const AbstractPermutation &other) override;
+	void preMultiply(const AbstractPermutation &other) override;
+
+	void postMultiply(const AbstractPermutation &other) override;
 
 	virtual Cycle toCycle() const override;
 
 	void insertIntoStream(std::ostream &stream) const override;
 
+	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const AbstractPermutation &rhs);
+	friend ExplicitPermutation operator*(const AbstractPermutation &lhs, const ExplicitPermutation &rhs);
 	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);
 
 protected:
 	std::vector< value_type > m_image;
+
+	/**
+	 * Multiplies this perm by itself
+	 */
+	void selfMultiply();
 
 	/**
 	 * Removes redundant entries from the currently stored image. Entries in the image are
