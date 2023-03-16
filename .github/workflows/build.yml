@@ -31,7 +31,7 @@ jobs:
                   cmakeListsOrSettingsJson: 'CMakeListsTxtAdvanced' # Required to respect cmakeAppendedArgs
                   cmakeBuildType: ${{ matrix.build_type }}
                   buildDirectory: 'build'
-                  cmakeAppendedArgs: -DLIBPERM_WARNINGS_AS_ERRORS=ON -DLIBPERM_EXAMPLES=ON -DCMAKE_UNITY_BUILD=ON
+                  cmakeAppendedArgs: -G Ninja -DLIBPERM_WARNINGS_AS_ERRORS=ON -DLIBPERM_EXAMPLES=ON -DCMAKE_UNITY_BUILD=ON
 
             - name: Run tests
               run: cd build && ctest --output-on-failure .
