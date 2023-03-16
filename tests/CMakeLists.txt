@@ -16,6 +16,7 @@ if(LIBPERM_TESTS)
 		"TestCycle.cpp"
 		"TestDiminoAlgorithm.cpp"
 		"TestExplicitPermutation.cpp"
+		"TestPermutationInterface.cpp"
 		"TestPrimitivePermutationGroup.cpp"
 		"TestUtils.cpp"
 	)

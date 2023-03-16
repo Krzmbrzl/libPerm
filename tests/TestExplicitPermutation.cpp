@@ -5,8 +5,6 @@
 
 #include <libperm/ExplicitPermutation.hpp>
 
-#include "PermutationTest.hpp"
-
 #include <gtest/gtest.h>
 
 #include <functional>
@@ -206,7 +204,3 @@ INSTANTIATE_TEST_SUITE_P(ExplicitPermutation, InvertTest,
 																 perm::Cycle({ { 0, 2, 1 }, { 3, 4 } })),
 										   InvertTest::ParamPack(perm::Cycle({ { 1, 3, 4 }, { 7, 8, 2, 5 } }),
 																 perm::Cycle({ { 1, 4, 3 }, { 2, 8, 7, 5 } }))));
-
-TEST(ExplicitPermutation, permutationInterface) {
-	perm::test::testPermutationInterface< perm::ExplicitPermutation >();
-}
