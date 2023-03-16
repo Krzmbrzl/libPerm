@@ -8,8 +8,6 @@
 #include <libperm/Permutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
 
-#include "PermutationGroupTest.hpp"
-
 #include <gtest/gtest.h>
 
 TEST(PrimitivePermutationGroup, construction) {
@@ -22,16 +20,4 @@ TEST(PrimitivePermutationGroup, construction) {
 		{ perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }))) });
 
 	ASSERT_EQ(group.order(), 2);
-}
-
-TEST(PrimitivePermutationGroup, permutationGroupInterface) {
-	perm::test::testPermutationGroupInterface< perm::PrimitivePermutationGroup >();
-}
-
-TEST(PrimitivePermutationGroup, cosetRepresentative) {
-	perm::test::testCosetRepresentative< perm::PrimitivePermutationGroup >();
-}
-
-TEST(PrimitivePermutationGroup, equality) {
-	perm::test::testEquality< perm::PrimitivePermutationGroup >();
 }
