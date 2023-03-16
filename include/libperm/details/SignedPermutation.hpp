@@ -28,8 +28,6 @@ public:
 
 	void setSign(int sign) override final;
 
-	void invert(bool invertSign = true) override;
-
 	void preMultiply(const AbstractPermutation &other) override;
 
 	void postMultiply(const AbstractPermutation &other) override;

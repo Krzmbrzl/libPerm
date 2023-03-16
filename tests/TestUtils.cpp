@@ -121,7 +121,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 	const perm::ExplicitPermutation shufflePermutation = GetParam();
 	// Sorting is the inverse of shuffling
 	perm::ExplicitPermutation expectedSortPerm = shufflePermutation;
-	expectedSortPerm.invert(false);
+	expectedSortPerm.invert();
 
 	perm::applyPermutation(sequence, shufflePermutation);
 
@@ -133,7 +133,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 
 	expectedSortPerm = shufflePermutation;
 	expectedSortPerm *= secondShuffle;
-	expectedSortPerm.invert(false);
+	expectedSortPerm.invert();
 
 	ASSERT_EQ(perm::computeSortPermutation(sequence), expectedSortPerm) << "Sequence to sort: " << sequence;
 }

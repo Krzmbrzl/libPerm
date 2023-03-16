@@ -23,12 +23,6 @@ void SignedPermutation::setSign(int sign) {
 	m_negative = sign < 0;
 }
 
-void SignedPermutation::invert(bool invertSign) {
-	if (invertSign) {
-		m_negative = !m_negative;
-	}
-}
-
 void SignedPermutation::preMultiply(const AbstractPermutation &other) {
 	// As far as the sign is concerned, there is no difference between pre and post multiplication
 	SignedPermutation::postMultiply(other);

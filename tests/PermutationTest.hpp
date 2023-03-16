@@ -27,15 +27,8 @@ template< typename PermutationImpl > void testPermutationInterface() {
 	PermutationImpl permObj4 = permObj1;
 	PermutationImpl permObj5 = PermutationImpl::fromCycle(cycle3);
 	PermutationImpl result1  = PermutationImpl::fromCycle(cycle4);
-	PermutationImpl result2  = [permObj3]() {
-        if constexpr (PermutationImpl::is_signed) {
-            // For signed permutations, inversion leads to a sign change
-            return PermutationImpl::fromCycle(perm::Cycle({ 0, 3, 2, 1 }), -1 * permObj3.sign());
-        } else {
-            return PermutationImpl::fromCycle(perm::Cycle({ 0, 3, 2, 1 }));
-        }
-	}();
-	PermutationImpl result3 = PermutationImpl::fromCycle(perm::Cycle({ 1, 2, 3 }));
+	PermutationImpl result2  = PermutationImpl::fromCycle(perm::Cycle({ 0, 3, 2, 1 }));
+	PermutationImpl result3  = PermutationImpl::fromCycle(perm::Cycle({ 1, 2, 3 }));
 	PermutationImpl identity;
 
 	AbstractPermutation &p1 = permObj1;

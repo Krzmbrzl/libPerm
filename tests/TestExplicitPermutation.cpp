@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+#include <functional>
+
 TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm;
 
@@ -138,10 +140,10 @@ TEST_P(MultiplicationTest, consistency) {
 
 
 	perm::ExplicitPermutation p1Inv = p1;
-	p1Inv.invert(false);
+	p1Inv.invert();
 
 	perm::ExplicitPermutation p2Inv = p2;
-	p2Inv.invert(false);
+	p2Inv.invert();
 
 
 	preMultiplied.preMultiply(p2Inv);
@@ -160,29 +162,50 @@ INSTANTIATE_TEST_SUITE_P(
 										 perm::Cycle({ { 2, 1 }, { 0, 5, 3, 4 } }))));
 
 
-TEST(ExplicitPermutation, invert) {
-	perm::ExplicitPermutation inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }));
-	inverse.invert();
-	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }), -1));
+struct InvertTest : ::testing::TestWithParam< std::tuple< perm::Cycle, perm::Cycle > > {
+	using ParamPack = std::tuple< perm::Cycle, perm::Cycle >;
+};
 
+TEST_P(InvertTest, invert) {
+	const perm::ExplicitPermutation identity;
+	perm::ExplicitPermutation original        = perm::ExplicitPermutation::fromCycle(std::get< 0 >(GetParam()));
+	perm::ExplicitPermutation perm            = original;
+	perm::ExplicitPermutation expectedInverse = perm::ExplicitPermutation::fromCycle(std::get< 1 >(GetParam()));
 
-	inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }));
-	inverse.invert(false);
-	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 1 }), +1));
+	perm.invert();
+	ASSERT_EQ(perm, expectedInverse);
 
+	// perm times its inverse should be identity
+	ASSERT_EQ(original * perm, identity);
 
-	inverse = perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1, 2 }, { 3, 4 } }));
-	inverse.invert();
-	ASSERT_EQ(inverse, perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2, 1 }, { 3, 4 } }), -1));
+	// Inverting twice should give back the original perm
+	perm.invert();
+	ASSERT_EQ(perm, original);
 
+	// The sign should be retained during inversion
+	original.setSign(-1);
+	perm.setSign(-1);
+	expectedInverse.setSign(-1);
+	perm.invert();
+	ASSERT_EQ(perm, expectedInverse);
 
-	perm::ExplicitPermutation p1 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3, 4 }));
-	perm::ExplicitPermutation p2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
-	inverse                      = p1 * p2;
-	inverse.invert(false);
-	perm::ExplicitPermutation identity;
-	ASSERT_EQ(p1 * p2 * inverse, identity);
+	// Inverting twice should give back the original perm
+	perm.invert();
+	ASSERT_EQ(perm, original);
+
+	perm.invert();
+
+	// perm times its inverse should be identity
+	ASSERT_EQ(original * perm, identity);
 }
+
+INSTANTIATE_TEST_SUITE_P(ExplicitPermutation, InvertTest,
+						 ::testing::Values(InvertTest::ParamPack(perm::Cycle({ 0, 1 }), perm::Cycle({ 0, 1 })),
+										   InvertTest::ParamPack(perm::Cycle({ 0, 1, 2 }), perm::Cycle({ 0, 2, 1 })),
+										   InvertTest::ParamPack(perm::Cycle({ { 0, 1, 2 }, { 3, 4 } }),
+																 perm::Cycle({ { 0, 2, 1 }, { 3, 4 } })),
+										   InvertTest::ParamPack(perm::Cycle({ { 1, 3, 4 }, { 7, 8, 2, 5 } }),
+																 perm::Cycle({ { 1, 4, 3 }, { 2, 8, 7, 5 } }))));
 
 TEST(ExplicitPermutation, permutationInterface) {
 	perm::test::testPermutationInterface< perm::ExplicitPermutation >();
