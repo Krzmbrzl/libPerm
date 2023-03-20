@@ -147,3 +147,44 @@ INSTANTIATE_TEST_SUITE_P(
 					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 6, 1 })),
 					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1, 2 }, { 4, 5 } })),
 					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 3 }, { 1, 5 }, { 2, 4 } }))));
+
+
+struct CanonicalizeTest : ::testing::TestWithParam< std::vector< perm::Cycle > > {
+	using ParamPack = std::vector< perm::Cycle >;
+};
+
+TEST_P(CanonicalizeTest, canonicalize) {
+	perm::PrimitivePermutationGroup group;
+
+	for (const perm::Cycle &currentCycle : GetParam()) {
+		group.addGenerator(perm::Permutation(perm::ExplicitPermutation::fromCycle(currentCycle)));
+	}
+
+	std::vector< perm::Permutation > elements;
+	group.getElementsTo(elements);
+
+	const perm::ExplicitPermutation shufflePermutation =
+		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 2 }, { 3, 5, 0 } }));
+
+	std::vector< perm::AbstractPermutation::value_type > baseSequence = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	perm::applyPermutation(baseSequence, shufflePermutation);
+
+	decltype(baseSequence) expectedSequence = baseSequence;
+	perm::canonicalize(expectedSequence, group);
+
+	for (perm::Permutation &currentPerm : elements) {
+		decltype(baseSequence) sequence = baseSequence;
+		perm::applyPermutation(sequence, currentPerm);
+
+		perm::canonicalize(sequence, group);
+
+		ASSERT_EQ(sequence, expectedSequence) << "Current perm: " << currentPerm;
+	}
+}
+
+INSTANTIATE_TEST_SUITE_P(
+	Utils, CanonicalizeTest,
+	::testing::Values(CanonicalizeTest::ParamPack{}, CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1 }) },
+					  CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1, 2 }) },
+					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2, 3 }, { 4, 5 } }) },
+					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2 }, { 4, 1 }, { 3, 7 } }) }));

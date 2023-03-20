@@ -7,6 +7,7 @@
 #define LIBPERM_UTILS_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
+#include "libperm/AbstractPermutationGroup.hpp"
 #include "libperm/Cycle.hpp"
 #include "libperm/ExplicitPermutation.hpp"
 #include "libperm/Permutation.hpp"
@@ -104,6 +105,69 @@ void applyPermutation(Container &container, const Permutation &perm) {
 			std::swap(begin[baseIndex], begin[currentIndex]);
 		}
 	}
+}
+
+/**
+ * Computes the permutation that, applied to the provided container, will bring it into a canonical order, that is
+ * related to the original order of elements by means of a permutation contained in the provided permutation group.
+ *
+ * The canonical order is unique, meaning that for every sequence of elements that are interconvertible by an element
+ * of the provided group, the returned permutation will bring all of them into the exact same order.
+ *
+ * @tparam Container The type of the container the computed permutation shall act on
+ * @tparam PermGroup The type of the provided permutation group
+ * @tparam Compare The type of the used comparator
+ * @param container The container whose elements shall be considered
+ * @param group The permutation group to consider
+ * @param cmp The comparator used to determine the standard configuration that is used as a reference point in the
+ * computation
+ * @returns The computed permutation
+ */
+template< typename Container, typename PermGroup, typename Compare = std::less< typename Container::value_type > >
+Permutation computeCanonicalizationPermutation(Container &container, const PermGroup &group, Compare cmp = {}) {
+	static_assert(std::is_base_of_v< AbstractPermutationGroup, PermGroup >, "Expected a proper permutation group");
+
+	// We require a fix point that serves as an anchor to determine the canonical order of elements (aka the standard
+	// configuration) and which can be reached by a known procedure for any given sequence of elements. Sorting the
+	// sequence with respect to the provided comparator fulfills this need.
+	const ExplicitPermutation sortPermutation = computeSortPermutation(container, cmp);
+
+	// The canonicalization idea is this: Determine a way to permute the standard configuration into the searched-for
+	// canonical order of elements for the provided sequence. We can achieve this by considering how to reach the
+	// current sequence of elements from the standard configuration
+	// -> that's exactly the inverse of the sort permutation
+	ExplicitPermutation cosetGenerator = sortPermutation;
+	cosetGenerator.invert();
+
+	// This we can then use to generate the left coset with the provided group, which will always be the same
+	// for starting configurations that can be transformed into each other using the elements of the provided group
+	// (and different in the other case).
+	// From this coset, we then select one element deterministically (always the same, for the same coset, regardless
+	// of the coset's order)
+	Permutation canonicalization = group.leftCosetRepresentative(cosetGenerator);
+
+	// Since we want to apply the canonicalization permutation to the original sequence rather than the standard
+	// configuration, we first have to (formally) transform the current sequence into the standard configuration, which
+	// we achieve by applying the determined sort permutation as a first step.
+	canonicalization->preMultiply(sortPermutation);
+
+	return canonicalization;
+}
+
+/**
+ * Brings the elements in the provided container into the canonical order
+ *
+ * @returns The sign of the permutation that was used to reorder the elements
+ *
+ * @see computeCanonicalizationPermutation
+ */
+template< typename Container, typename PermGroup, typename Compare = std::less< typename Container::value_type > >
+int canonicalize(Container &container, const PermGroup &group, Compare cmp = {}) {
+	Permutation canonicalizer = computeCanonicalizationPermutation(container, group, cmp);
+
+	applyPermutation(container, canonicalizer);
+
+	return canonicalizer->sign();
 }
 
 } // namespace perm
