@@ -77,41 +77,36 @@ void PrimitivePermutationGroup::getElementsTo(std::vector< Permutation > &permut
 	}
 }
 
-void PrimitivePermutationGroup::regenerateGroup() {
-	m_elements = DiminoAlgorithm::generateGroupElements(m_generators);
-}
+enum class Coset { Left, Right };
 
-const Permutation &getCanonicalRepresentative(const std::vector< Permutation > &elements) {
-	/*
-	 * The idea used to establish an order between the different permutation elements (required for a minimum element to
-	 * exist) consists in defining a set B that contains all numbers between 0 and n (the elements the given
-	 * permutation objects act on) in a defined order. This can then be used to establish an order between two image
-	 * points: a < b, if a comes before b in B (going left-to-right).
-	 * Thus, sets of numbers can be ordered: A < B, if for the first element (a,b) in which they differ a < b.
-	 * Now permutations are ordered by taking the pointwise image B^g into account, which is defined as {b^g | b in B}
-	 * and ^ means applying the permutation to the respective object. Thus: p1 < p2, if B^p1 < B^p2
-	 *
-	 * Since we don't have any reason to choose B otherwise, we can simply take it as the numbers 0, 1, ..., n in
-	 * ascending order. Therefore, we can simply compare two images numerically to determine if one comes before the
-	 * other in B.
-	 */
-	assert(!elements.empty());
-	return *std::min_element(elements.begin(), elements.end(), [](const Permutation &lhs, const Permutation &rhs) {
-		const AbstractPermutation::value_type n = std::max(lhs->maxElement(), rhs->maxElement());
+template< Coset cosetType >
+std::vector< Permutation > computeCoset(const AbstractPermutation &perm, const std::vector< Permutation > &elements) {
+	std::vector< Permutation > coset;
+	coset.reserve(elements.size());
 
-		for (AbstractPermutation::value_type i = 0; i <= n; ++i) {
-			AbstractPermutation::value_type lhsImage = lhs->image(i);
-			AbstractPermutation::value_type rhsImage = rhs->image(i);
-			if (lhsImage != rhsImage) {
-				return lhsImage < rhsImage;
-			}
+	for (Permutation currentElement : elements) {
+		if constexpr (cosetType == Coset::Left) {
+			currentElement->preMultiply(perm);
+		} else {
+			currentElement->postMultiply(perm);
 		}
 
-		// Permutations are identical (this is something that we don't expect to happen as the elements passed
-		// in should represent a group and therefore there should be no duplicates.
-		assert(false);
-		return false;
-	});
+		coset.push_back(std::move(currentElement));
+	}
+
+	return coset;
+}
+
+std::vector< Permutation > PrimitivePermutationGroup::leftCoset(const AbstractPermutation &perm) const {
+	return computeCoset< Coset::Left >(perm, m_elements);
+}
+
+std::vector< Permutation > PrimitivePermutationGroup::rightCoset(const AbstractPermutation &perm) const {
+	return computeCoset< Coset::Right >(perm, m_elements);
+}
+
+void PrimitivePermutationGroup::regenerateGroup() {
+	m_elements = DiminoAlgorithm::generateGroupElements(m_generators);
 }
 
 std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &group) {
@@ -127,29 +122,62 @@ std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &
 	return stream << "}";
 }
 
-Permutation &getCanonicalRepresentative(std::vector< Permutation > &elements) {
-	// Implement the non-const func in terms of the const one
-	return const_cast< Permutation & >(
-		getCanonicalRepresentative(const_cast< const std::vector< Permutation > & >(elements)));
-}
+struct Canonicalizer {
+	bool operator()(const Permutation &lhs, const Permutation &rhs) const {
+		/*
+		 * The idea used to establish an order between the different permutation elements (required for a minimum
+		 * element to exist) consists in defining a set B that contains all numbers between 0 and n (the elements the
+		 * given permutation objects act on) in a defined order. This can then be used to establish an order between two
+		 * image points: a < b, if a comes before b in B (going left-to-right). Thus, sets of numbers can be ordered: A
+		 * < B, if for the first element (a,b) in which they differ a < b. Now permutations are ordered by taking the
+		 * pointwise image B^g into account, which is defined as {b^g | b in B} and ^ means applying the permutation to
+		 * the respective object. Thus: p1 < p2, if B^p1 < B^p2
+		 *
+		 * Since we don't have any reason to choose B otherwise, we can simply take it as the numbers 0, 1, ..., n in
+		 * ascending order. Therefore, we can simply compare two images numerically to determine if one comes before the
+		 * other in B.
+		 */
+		const AbstractPermutation::value_type n = std::max(lhs->maxElement(), rhs->maxElement());
 
-Permutation PrimitivePermutationGroup::getCanonicalCosetRepresentative(const AbstractPermutation &perm) const {
+		for (AbstractPermutation::value_type i = 0; i <= n; ++i) {
+			AbstractPermutation::value_type lhsImage = lhs->image(i);
+			AbstractPermutation::value_type rhsImage = rhs->image(i);
+			if (lhsImage != rhsImage) {
+				return lhsImage < rhsImage;
+			}
+		}
+
+		// Permutations are identical (this is something that we don't expect to happen as the elements passed
+		// in should represent a group and therefore there should be no duplicates.
+		assert(false);
+		return false;
+	}
+};
+
+Permutation PrimitivePermutationGroup::leftCosetRepresentative(const AbstractPermutation &perm) const {
+	assert(!m_elements.empty());
+
 	if (perm.isIdentity() || contains(perm)) {
 		// If perm is contained in this group (which is guaranteed, if perm == identity), the resulting coset
 		// will just be the group itself, so there is no point in explicitly calculating the coset.
-		return getCanonicalCosetRepresentative();
+		return *std::min_element(m_elements.begin(), m_elements.end(), Canonicalizer{});
 	}
 
-	std::vector< Permutation > coset = m_elements;
-	for (Permutation &currentPerm : coset) {
-		currentPerm *= perm;
-	}
-
-	return getCanonicalRepresentative(coset);
+	std::vector< Permutation > coset = computeCoset< Coset::Left >(perm, m_elements);
+	return *std::min_element(coset.begin(), coset.end(), Canonicalizer{});
 }
 
-const Permutation &PrimitivePermutationGroup::getCanonicalCosetRepresentative() const {
-	return getCanonicalRepresentative(m_elements);
+Permutation PrimitivePermutationGroup::rightCosetRepresentative(const AbstractPermutation &perm) const {
+	assert(!m_elements.empty());
+
+	if (perm.isIdentity() || contains(perm)) {
+		// If perm is contained in this group (which is guaranteed, if perm == identity), the resulting coset
+		// will just be the group itself, so there is no point in explicitly calculating the coset.
+		return *std::min_element(m_elements.begin(), m_elements.end(), Canonicalizer{});
+	}
+
+	std::vector< Permutation > coset = computeCoset< Coset::Right >(perm, m_elements);
+	return *std::min_element(coset.begin(), coset.end(), Canonicalizer{});
 }
 
 } // namespace perm

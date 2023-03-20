@@ -88,7 +88,6 @@ int main() {
 
 	// Groups also support retrieving a "canonical coset representative". For more details on this, see the
 	// documentation
-	std::cout << "Canonical coset representative: " << group.getCanonicalCosetRepresentative() << std::endl;
-	std::cout << "Canonical coset representative for coset with " << perm2 << ": "
-			  << group.getCanonicalCosetRepresentative(perm2) << std::endl;
+	std::cout << "Canonical right coset representative for coset with " << perm2 << ": "
+			  << group.rightCosetRepresentative(perm2) << std::endl;
 }

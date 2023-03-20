@@ -59,9 +59,13 @@ public:
 
 	virtual void getElementsTo(std::vector< Permutation > &permutations) const override final;
 
-	virtual Permutation getCanonicalCosetRepresentative(const AbstractPermutation &perm) const override;
+	virtual std::vector< Permutation > leftCoset(const AbstractPermutation &perm) const override final;
 
-	virtual const Permutation &getCanonicalCosetRepresentative() const override;
+	virtual std::vector< Permutation > rightCoset(const AbstractPermutation &perm) const override final;
+
+	virtual Permutation leftCosetRepresentative(const AbstractPermutation &perm) const override;
+
+	virtual Permutation rightCosetRepresentative(const AbstractPermutation &perm) const override;
 
 	friend std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &group);
 

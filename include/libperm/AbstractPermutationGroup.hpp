@@ -7,6 +7,7 @@
 #define LIBPERM_ABSTRACTPERMUTATIONGROUP_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
+#include "libperm/ExplicitPermutation.hpp"
 #include "libperm/Permutation.hpp"
 
 #include <vector>
@@ -74,6 +75,33 @@ public:
 	 */
 	virtual void getElementsTo(std::vector< Permutation > &permutations) const = 0;
 
+
+	/**
+	 * @returns The left coset gH, where H is the represented group and g is the provided permutation
+	 *
+	 * Note: The order of the returned elements is undefined
+	 */
+	virtual std::vector< Permutation > leftCoset(const AbstractPermutation &perm) const = 0;
+
+	/**
+	 * @returns The right coset Hg, where H is the represented group and g is the provided permutation
+	 *
+	 * Note: The order of the returned elements is undefined
+	 */
+	virtual std::vector< Permutation > rightCoset(const AbstractPermutation &perm) const = 0;
+
+	/**
+	 * Calculates the canonical coset representative of the left coset g * H, defined as
+	 * { g * h | h in H}. "Canonical" means that regardless of how the respective coset is generated
+	 * (that is: regardless of which exact g is used), the returned element is guaranteed to always
+	 * be the same, as long as the generated coset is the same.
+	 * The group H is the group represented by this object.
+	 *
+	 * @param perm The permutation g to use to generate the coset.
+	 * @returns The canonical left coset representative
+	 */
+	virtual Permutation leftCosetRepresentative(const AbstractPermutation &perm) const = 0;
+
 	/**
 	 * Calculates the canonical coset representative of the right coset H * g, defined as
 	 * { h * g | h in H}. "Canonical" means that regardless of how the respective coset is generated
@@ -82,16 +110,15 @@ public:
 	 * The group H is the group represented by this object.
 	 *
 	 * @param perm The permutation g to use to generate the coset.
-	 * @returns The canonical coset representative
+	 * @returns The canonical right coset representative
 	 */
-	virtual Permutation getCanonicalCosetRepresentative(const AbstractPermutation &perm) const = 0;
+	virtual Permutation rightCosetRepresentative(const AbstractPermutation &perm) const = 0;
 
 	/**
-	 * Same as getCanonicalCosetRepresentative(const Permutation &perm), but the element g used to generate
-	 * the coset is the identity permutation. Thus, the returned coset representative is also the
-	 * canonical representative of this group.
+	 * @see rightCosetRepresentative
 	 */
-	virtual const Permutation &getCanonicalCosetRepresentative() const = 0;
+	[[deprecated("Prefer using rightCosetRepresentative")]] Permutation
+		getCanonicalCosetRepresentative(const AbstractPermutation &perm = ExplicitPermutation()) const;
 
 	/**
 	 * @returns Whether the two given groups are equal

@@ -188,7 +188,31 @@ TYPED_TEST(PermutationGroupInterface, setGenerators) {
 }
 
 
-TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
+TYPED_TEST(PermutationGroupInterface, cosets) {
+	using Group                       = TypeParam;
+	const Group H                     = fromGenerators< Group >({ perm::Cycle({ 0, 1, 2 }) });
+	const perm::ExplicitPermutation p = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
+
+	const std::vector< perm::Permutation > leftCoset  = H.leftCoset(p);
+	const std::vector< perm::Permutation > rightCoset = H.rightCoset(p);
+
+	const std::vector< perm::Permutation > expectedLeftCoset = {
+		perm::Permutation(p),
+		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2, 3 }))),
+		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 3, 1 }))),
+	};
+	const std::vector< perm::Permutation > expectedRightCoset = {
+		perm::Permutation(p),
+		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 3, 2 }))),
+		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 3, 2, 1 }))),
+	};
+
+	EXPECT_THAT(leftCoset, ::testing::UnorderedElementsAreArray(expectedLeftCoset));
+	EXPECT_THAT(rightCoset, ::testing::UnorderedElementsAreArray(expectedRightCoset));
+}
+
+
+TYPED_TEST(PermutationGroupInterface, cosetRepresentatives) {
 	using Group = TypeParam;
 
 	// All of these generator sets generate Sym(6)
@@ -199,7 +223,9 @@ TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
 	};
 
 	bool assignedRepresentative = false;
-	perm::Permutation representative;
+	perm::Permutation rightRepresentative;
+	perm::Permutation leftRepresentative;
+	const perm::ExplicitPermutation cosetGenerator = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 5 }));
 
 	for (const std::vector< perm::Cycle > &currentGenerators : s6GeneratorSets) {
 		const Group g                               = fromGenerators< Group >(currentGenerators);
@@ -210,9 +236,12 @@ TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
 		// Since the group is always the same, we expect the canonical coset representative to be the same regardless of
 		// what generators were used to generate the group as well.
 		if (!assignedRepresentative) {
-			representative = group.getCanonicalCosetRepresentative();
+			leftRepresentative     = group.leftCosetRepresentative(cosetGenerator);
+			rightRepresentative    = group.rightCosetRepresentative(cosetGenerator);
+			assignedRepresentative = true;
 		} else {
-			ASSERT_EQ(group.getCanonicalCosetRepresentative(), representative);
+			ASSERT_EQ(group.leftCosetRepresentative(cosetGenerator), leftRepresentative);
+			ASSERT_EQ(group.rightCosetRepresentative(cosetGenerator), rightRepresentative);
 		}
 
 		// Since the group is the full Sym(6), any coset with the group with a permutation acting on the
@@ -224,7 +253,8 @@ TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
 				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 4, 5 } })),
 				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 5, 1 }, { 2, 5 }, { 0, 2, 3 } })),
 			 }) {
-			ASSERT_EQ(group.getCanonicalCosetRepresentative(currentPerm), representative);
+			ASSERT_EQ(group.leftCosetRepresentative(currentPerm), leftRepresentative);
+			ASSERT_EQ(group.rightCosetRepresentative(currentPerm), rightRepresentative);
 		}
 	}
 
@@ -251,7 +281,8 @@ TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
 		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
 	};
 
-	std::vector< perm::Permutation > representatives;
+	std::vector< perm::Permutation > leftRepresentatives;
+	std::vector< perm::Permutation > rightRepresentatives;
 
 	for (const std::vector< perm::Cycle > &currentGenerators : generatorSets) {
 		const Group g                               = fromGenerators< Group >(currentGenerators);
@@ -262,16 +293,25 @@ TYPED_TEST(PermutationGroupInterface, getCanonicalCosetRepresentative) {
 		// Each of the coset generators should generate a different coset, which in turn should have a unique
 		// canonical coset representative
 		for (const perm::ExplicitPermutation &currentCosetPerm : cosetGenerators) {
-			representative = group.getCanonicalCosetRepresentative(currentCosetPerm);
+			leftRepresentative  = group.leftCosetRepresentative(currentCosetPerm);
+			rightRepresentative = group.rightCosetRepresentative(currentCosetPerm);
 
-			if (std::find(representatives.begin(), representatives.end(), representative) != representatives.end()) {
-				FAIL() << "Duplicate coset representative " << representative << " from coset perm "
+			if (std::find(leftRepresentatives.begin(), leftRepresentatives.end(), leftRepresentative)
+				!= leftRepresentatives.end()) {
+				FAIL() << "Duplicate left coset representative " << leftRepresentative << " from coset perm "
+					   << currentCosetPerm;
+			}
+			if (std::find(rightRepresentatives.begin(), rightRepresentatives.end(), rightRepresentative)
+				!= rightRepresentatives.end()) {
+				FAIL() << "Duplicate right coset representative " << rightRepresentative << " from coset perm "
 					   << currentCosetPerm;
 			}
 
-			representatives.push_back(std::move(representative));
+			leftRepresentatives.push_back(std::move(leftRepresentative));
+			rightRepresentatives.push_back(std::move(rightRepresentative));
 		}
 
-		representatives.clear();
+		leftRepresentatives.clear();
+		rightRepresentatives.clear();
 	}
 }
