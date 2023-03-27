@@ -33,9 +33,8 @@ int main() {
 
 	std::cout << "Original:\n" << myVec << "\n";
 
-	// The permutation describes where the ith element of the original vector shall be placed
-	// due to the action of the permutation
-	perm::ExplicitPermutation yodaPerm({ 2, 3, 0, 1 });
+	// The permutation describes what element of the original vector shall be placed at position i of the new vector
+	perm::ExplicitPermutation yodaPerm({ 2, 3, 1, 0 });
 	perm::applyPermutation(myVec, yodaPerm);
 	std::cout << "As Yoda would say:\n" << myVec << "\n";
 
@@ -62,8 +61,11 @@ int main() {
 
 	// In order to reverse the action of both permutations at once, we have to create
 	// the combined inverse
+	// Note: When applying permutations to lists, the order of composition reverses and therefore
+	// we have to read our resulting "expression" from right-to-left rather than left-to-right.
+	// See the manual for why this is the case.
 	perm::ExplicitPermutation undo = first;
-	undo *= second;
+	undo.preMultiply(second);
 	undo.invert();
 	perm::applyPermutation(myVec, undo);
 	std::cout << "Undoing the previous permutations:" << std::endl;

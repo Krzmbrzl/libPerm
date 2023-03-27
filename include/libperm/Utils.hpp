@@ -52,13 +52,7 @@ ExplicitPermutation computeSortPermutation(const Container &container, Compare c
 				  return cmp(begin[lhs], begin[rhs]);
 			  });
 
-	// The image that we have created above describes what element of the original container have to appear at a given
-	// position in the sorted container. However, by definition, our permutation is supposed to indicate to which
-	// position in the sorted container, a given entry in the original container has to go to.
-	// That's exactly the inverse information.
-	ExplicitPermutation p(std::move(image));
-	p.invert();
-	return p;
+	return ExplicitPermutation(std::move(image));
 }
 
 /**
@@ -103,6 +97,8 @@ void applyPermutation(Container &container, const Permutation &perm) {
 			assert(currentIndex < container.size());
 
 			std::swap(begin[baseIndex], begin[currentIndex]);
+
+			baseIndex = currentIndex;
 		}
 	}
 }
@@ -144,12 +140,14 @@ Permutation computeCanonicalizationPermutation(Container &container, const PermG
 	// (and different in the other case).
 	// From this coset, we then select one element deterministically (always the same, for the same coset, regardless
 	// of the coset's order)
-	Permutation canonicalization = group.leftCosetRepresentative(cosetGenerator);
+	Permutation canonicalization = group.rightCosetRepresentative(cosetGenerator);
 
 	// Since we want to apply the canonicalization permutation to the original sequence rather than the standard
 	// configuration, we first have to (formally) transform the current sequence into the standard configuration, which
 	// we achieve by applying the determined sort permutation as a first step.
-	canonicalization->preMultiply(sortPermutation);
+	// Note: The order of composition is reversed when applying permutations to sequences and therefore, we have to
+	// think right-to-left rather than left-to-right.
+	canonicalization->postMultiply(sortPermutation);
 
 	return canonicalization;
 }

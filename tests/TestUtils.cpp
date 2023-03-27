@@ -13,9 +13,9 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <functional>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -34,7 +34,7 @@ TEST(Utils, applyPermutation) {
 	sequence                       = mainSequence;
 	perm::ExplicitPermutation perm = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 3, 1, 2 }));
 	perm::applyPermutation(sequence, perm);
-	expectedSequence = { "I", "sentence", "am", "a" };
+	expectedSequence = { "I", "a", "sentence", "am" };
 	ASSERT_EQ(sequence, expectedSequence);
 
 	// Undo gibberish
@@ -55,12 +55,30 @@ TEST(Utils, applyPermutation) {
 	expectedSequence = { "a", "sentence", "am", "I" };
 	ASSERT_EQ(sequence, expectedSequence);
 
+	// one-step yoda-question
+	// Remember that the order of composition is reversed when applying to sequences. That is: the multiplication
+	// has to be read from right-to-left rather than from left-to-right.
+	perm::ExplicitPermutation yodaQuestion = yodaPerm;
+	yodaQuestion.preMultiply(yodaQuestionTransformer);
+	sequence = mainSequence;
+	perm::applyPermutation(sequence, yodaQuestion);
+	ASSERT_EQ(sequence, expectedSequence);
+
 	// Un-yoda
-	perm::ExplicitPermutation undoYoda = yodaPerm;
-	undoYoda *= yodaQuestionTransformer;
+	perm::ExplicitPermutation undoYoda = yodaQuestion;
 	undoYoda.invert();
 	perm::applyPermutation(sequence, undoYoda);
 	ASSERT_EQ(sequence, mainSequence);
+}
+
+TEST(Utils, applyPermutation_consistency) {
+	// Ensure applyPermutation is consistent with the permutation's image
+	std::vector< perm::AbstractPermutation::value_type > sequence = { 0, 1, 2, 3, 4, 5 };
+	const perm::ExplicitPermutation perm = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 5, 3 }));
+
+	perm::applyPermutation(sequence, perm);
+
+	ASSERT_EQ(sequence, perm.image());
 }
 
 struct UtilsTest : testing::TestWithParam< std::vector< perm::AbstractPermutation::value_type > > {
@@ -77,7 +95,7 @@ TEST_P(UtilsTest, applyPermutation) {
 	for (std::size_t i = 0; i < mainSequence.size(); ++i) {
 		perm::AbstractPermutation::value_type image =
 			permutation.image(static_cast< perm::AbstractPermutation::value_type >(i));
-		expectedSequence[image] = mainSequence[i];
+		expectedSequence[i] = mainSequence[image];
 	}
 
 	auto sequence = mainSequence;
@@ -101,10 +119,10 @@ TEST(Utils, computeSortPermutation) {
 	std::vector< int > sequence = { 1, 3, 2 };
 
 	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 })));
-	ASSERT_EQ(perm::computeSortPermutation(sequence, std::greater< int >{}), perm::ExplicitPermutation({ 2, 0, 1 }));
+	ASSERT_EQ(perm::computeSortPermutation(sequence, std::greater< int >{}), perm::ExplicitPermutation({ 1, 2, 0 }));
 
 	sequence = { 42, 12, -13, 0, 21 };
-	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation({ 4, 2, 0, 1, 3 }));
+	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation({ 2, 3, 1, 4, 0 }));
 
 	sequence = {};
 	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation());
@@ -125,17 +143,28 @@ TEST_P(SortPermTest, computeSortPermutation) {
 
 	perm::applyPermutation(sequence, shufflePermutation);
 
-	ASSERT_EQ(perm::computeSortPermutation(sequence), expectedSortPerm) << "Sequence to sort: " << sequence;
+	perm::ExplicitPermutation sortPerm = perm::computeSortPermutation(sequence);
+	ASSERT_EQ(sortPerm, expectedSortPerm) << "Sequence to sort: " << sequence;
+	auto sortedSeq = sequence;
+	perm::applyPermutation(sortedSeq, sortPerm);
+	ASSERT_TRUE(std::is_sorted(sortedSeq.begin(), sortedSeq.end()))
+		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 
 
 	const perm::ExplicitPermutation secondShuffle = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 6, 4 }));
 	perm::applyPermutation(sequence, secondShuffle);
 
+	// Remember that composition order is reversed when applying to sequences
 	expectedSortPerm = shufflePermutation;
-	expectedSortPerm *= secondShuffle;
+	expectedSortPerm.preMultiply(secondShuffle);
 	expectedSortPerm.invert();
 
-	ASSERT_EQ(perm::computeSortPermutation(sequence), expectedSortPerm) << "Sequence to sort: " << sequence;
+	sortPerm = perm::computeSortPermutation(sequence);
+	ASSERT_EQ(sortPerm, expectedSortPerm) << "Sequence to sort: " << sequence;
+	sortedSeq = sequence;
+	perm::applyPermutation(sortedSeq, sortPerm);
+	ASSERT_TRUE(std::is_sorted(sortedSeq.begin(), sortedSeq.end()))
+		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 }
 
 INSTANTIATE_TEST_SUITE_P(
