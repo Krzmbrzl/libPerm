@@ -13,6 +13,10 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{braket}
+\usepackage{xcolor}
+\usepackage{expl3}
+\usepackage{xparse}
+\usepackage{tcolorbox}
 
 
 \addbibresource{sources.bib}
@@ -21,27 +25,72 @@
 % https://tex.stackexchange.com/a/152310
 \deffootnote[0em]{1em}{0em}{\textsuperscript{\thefootnotemark}}
 
-
-\newcommand{\ifMathMode}[2]{%
-	\relax\ifmmode%
-		#1%
-	\else%
-		#2%
-	\fi%
-}
-
-\newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\class}[1]{\code{#1}}
-\newcommand{\libPerm}{\code{libPerm}}
-\newcommand{\Sym}[1]{\ifMathMode{\textrm{Sym}(#1)}{Sym($#1$)}}
-\newcommand{\complexity}[1]{\ifMathMode{\mathcal{O}(#1)}{$\mathcal{O}(#1)$}}
-
 % use roman footnote numbers
 \renewcommand{\thefootnote}{\Roman{footnote}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% DEFINITION OF CUSTOM MACROS %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ExplSyntaxOn
+
+% Macro for typesetting a permutation in cycle notation
+\NewDocumentCommand{\perm}{ m }{
+	\seq_set_from_clist:Nn \l_tmpa_seq { #1 }
+	(\seq_use:Nnnn \l_tmpa_seq {\;}{\;}{\;})
+}
+% Macro for typesetting a permutation's image with superset element indices
+\NewDocumentCommand{\image}{ O{} m }{
+	\ensuremath {
+		\seq_set_from_clist:Nn \l_tmpa_seq { #2 }
+
+		[\,
+			\seq_indexed_map_inline:Nn \l_tmpa_seq {
+				\int_compare:nF { ##1 = 1 } { , }
+				\overset{{\color{gray}\scriptscriptstyle\int_eval:n { ##1 - 1 }} } { \mathstrut #1{##2} }
+			}
+		\,]
+	}
+}
+% Macro for typesetting a sequence of elements, with superset element indices
+\NewDocumentCommand{\sequence}{ m }{
+	\image[\textrm]{#1}
+}
+
+
+\cs_new:Nn \if_math_mode:TF {
+	\relax\ifmmode
+		#1
+	\else
+		#2
+	\fi
+}
+
+\NewDocumentCommand{\code}{ m }{ \texttt{#1} }
+\NewDocumentCommand{\class}{ m }{ \code{#1} }
+\NewDocumentCommand{\libPerm}{ }{ \texttt{libPerm} }
+\NewDocumentCommand{\Sym}{ m }{
+	\if_math_mode:TF{
+		\textrm{Sym}(#1)
+	}{
+		Sym($#1$)
+	}
+}
+\NewDocumentCommand{\complexity}{ m }{
+	\ensuremath{
+		\mathcal{O}(#1)
+	}
+}
+
+\ExplSyntaxOff
+
+
 
 \author{Robert Adam}
 \date{last edited: \today}
 \title{\libPerm}
+
 
 \begin{document}
 	\maketitle
@@ -70,7 +119,7 @@
 	\section{Notation}
 
 	\Cref{tab:notation} summarizes the symbols and concepts used throughout this work (unless noted otherwise). We assume the reader is generally
-	familiar with group theory basics and so will not include that here.
+	familiar with group theory basics and thus will not include a full introduction here.
 
 	Furthermore, note that we start enumerations at zero rather than at one (unless noted otherwise).
 
@@ -89,14 +138,67 @@
 			$\alpha, \beta, \ldots$ & Concrete integer number ($\alpha, \beta, \ldots \in \mathbb{Z}_0$) & \\
 			$\alpha^g$ & The image of $\alpha$ under the action of $g$ & \\
 			$|G|$ & The order (amount of elements contained) of the group $G$ & \\
-			$gh = g \cdot h$ & Product of $g$ and $h$. This creates a new permutation that performs the same action as if first applying $g$ and then
-			applying $h$: $\alpha^{gh} = \left( \alpha^g \right)^h$ & \\
+			$gh = g \cdot h$ & Product of $g$ and $h$. Please see \cref{sec:CompositionOrder} for what exactly this means. & \\
 			$gH$ & The left coset of $g$ with $H$. Note that (usually) $g \in G$ and $H \subseteq G$ & $\{ g h | \forall h \in H \}$ \\
 			$Hg$ & The right coset of $g$ with $H$. & $\{ h g | \forall h \in H \}$ \\
 			$id$ & The identity permutation & \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
+
+
+	\section{Applying permutations and order of composition}
+	\label{sec:CompositionOrder}
+
+	When we \enquote{multiply} two permutations $a$ and $b$, we create a new permutation $c = a \cdot b$. This new permutation is then the
+	\emph{composition} of its \enquote{factors}. Composing two permutations effectively means first applying one of them and then applying the other.
+	The only question remaining is this: given $c = a \cdot b$, do we first apply $a$ or do we first apply $b$?
+
+	Someone coming from maths will immediately think of function composition $h = g \circ f$, where the composition is understood to mean
+	$h(x) = g(f(x))$. That is, the order of applying the functions is from right to left. However, when dealing with permutations, it is common to
+	instead use a left-to-right interpretation of composing two permutations, such that $a \cdot b$ is understood as first applying $a$ and then
+	applying $b$. Thus, composing permutations works left-to-right.
+
+	However, this is only valid as long as the permutations are only applied to a single integer. This, by definition, gives the image of that number
+	under the acting permutation $\alpha^a$. There is also the possibility to let a permutation act on an entire sequence of elements, in which case
+	the elements in the sequence shall be rearranged according to the permutation. Since the elements in that sequence don't have to be integers, it
+	is clear that the permutation must somehow act on the indices of the elements instead of the elements itself. But still, there are two possible
+	ways to do that:
+	\begin{enumerate}
+		\item The $\alpha$-th element in the original sequence will be moved to position $\alpha^a$ in the rearranged sequence
+		\item The $\alpha$-th element in the rearranged sequence will be the $\alpha^a$-th element of the original sequence
+	\end{enumerate}
+
+	We choose to use the second interpretation as this is the one in which a sequence of integers \image{0, 1, 2, \ldots} will be mapped to
+	\image{0^a, 1^a, 2^a, \ldots} when acting on it with the permutation $a$.
+
+	If we call our sequence $s$ and denote the $\alpha$-th element of the sequence as $s[\alpha]$, we can formalize what it means for a permutation
+	$p$ to act on $s$:
+	\begin{equation}
+		s^p[\alpha] = s[\alpha^p]
+	\end{equation}
+
+	If we instead apply two permutations to the sequence one after the other, say first $a$ and then $b$, the situation would look as follows:
+	\begin{equation}
+		s^{ab}[\alpha] = \left( s^a \right)^b[\alpha] = s^a[\alpha^b] \overset{\beta=\alpha^b}{=} s^a[\beta] = s[\beta^a]
+		= s[(\alpha^b)^a] = s[\alpha^{ba}]
+	\end{equation}
+
+	Therefore, it can be seen that the meaning of the composite permutation $ab$ is exactly reversed when acting on a single integer ($\alpha$) vs.
+	when acting on a sequence ($s$). Since permutations are by definition defined as a bijection of a set of numbers onto itself, the composition
+	order of applying a permutation to an integer, is the \enquote{natural} composition order that we chose. Therefore, while composition of
+	permutations acting on integers are ordered left-to-right, permutations acting on sequences act right-to-left.
+
+	An example where this comes into play is if you have two permutations $a$ and $b$ and apply them to your object individually, first $a$ and then
+	$b$, and then want to construct a composite permutation $c$ that performs these two steps in a single action. If your object is an integer, then
+	$c = ab$, but if your object is a sequence that you want to permute, $c = ba$.
+
+	\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Composition order]
+		\begin{itemize}
+			\item When acting on integers, permutations compose left-to-right
+			\item When acting on sequences, permutations compose right-to-left
+		\end{itemize}
+	\end{tcolorbox}
 
 
 	\section{Usage}
@@ -137,7 +239,7 @@
 	rather than at one (as is common practice when working with permutations in e.g. a maths context).
 
 
-	\subsubsection{\class{AbstractPermutation}}
+	\subsubsection{\texorpdfstring{\class{AbstractPermutation}}{AbstractPermutation}}
 
 	In order to be able to be able to test or switch out the used representation in \libPerm, we created the \class{AbstractPermutation} interface.
 	This interface covers all functionality that the library or any user of the library is expected to require in order to work with a given
@@ -159,12 +261,12 @@
 	means.
 
 
-	\subsubsection{\class{Permutation}}
+	\subsubsection{\texorpdfstring{\class{Permutation}}{Permutation}}
 
 	The \class{Permutation} \enquote{class} is simply the result of \emph{unwrapping} the \class{AbstractPermutation} interface.
 
 
-	\subsubsection{\class{ExplicitPermutation}}
+	\subsubsection{\texorpdfstring{\class{ExplicitPermutation}}{ExplicitPermutation}}
 
 	The \class{ExplicitPermutation} class is a concrete implementation of the \class{AbstractPermutation} interface. It stores a permutation as a list
 	of points, where the $i$th point corresponds to the image of $i$ under the represented permutation (\code{list[$\alpha$] = $\alpha^{g}$}, where
@@ -224,7 +326,7 @@
 	\emph{Schreier-Sims algorithm} (for details see e.g. refs.~\cite{Butler1991a, Rehn2010}).
 
 
-	\subsubsection{\class{AbstractPermutationGroup}}
+	\subsubsection{\texorpdfstring{\class{AbstractPermutationGroup}}{AbstractPermutationGroup}}
 
 	Similarly to the \class{AbstractPermutation} interface, we also created a general interface for a general permutation group, which we called
 	\class{AbstractPermutationGroup}. The interface tries to cover common operations one would like to perform on a permutation group, such as
@@ -239,7 +341,7 @@
 	\emph{canonical} coset representative.
 
 
-	\subsubsection{\class{PrimitivePermutationGroup}}
+	\subsubsection{\texorpdfstring{\class{PrimitivePermutationGroup}}{PrimitivePermutationGroup}}
 
 	The \class{PrimitivePermutationGroup} is an implementation of the \class{AbstractPermutationGroup} interface, that essentially follows the trivial
 	approach outlined before: it stores the elements of the group explicitly in a list. Additionally, the group maintains a separate list of
