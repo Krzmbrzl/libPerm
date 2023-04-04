@@ -38,9 +38,14 @@ set_target_properties(libperm PROPERTIES PREFIX "")
 
 add_library(libperm::libperm ALIAS libperm)
 
+set(SYSTEM_KEY "")
+if (LIBPERM_DISABLE_WARNINGS)
+	set(SYSTEM_KEY "SYSTEM")
+endif()
+
 # Make sure that outside projects have to prefix all includes with libperm, but don't burden
 # ourselves with this.
-target_include_directories(libperm PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(libperm ${SYSTEM_KEY} PUBLIC "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(libperm PRIVATE "${PROJECT_SOURCE_DIR}/include/libperm/")
 
 target_link_libraries(libperm PUBLIC polymorphic_variant)
