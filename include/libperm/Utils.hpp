@@ -41,7 +41,8 @@ ExplicitPermutation computeSortPermutation(Iterator begin, Iterator end, Compare
 		std::is_same_v< typename std::iterator_traits< Iterator >::iterator_category, std::random_access_iterator_tag >,
 		"Can only process random-access iterators");
 
-	std::vector< ExplicitPermutation::value_type > image(std::distance(begin, end));
+	assert(std::distance(begin, end) >= 0);
+	std::vector< ExplicitPermutation::value_type > image(static_cast< std::size_t >(std::distance(begin, end)));
 	std::iota(image.begin(), image.end(), 0);
 
 	std::sort(image.begin(), image.end(),
