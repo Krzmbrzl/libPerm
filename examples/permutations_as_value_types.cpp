@@ -47,8 +47,8 @@ perm::Permutation multiply(const perm::Permutation &perm1, const perm::AbstractP
 }
 
 int main() {
-	perm::Permutation perm1(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3 })));
-	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 0, 1 }));
+	perm::Permutation perm1(perm::ExplicitPermutation(perm::Cycle({ 1, 3 })));
+	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation(perm::Cycle({ 2, 0, 1 }));
 
 	perm::Permutation result = multiply(perm1, perm2);
 

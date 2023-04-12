@@ -26,13 +26,13 @@ TEST(Utils, applyPermutation) {
 
 	// Turn into question
 	auto sequence = mainSequence;
-	perm::applyPermutation(sequence, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 })));
+	perm::applyPermutation(sequence, perm::ExplicitPermutation(perm::Cycle({ 0, 1 })));
 	decltype(sequence) expectedSequence = { "am", "I", "a", "sentence" };
 	ASSERT_EQ(sequence, expectedSequence);
 
 	// Gibberish
 	sequence                       = mainSequence;
-	perm::ExplicitPermutation perm = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 3, 1, 2 }));
+	perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::Cycle({ 3, 1, 2 }));
 	perm::applyPermutation(sequence, perm);
 	expectedSequence = { "I", "a", "sentence", "am" };
 	ASSERT_EQ(sequence, expectedSequence);
@@ -50,7 +50,7 @@ TEST(Utils, applyPermutation) {
 	ASSERT_EQ(sequence, expectedSequence);
 
 	// Yoda question
-	perm::ExplicitPermutation yodaQuestionTransformer = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
+	perm::ExplicitPermutation yodaQuestionTransformer = perm::ExplicitPermutation(perm::Cycle({ 2, 3 }));
 	perm::applyPermutation(sequence, yodaQuestionTransformer);
 	expectedSequence = { "a", "sentence", "am", "I" };
 	ASSERT_EQ(sequence, expectedSequence);
@@ -74,7 +74,7 @@ TEST(Utils, applyPermutation) {
 TEST(Utils, applyPermutation_consistency) {
 	// Ensure applyPermutation is consistent with the permutation's image
 	std::vector< perm::AbstractPermutation::value_type > sequence = { 0, 1, 2, 3, 4, 5 };
-	const perm::ExplicitPermutation perm = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 5, 3 }));
+	const perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 5, 3 }));
 
 	perm::applyPermutation(sequence, perm);
 
@@ -118,7 +118,7 @@ TEST(Utils, computeSortPermutation) {
 	// A few hand-coded tests
 	std::vector< int > sequence = { 1, 3, 2 };
 
-	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 })));
+	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation(perm::Cycle({ 1, 2 })));
 	ASSERT_EQ(perm::computeSortPermutation(sequence, std::greater< int >{}), perm::ExplicitPermutation({ 1, 2, 0 }));
 
 	sequence = { 42, 12, -13, 0, 21 };
@@ -151,7 +151,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 
 
-	const perm::ExplicitPermutation secondShuffle = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 6, 4 }));
+	const perm::ExplicitPermutation secondShuffle = perm::ExplicitPermutation(perm::Cycle({ 1, 6, 4 }));
 	perm::applyPermutation(sequence, secondShuffle);
 
 	// Remember that composition order is reversed when applying to sequences
@@ -167,15 +167,14 @@ TEST_P(SortPermTest, computeSortPermutation) {
 		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 }
 
-INSTANTIATE_TEST_SUITE_P(
-	Utils, SortPermTest,
-	::testing::Values(perm::ExplicitPermutation::fromCycle(perm::Cycle{}),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 })),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 })),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 1, 0 })),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 6, 1 })),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1, 2 }, { 4, 5 } })),
-					  perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 3 }, { 1, 5 }, { 2, 4 } }))));
+INSTANTIATE_TEST_SUITE_P(Utils, SortPermTest,
+						 ::testing::Values(perm::ExplicitPermutation(perm::Cycle{}),
+										   perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
+										   perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
+										   perm::ExplicitPermutation(perm::Cycle({ 2, 1, 0 })),
+										   perm::ExplicitPermutation(perm::Cycle({ 2, 6, 1 })),
+										   perm::ExplicitPermutation(perm::Cycle({ { 0, 1, 2 }, { 4, 5 } })),
+										   perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 1, 5 }, { 2, 4 } }))));
 
 
 struct CanonicalizeTest : ::testing::TestWithParam< std::vector< perm::Cycle > > {
@@ -186,14 +185,14 @@ TEST_P(CanonicalizeTest, canonicalize) {
 	perm::PrimitivePermutationGroup group;
 
 	for (const perm::Cycle &currentCycle : GetParam()) {
-		group.addGenerator(perm::Permutation(perm::ExplicitPermutation::fromCycle(currentCycle)));
+		group.addGenerator(perm::Permutation(perm::ExplicitPermutation(currentCycle)));
 	}
 
 	std::vector< perm::Permutation > elements;
 	group.getElementsTo(elements);
 
 	const perm::ExplicitPermutation shufflePermutation =
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 2 }, { 3, 5, 0 } }));
+		perm::ExplicitPermutation(perm::Cycle({ { 1, 2 }, { 3, 5, 0 } }));
 
 	std::vector< perm::AbstractPermutation::value_type > baseSequence = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	perm::applyPermutation(baseSequence, shufflePermutation);

@@ -36,7 +36,7 @@ int main() {
 	// Different permutation implementations may also offer different methods of construction
 
 	// The following creates a permutation representing the (1-based) cycle (1 2)(2 3) or equivalently: (1 2 3)
-	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1 }, { 1, 2 } }));
+	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 1, 2 } }));
 
 	std::cout << "perm2 is " << perm2 << std::endl;
 	// There are different ways of getting the image of a point under the action of a permutation
@@ -47,7 +47,7 @@ int main() {
 
 
 	// Permutations may also carry a sign information
-	perm::ExplicitPermutation perm3 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 3 }, { 0, 4 } }), -1);
+	perm::ExplicitPermutation perm3 = perm::ExplicitPermutation(perm::Cycle({ { 1, 3 }, { 0, 4 } }), -1);
 
 	std::cout << "perm3 is " << perm3 << std::endl;
 	std::cout << "Its sign is " << perm3.sign() << std::endl;

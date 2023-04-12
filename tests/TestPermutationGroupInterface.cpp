@@ -22,7 +22,7 @@ template< typename Group > Group fromGenerators(const std::vector< perm::Cycle >
 	Group g;
 
 	for (const perm::Cycle &current : cycles) {
-		g.addGenerator(perm::Permutation(perm::ExplicitPermutation::fromCycle(current)));
+		g.addGenerator(perm::Permutation(perm::ExplicitPermutation(current)));
 	}
 
 	return g;
@@ -43,8 +43,8 @@ TYPED_TEST(PermutationGroupInterface, getElementsTo) {
 
 	const std::vector< perm::Permutation > expectedElements = {
 		perm::Permutation(perm::ExplicitPermutation()),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 1 })))
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }))),
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 2, 1 })))
 	};
 
 	std::vector< perm::Permutation > elements;
@@ -59,23 +59,23 @@ TYPED_TEST(PermutationGroupInterface, equality) {
 
 	std::vector< perm::ExplicitPermutation > firstList = {
 		perm::ExplicitPermutation(),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
 	};
 	std::vector< perm::ExplicitPermutation > secondList = {
 		perm::ExplicitPermutation(),
 		firstList[1],
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 3, 5 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 5, 4 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 2 }, { 4, 5 } })),
+		perm::ExplicitPermutation(perm::Cycle({ 3, 5 })),
+		perm::ExplicitPermutation(perm::Cycle({ 5, 4 })),
+		perm::ExplicitPermutation(perm::Cycle({ { 1, 2 }, { 4, 5 } })),
 	};
 	std::vector< perm::ExplicitPermutation > thirdList = {
 		perm::ExplicitPermutation(),
 		firstList[1],
 		secondList[2],
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 6, 7 }, { 4, 8 } })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 7 })),
+		perm::ExplicitPermutation(perm::Cycle({ { 6, 7 }, { 4, 8 } })),
+		perm::ExplicitPermutation(perm::Cycle({ 2, 7 })),
 	};
 
 	std::vector< Group > groups;
@@ -168,9 +168,9 @@ TYPED_TEST(PermutationGroupInterface, contains) {
 	const Group g = fromGenerators< Group >({ perm::Cycle({ 0, 1 }), perm::Cycle({ 2, 3 }) });
 	const perm::AbstractPermutationGroup &group = g;
 
-	ASSERT_TRUE(group.contains(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1 }))));
-	ASSERT_TRUE(group.contains(perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 1 }, { 2, 3 } }))));
-	ASSERT_FALSE(group.contains(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }))));
+	ASSERT_TRUE(group.contains(perm::ExplicitPermutation(perm::Cycle({ 0, 1 }))));
+	ASSERT_TRUE(group.contains(perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 3 } }))));
+	ASSERT_FALSE(group.contains(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }))));
 }
 
 
@@ -182,7 +182,7 @@ TYPED_TEST(PermutationGroupInterface, setGenerators) {
 
 	ASSERT_EQ(g.order(), static_cast< std::size_t >(1));
 
-	group.setGenerators({ perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }))) });
+	group.setGenerators({ perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }))) });
 
 	ASSERT_EQ(g.order(), static_cast< std::size_t >(3));
 }
@@ -191,20 +191,20 @@ TYPED_TEST(PermutationGroupInterface, setGenerators) {
 TYPED_TEST(PermutationGroupInterface, cosets) {
 	using Group                       = TypeParam;
 	const Group H                     = fromGenerators< Group >({ perm::Cycle({ 0, 1, 2 }) });
-	const perm::ExplicitPermutation p = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
+	const perm::ExplicitPermutation p = perm::ExplicitPermutation(perm::Cycle({ 2, 3 }));
 
 	const std::vector< perm::Permutation > leftCoset  = H.leftCoset(p);
 	const std::vector< perm::Permutation > rightCoset = H.rightCoset(p);
 
 	const std::vector< perm::Permutation > expectedLeftCoset = {
 		perm::Permutation(p),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2, 3 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 3, 1 }))),
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }))),
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 2, 3, 1 }))),
 	};
 	const std::vector< perm::Permutation > expectedRightCoset = {
 		perm::Permutation(p),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 3, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 3, 2, 1 }))),
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 3, 2 }))),
+		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 3, 2, 1 }))),
 	};
 
 	EXPECT_THAT(leftCoset, ::testing::UnorderedElementsAreArray(expectedLeftCoset));
@@ -225,7 +225,7 @@ TYPED_TEST(PermutationGroupInterface, cosetRepresentatives) {
 	bool assignedRepresentative = false;
 	perm::Permutation rightRepresentative;
 	perm::Permutation leftRepresentative;
-	const perm::ExplicitPermutation cosetGenerator = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 5 }));
+	const perm::ExplicitPermutation cosetGenerator = perm::ExplicitPermutation(perm::Cycle({ 2, 5 }));
 
 	for (const std::vector< perm::Cycle > &currentGenerators : s6GeneratorSets) {
 		const Group g                               = fromGenerators< Group >(currentGenerators);
@@ -248,10 +248,10 @@ TYPED_TEST(PermutationGroupInterface, cosetRepresentatives) {
 		// elements [0, 5] will necessarily be the group itself again and therefore the coset representative
 		// must still be the same as well.
 		for (const perm::AbstractPermutation &currentPerm : {
-				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2, 3 })),
-				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 5 })),
-				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 4, 5 } })),
-				 perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 5, 1 }, { 2, 5 }, { 0, 2, 3 } })),
+				 perm::ExplicitPermutation(perm::Cycle({ 1, 2, 3 })),
+				 perm::ExplicitPermutation(perm::Cycle({ 1, 5 })),
+				 perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 4, 5 } })),
+				 perm::ExplicitPermutation(perm::Cycle({ { 5, 1 }, { 2, 5 }, { 0, 2, 3 } })),
 			 }) {
 			ASSERT_EQ(group.leftCosetRepresentative(currentPerm), leftRepresentative);
 			ASSERT_EQ(group.rightCosetRepresentative(currentPerm), rightRepresentative);
@@ -274,11 +274,11 @@ TYPED_TEST(PermutationGroupInterface, cosetRepresentatives) {
 
 	const std::vector< perm::ExplicitPermutation > cosetGenerators{
 		perm::ExplicitPermutation(),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 3 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 3 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 2 })),
-		perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 3 })),
+		perm::ExplicitPermutation(perm::Cycle({ 1, 3 })),
+		perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
+		perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
 	};
 
 	std::vector< perm::Permutation > leftRepresentatives;

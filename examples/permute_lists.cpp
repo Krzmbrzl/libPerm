@@ -48,8 +48,8 @@ int main() {
 	// Now some random scrambling
 	// This will be applied by two consecutively applied permutations
 
-	perm::ExplicitPermutation first  = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2 }));
-	perm::ExplicitPermutation second = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 }));
+	perm::ExplicitPermutation first  = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }));
+	perm::ExplicitPermutation second = perm::ExplicitPermutation(perm::Cycle({ 2, 3 }));
 
 	perm::applyPermutation(myVec, first);
 	std::cout << "After first permutation:" << std::endl;

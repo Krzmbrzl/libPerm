@@ -21,10 +21,12 @@ public:
 	 * @param cycle The Cycle to construct this perm from
 	 * @param sign The sign associated with the to-be-constructed perm
 	 */
-	static ExplicitPermutation fromCycle(const Cycle &cycle, int sign = 1);
+	[[deprecated("Prefer using the corresponding constructor directly")]] static ExplicitPermutation
+		fromCycle(const Cycle &cycle, int sign = 1);
 
 	explicit ExplicitPermutation(int sign = 1);
 	explicit ExplicitPermutation(std::vector< value_type > image, int sign = 1);
+	ExplicitPermutation(const Cycle &cycle, int sign = 1);
 	ExplicitPermutation(const ExplicitPermutation &other) = default;
 	ExplicitPermutation(ExplicitPermutation &&other)      = default;
 	~ExplicitPermutation();

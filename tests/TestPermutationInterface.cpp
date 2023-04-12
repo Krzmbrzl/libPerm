@@ -16,7 +16,7 @@ using PermutationTypes = ::testing::Types< perm::ExplicitPermutation >;
 
 
 template< typename T > struct PermCtor {
-	static T construct(const perm::Cycle &cycle) { return T::fromCycle(cycle); }
+	static T construct(const perm::Cycle &cycle) { return T(cycle); }
 };
 
 
@@ -90,7 +90,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm *= factor;
-		ASSERT_EQ(perm, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 4, 1, 2, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 4, 1, 2, 3 })));
 	}
 	{
 		// postMultiply
@@ -98,7 +98,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm.postMultiply(factor);
-		ASSERT_EQ(perm, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 4, 1, 2, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 4, 1, 2, 3 })));
 	}
 	{
 		// preMultiply
@@ -106,7 +106,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm.preMultiply(factor);
-		ASSERT_EQ(perm, perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 2, 4, 1, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 2, 4, 1, 3 })));
 	}
 	{
 		// Multiply with identity

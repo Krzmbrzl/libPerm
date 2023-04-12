@@ -33,6 +33,10 @@ ExplicitPermutation::ExplicitPermutation(std::vector< value_type > image, int si
 	}
 }
 
+ExplicitPermutation::ExplicitPermutation(const Cycle &cycle, int sign)
+	: ExplicitPermutation(cycle.toImage< value_type >(), sign) {
+}
+
 ExplicitPermutation::~ExplicitPermutation() {
 }
 

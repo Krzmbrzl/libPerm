@@ -35,8 +35,8 @@ void printGroup(const perm::AbstractPermutationGroup &group) {
 
 int main() {
 	// Together these two generators generate Sym(4) - the symmetric group of degree 4
-	perm::Permutation generator1(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 0, 1, 2, 3 })));
-	perm::Permutation generator2(perm::ExplicitPermutation::fromCycle(perm::Cycle({ 2, 3 })));
+	perm::Permutation generator1(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 })));
+	perm::Permutation generator2(perm::ExplicitPermutation(perm::Cycle({ 2, 3 })));
 
 	std::cout << std::boolalpha;
 
@@ -80,8 +80,8 @@ int main() {
 
 
 	// Check membership of a given permutation
-	perm::ExplicitPermutation perm1 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ { 1, 2 }, { 0, 3 } }));
-	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation::fromCycle(perm::Cycle({ 1, 4 }));
+	perm::ExplicitPermutation perm1 = perm::ExplicitPermutation(perm::Cycle({ { 1, 2 }, { 0, 3 } }));
+	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation(perm::Cycle({ 1, 4 }));
 	std::cout << "Group contains " << perm1 << ": " << group.contains(perm1) << std::endl;
 	std::cout << "Group contains " << perm2 << ": " << group.contains(perm2) << std::endl;
 
