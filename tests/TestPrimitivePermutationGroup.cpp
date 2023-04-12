@@ -22,10 +22,13 @@ TEST(PrimitivePermutationGroup, construction) {
 
 	ASSERT_EQ(group.order(), 2);
 
-	std::vector< perm::Permutation > generators = { perm::Permutation(
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 }))) };
+	std::vector< perm::ExplicitPermutation > generators = { perm::Cycle({ 0, 1 }) };
 
 	perm::PrimitivePermutationGroup group2(generators.begin(), generators.end());
 
 	ASSERT_EQ(group, group2);
+
+	perm::PrimitivePermutationGroup group3({ perm::ExplicitPermutation(perm::Cycle({ 0, 1 })) });
+
+	ASSERT_EQ(group, group3);
 }
