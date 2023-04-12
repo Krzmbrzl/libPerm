@@ -22,7 +22,8 @@ public:
 	PrimitivePermutationGroup();
 	PrimitivePermutationGroup(std::vector< Permutation > generators);
 
-	template< typename Iterator > PrimitivePermutationGroup(Iterator begin, Iterator end) {
+	template< typename Iterator >
+	PrimitivePermutationGroup(Iterator begin, Iterator end) : PrimitivePermutationGroup() {
 		static_assert(std::is_same_v< typename std::iterator_traits< Iterator >::value_type, Permutation >,
 					  "Can only construct PrimitivePermutationGroup with generators of type perm::Permutation");
 
@@ -34,7 +35,7 @@ public:
 			begin++;
 		}
 
-		PrimitivePermutationGroup(std::move(generators));
+		setGenerators(std::move(generators));
 	}
 
 	PrimitivePermutationGroup(const PrimitivePermutationGroup &) = default;

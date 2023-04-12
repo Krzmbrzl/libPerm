@@ -10,14 +10,22 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+
 TEST(PrimitivePermutationGroup, construction) {
 	perm::PrimitivePermutationGroup group;
 
 	// The identity element is always contained in a group
 	ASSERT_EQ(group.order(), 1);
 
-	group = perm::PrimitivePermutationGroup(
-		{ perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1 }))) });
+	group = perm::PrimitivePermutationGroup({ perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1 }))) });
 
 	ASSERT_EQ(group.order(), 2);
+
+	std::vector< perm::Permutation > generators = { perm::Permutation(
+		perm::ExplicitPermutation(perm::Cycle({ 0, 1 }))) };
+
+	perm::PrimitivePermutationGroup group2(generators.begin(), generators.end());
+
+	ASSERT_EQ(group, group2);
 }
