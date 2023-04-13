@@ -94,6 +94,8 @@ void applyPermutation(Iterator begin, Iterator end, const Permutation &perm) {
 	static_assert(
 		std::is_same_v< typename std::iterator_traits< Iterator >::iterator_category, std::random_access_iterator_tag >,
 		"Can only work with random-access iterators");
+	static_assert(!std::is_const_v< typename std::iterator_traits< Iterator >::value_type >,
+				  "Can't apply permutation to a range of const elements");
 
 	Cycle cycles = [&]() {
 		if constexpr (std::is_same_v< Permutation, perm::Permutation >) {
@@ -224,6 +226,9 @@ Permutation computeCanonicalizationPermutation(const Container &container, const
 template< typename Iterator, typename PermGroup,
 		  typename Compare = std::less< typename std::iterator_traits< Iterator >::value_type > >
 int canonicalize(Iterator begin, Iterator end, const PermGroup &group, Compare cmp = {}) {
+	static_assert(!std::is_const_v< typename std::iterator_traits< Iterator >::value_type >,
+				  "Can't canonicalize a range of const elements");
+
 	Permutation canonicalizer = computeCanonicalizationPermutation(begin, end, group, cmp);
 
 	applyPermutation(begin, end, canonicalizer);
