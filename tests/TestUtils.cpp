@@ -185,7 +185,7 @@ TEST_P(CanonicalizeTest, canonicalize) {
 	perm::PrimitivePermutationGroup group;
 
 	for (const perm::Cycle &currentCycle : GetParam()) {
-		group.addGenerator(perm::Permutation(perm::ExplicitPermutation(currentCycle)));
+		group.addGenerator(perm::ExplicitPermutation(currentCycle));
 	}
 
 	std::vector< perm::Permutation > elements;

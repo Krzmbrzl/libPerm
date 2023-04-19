@@ -23,27 +23,10 @@ public:
 	PrimitivePermutationGroup();
 	PrimitivePermutationGroup(std::vector< Permutation > generators);
 
-	template< typename Perm >
-	PrimitivePermutationGroup(std::initializer_list< Perm > generators) : PrimitivePermutationGroup() {
-		if constexpr (!std::is_same_v< std::remove_const_t< Perm >, Permutation >) {
-			static_assert(std::is_base_of_v< AbstractPermutation, Perm >, "Can only use proper permutation classes");
-		}
-
-		std::vector< Permutation > transformedGenerators;
-		transformedGenerators.reserve(generators.size());
-
-		for (std::size_t i = 0; i < generators.size(); ++i) {
-			transformedGenerators.emplace_back(*(std::data(generators) + i));
-		}
-
-		setGenerators(std::move(transformedGenerators));
-	}
-
 	template< typename Iterator, typename Perm = typename std::iterator_traits< Iterator >::value_type >
 	PrimitivePermutationGroup(Iterator begin, Iterator end) : PrimitivePermutationGroup() {
-		if constexpr (!std::is_same_v< std::remove_const_t< Perm >, Permutation >) {
-			static_assert(std::is_base_of_v< AbstractPermutation, Perm >, "Can only use proper permutation classes");
-		}
+		static_assert(std::is_convertible_v< Perm, Permutation >,
+					  "Can only use permutation classes that are convertible to Permutation");
 
 		std::vector< Permutation > generators;
 		generators.reserve(std::distance(begin, end));

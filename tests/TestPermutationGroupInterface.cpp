@@ -22,7 +22,7 @@ template< typename Group > Group fromGenerators(const std::vector< perm::Cycle >
 	Group g;
 
 	for (const perm::Cycle &current : cycles) {
-		g.addGenerator(perm::Permutation(perm::ExplicitPermutation(current)));
+		g.addGenerator(perm::ExplicitPermutation(current));
 	}
 
 	return g;
@@ -41,11 +41,9 @@ TYPED_TEST(PermutationGroupInterface, getElementsTo) {
 	const Group g                               = fromGenerators< Group >({ perm::Cycle({ 0, 1, 2 }) });
 	const perm::AbstractPermutationGroup &group = g;
 
-	const std::vector< perm::Permutation > expectedElements = {
-		perm::Permutation(perm::ExplicitPermutation()),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 2, 1 })))
-	};
+	const std::vector< perm::Permutation > expectedElements = { perm::ExplicitPermutation(),
+																perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
+																perm::ExplicitPermutation(perm::Cycle({ 0, 2, 1 })) };
 
 	std::vector< perm::Permutation > elements;
 	group.getElementsTo(elements);
@@ -84,9 +82,9 @@ TYPED_TEST(PermutationGroupInterface, equality) {
 		for (const perm::ExplicitPermutation &second : secondList) {
 			for (const perm::ExplicitPermutation &third : thirdList) {
 				Group group;
-				group.addGenerator(perm::Permutation{ first });
-				group.addGenerator(perm::Permutation{ second });
-				group.addGenerator(perm::Permutation{ third });
+				group.addGenerator(first);
+				group.addGenerator(second);
+				group.addGenerator(third);
 
 				groups.push_back(std::move(group));
 			}
@@ -182,7 +180,7 @@ TYPED_TEST(PermutationGroupInterface, setGenerators) {
 
 	ASSERT_EQ(g.order(), static_cast< std::size_t >(1));
 
-	group.setGenerators({ perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }))) });
+	group.setGenerators({ perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })) });
 
 	ASSERT_EQ(g.order(), static_cast< std::size_t >(3));
 }
@@ -197,14 +195,14 @@ TYPED_TEST(PermutationGroupInterface, cosets) {
 	const std::vector< perm::Permutation > rightCoset = H.rightCoset(p);
 
 	const std::vector< perm::Permutation > expectedLeftCoset = {
-		perm::Permutation(p),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }))),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 2, 3, 1 }))),
+		p,
+		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 2, 3, 1 })),
 	};
 	const std::vector< perm::Permutation > expectedRightCoset = {
-		perm::Permutation(p),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 3, 2 }))),
-		perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ 0, 3, 2, 1 }))),
+		p,
+		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 3, 2 })),
+		perm::ExplicitPermutation(perm::Cycle({ 0, 3, 2, 1 })),
 	};
 
 	EXPECT_THAT(leftCoset, ::testing::UnorderedElementsAreArray(expectedLeftCoset));
