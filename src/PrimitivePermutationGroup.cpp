@@ -15,9 +15,7 @@
 namespace perm {
 
 PrimitivePermutationGroup::PrimitivePermutationGroup() : AbstractPermutationGroup(PermutationGroupType::Primitive) {
-	// Add the identity element as a generator (this is the least a group can contain - aka: There is no such thing as
-	// an empty group)
-	setGenerators({ Permutation(ExplicitPermutation()) });
+	setGenerators({});
 }
 
 PrimitivePermutationGroup::PrimitivePermutationGroup(std::vector< Permutation > generators)
@@ -60,6 +58,11 @@ bool PrimitivePermutationGroup::addGenerator(Permutation perm) {
 
 void PrimitivePermutationGroup::setGenerators(std::vector< Permutation > generators) {
 	m_generators = std::move(generators);
+
+	if (m_generators.empty()) {
+		// There is no such thing as an empty group. It must always at least contain the identity element
+		m_generators.emplace_back(ExplicitPermutation());
+	}
 
 	regenerateGroup();
 }

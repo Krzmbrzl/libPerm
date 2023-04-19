@@ -35,6 +35,18 @@ template< typename Group > struct PermutationGroupInterface : ::testing::Test {}
 TYPED_TEST_SUITE(PermutationGroupInterface, PermutationGroupTypes, );
 
 
+TYPED_TEST(PermutationGroupInterface, emptyConstruction) {
+	using Group = TypeParam;
+
+	Group g1;
+	Group g2(std::vector< perm::Permutation >{});
+
+	// A group must always contain at least the identity permutation
+	ASSERT_EQ(g1.order(), 1);
+	ASSERT_EQ(g2.order(), 1);
+	ASSERT_EQ(g1, g2);
+}
+
 TYPED_TEST(PermutationGroupInterface, getElementsTo) {
 	using Group = TypeParam;
 
