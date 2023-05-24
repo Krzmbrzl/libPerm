@@ -48,7 +48,9 @@ public:
 
 	void postMultiply(const AbstractPermutation &other) override;
 
-	virtual Cycle toCycle() const override;
+	Cycle toCycle() const override;
+
+	void shift(int shift) override;
 
 	void insertIntoStream(std::ostream &stream) const override;
 

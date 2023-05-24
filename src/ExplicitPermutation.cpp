@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 #include <set>
 
 namespace perm {
@@ -126,6 +127,31 @@ void ExplicitPermutation::postMultiply(const AbstractPermutation &other) {
 
 Cycle ExplicitPermutation::toCycle() const {
 	return Cycle::fromImage(m_image);
+}
+
+void ExplicitPermutation::shift(int shift) {
+	// Either insert new elements in the front or remove elements from the front, which are no longer needed
+	if (shift >= 0) {
+		m_image.insert(m_image.begin(), static_cast< std::size_t >(shift), 0);
+		std::iota(m_image.begin(), m_image.begin() + shift, 0);
+	} else {
+		m_image.erase(m_image.begin(), m_image.begin() + std::min(m_image.size(), static_cast< std::size_t >(-shift)));
+	}
+
+	for (std::size_t i = 0; i < m_image.size(); ++i) {
+		if (m_image[i] != i) {
+			assert(shift >= 0 || m_image[i] >= static_cast< value_type >(-shift));
+
+			m_image[i] += shift;
+		}
+	}
+
+	if (m_image.empty()) {
+		// Ensure we always keep at least a single element in our image
+		m_image.push_back(0);
+	}
+
+	reduceImageRepresentation();
 }
 
 void ExplicitPermutation::insertIntoStream(std::ostream &stream) const {

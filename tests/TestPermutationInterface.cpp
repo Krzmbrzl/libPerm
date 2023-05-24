@@ -194,3 +194,21 @@ TYPED_TEST(PermutationInterface, toCycle) {
 
 	ASSERT_EQ(perm.toCycle(), cycle);
 }
+
+TYPED_TEST(PermutationInterface, shift) {
+	using Perm = TypeParam;
+
+	Perm actual = PermCtor< Perm >::construct(perm::Cycle({ 0, 1 }));
+	actual.shift(3);
+	Perm expected = PermCtor< Perm >::construct(perm::Cycle({ 3, 4 }));
+	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 7, 3 } }));
+	actual.shift(15);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 15, 16 }, { 22, 18 } }));
+	ASSERT_EQ(actual, expected);
+
+	actual.shift(-7);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 8, 9 }, { 15, 11 } }));
+	ASSERT_EQ(actual, expected);
+}

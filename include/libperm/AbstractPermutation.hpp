@@ -135,6 +135,15 @@ public:
 	virtual Cycle toCycle() const = 0;
 
 	/**
+	 * Shifts this permutation by the given amount. In this context, "shifting" means offsetting the
+	 * indices involved in this permutation to by modified by adding the given shift to them.
+	 * E.g. shifting (2 3) by +2 will yield (4 5).
+	 *
+	 * Note: Shifting that will end up producing negative indices is undefined behavior
+	 */
+	virtual void shift(int shift) = 0;
+
+	/**
 	 * Inserts a string representation of this permutation into the given stream object.
 	 * The implementation of this function determines the object's string representation.
 	 */
