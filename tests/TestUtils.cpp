@@ -17,7 +17,18 @@
 #include <array>
 #include <functional>
 #include <string>
+#include <unordered_set>
 #include <vector>
+
+perm::PrimitivePermutationGroup asGroup(const std::vector< perm::Cycle > &generators) {
+	perm::PrimitivePermutationGroup group;
+
+	for (const perm::Cycle &currentCycle : generators) {
+		group.addGenerator(perm::ExplicitPermutation(currentCycle));
+	}
+
+	return group;
+}
 
 
 TEST(Utils, applyPermutation) {
@@ -216,3 +227,77 @@ INSTANTIATE_TEST_SUITE_P(
 					  CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1, 2 }) },
 					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2, 3 }, { 4, 5 } }) },
 					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2 }, { 4, 1 }, { 3, 7 } }) }));
+
+
+
+struct ConcatenateTest
+	: ::testing::TestWithParam<
+		  std::tuple< perm::PrimitivePermutationGroup, std::vector< std::size_t >, perm::PrimitivePermutationGroup,
+					  std::vector< std::size_t >, perm::PrimitivePermutationGroup > > {
+	using ParamPack =
+		std::tuple< perm::PrimitivePermutationGroup, std::vector< std::size_t >, perm::PrimitivePermutationGroup,
+					std::vector< std::size_t >, perm::PrimitivePermutationGroup >;
+};
+
+TEST_P(ConcatenateTest, concatenate) {
+	const perm::PrimitivePermutationGroup lhsGroup      = std::get< 0 >(GetParam());
+	const std::vector< std::size_t > lhsExcludes        = std::get< 1 >(GetParam());
+	const perm::PrimitivePermutationGroup rhsGroup      = std::get< 2 >(GetParam());
+	const std::vector< std::size_t > rhsExcludes        = std::get< 3 >(GetParam());
+	const perm::PrimitivePermutationGroup expectedGroup = std::get< 4 >(GetParam());
+
+	std::vector< perm::Permutation > elements;
+	lhsGroup.getElementsTo(elements);
+	std::unordered_set< std::size_t > effectiveExcludes;
+	for (const perm::Permutation &current : elements) {
+		for (std::size_t currentExclude : lhsExcludes) {
+			if (current->maxElement() >= currentExclude) {
+				effectiveExcludes.insert(currentExclude);
+			}
+		}
+	}
+
+	std::size_t remainingLeftSize = 8 - effectiveExcludes.size();
+
+	perm::PrimitivePermutationGroup actualGroup = perm::concatenate< perm::PrimitivePermutationGroup >(
+		lhsGroup, remainingLeftSize, rhsGroup, lhsExcludes, rhsExcludes);
+
+	ASSERT_EQ(actualGroup, expectedGroup);
+}
+
+// clang-format off
+INSTANTIATE_TEST_SUITE_P(
+	Utils, ConcatenateTest,
+	::testing::Values(
+		ConcatenateTest::ParamPack{perm::PrimitivePermutationGroup{}, {4}, perm::PrimitivePermutationGroup{}, {42}, perm::PrimitivePermutationGroup{}},
+		ConcatenateTest::ParamPack{asGroup({perm::Cycle({0,1})}), {1}, asGroup({perm::Cycle({4,2})}), {4}, perm::PrimitivePermutationGroup{}},
+		ConcatenateTest::ParamPack{
+			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3})}),
+			{1},
+			asGroup({perm::Cycle({4,2}), perm::Cycle({{0,1}, {3,5}})}),
+			{4},
+			asGroup({perm::Cycle({1,2}), perm::Cycle({{7,8}, {10,11}})})
+		},
+		ConcatenateTest::ParamPack{
+			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3})}),
+			{5},
+			asGroup({perm::Cycle({4,2}), perm::Cycle({{0,1}, {3,5}})}),
+			{},
+			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3}), perm::Cycle({12,10}), perm::Cycle({{8,9}, {11,13}})})
+		},
+		ConcatenateTest::ParamPack{
+			asGroup({perm::Cycle({0,4,6})}),
+			{2,5,10},
+			asGroup({perm::Cycle({4,2}), perm::Cycle({1,5,9})}),
+			{3,4},
+			asGroup({perm::Cycle({0,3,4}), perm::Cycle({7,9,13})})
+		},
+		ConcatenateTest::ParamPack{
+			asGroup({perm::Cycle({1,4,6}), perm::Cycle({4,6})}),
+			{0,5},
+			asGroup({perm::Cycle({2,3}), perm::Cycle({3,4})}),
+			{0,1,5},
+			asGroup({perm::Cycle({0,3,4}), perm::Cycle({3,4}), perm::Cycle({6,7}), perm::Cycle({7,8})})
+		}
+	));
+// clang-format on

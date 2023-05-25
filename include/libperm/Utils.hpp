@@ -249,6 +249,117 @@ int canonicalize(Container &container, const PermGroup &group, Compare cmp = {})
 }
 
 
+/**
+ * Concatenates the two permutation groups under the assumption that the sequences that they act on are concatenated
+ * as well and then the produced group describes the symmetries within this concatenated sequence (where each
+ * sub-sequence still has the symmetries it started out with).
+ * For this concatenation, there is also the possibility to specify which elements (identified by their index in the
+ * sequence) will not be included when concatenating the sequences. Thus, this equates to removing the specified
+ * indices from the given sequences before concatenating them. Naturally, all symmetries that involve the removed
+ * elements will be removed as well and the elements that involve elements after ones that have been excluded are
+ * modified to account for the shift to lower indices (due to one or more elements to their left having been removed).
+ *
+ * @param lhs The permutation group describing the symmetries of the lhs sequence
+ * @param lhsSize The amount of retained elements (e.g. those that are not excluded) in the lhs sequence
+ * @param rhs The permutation group describing the symmetries of the rhs sequence
+ * @param lhsExcludes A collection of indices of elements that should be excluded from the lhs sequence
+ * @param rhsExcludes A collection of indices of elements that should be excluded from the rhs sequence
+ * @returns The permutation group describing the permutation symmetries of the concatenated sequence
+ *
+ * @tparam PermGroup The type of permutation group to produce
+ * @tparam Container The type of the container in which the excluded indices are specified
+ */
+template< typename PermGroup, typename Container = std::vector< std::size_t > >
+PermGroup concatenate(const AbstractPermutationGroup &lhs, std::size_t lhsSize, const AbstractPermutationGroup &rhs,
+					  const Container &lhsExcludes = {}, const Container &rhsExcludes = {}) {
+	static_assert(std::is_integral_v< typename Container::value_type >, "Excludes are expected to be indices");
+	static_assert(std::is_unsigned_v< typename Container::value_type >, "Excludes are expected to be indices");
+
+	std::vector< Permutation > generators;
+
+	// Fetch and adapt generators from lhs
+	std::vector< std::size_t > excludedIndices(lhsExcludes.begin(), lhsExcludes.end());
+	std::sort(excludedIndices.begin(), excludedIndices.end());
+
+	for (const Permutation &currentPerm : lhs.getGenerators()) {
+		if (currentPerm->isIdentity()) {
+			continue;
+		}
+
+		bool include = true;
+
+		for (auto currentExclude : excludedIndices) {
+			if (currentPerm->image(static_cast< AbstractPermutation::value_type >(currentExclude))
+				!= static_cast< AbstractPermutation::value_type >(currentExclude)) {
+				// This permutation is acting on an excluded position -> this won't be part of the resulting symmetry
+				include = false;
+				break;
+			}
+		}
+
+		if (include) {
+			if (excludedIndices.empty()) {
+				generators.push_back(currentPerm);
+			} else {
+				Permutation copy = currentPerm;
+
+				// Account for removed elements
+				for (std::size_t offset : excludedIndices) {
+					if (offset > copy->maxElement()) {
+						break;
+					}
+
+					copy->shift(-1, offset);
+				}
+
+				generators.push_back(std::move(copy));
+			}
+		}
+	}
+
+
+	// Fetch and adapt generators from rhs
+	excludedIndices = std::vector< std::size_t >(rhsExcludes.begin(), rhsExcludes.end());
+	std::sort(excludedIndices.begin(), excludedIndices.end());
+
+	for (const Permutation &currentPerm : rhs.getGenerators()) {
+		if (currentPerm->isIdentity()) {
+			continue;
+		}
+
+		bool include = true;
+
+		for (auto currentExclude : excludedIndices) {
+			if (currentPerm->image(static_cast< AbstractPermutation::value_type >(currentExclude))
+				!= static_cast< AbstractPermutation::value_type >(currentExclude)) {
+				// This permutation is acting on an excluded position -> this won't be part of the resulting symmetry
+				include = false;
+				break;
+			}
+		}
+
+		if (include) {
+			perm::Permutation copy = currentPerm;
+
+			// Account for removed elements
+			for (std::size_t offset : excludedIndices) {
+				if (offset > copy->maxElement()) {
+					break;
+				}
+				copy->shift(-1, offset);
+			}
+
+			// Also account for the fact that the lhs sequence comes before the rhs one
+			copy->shift(static_cast< int >(lhsSize));
+
+			generators.push_back(std::move(copy));
+		}
+	}
+
+	return PermGroup(generators);
+}
+
+
 } // namespace perm
 
 #endif // LIBPERM_UTILS_HPP_
