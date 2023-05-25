@@ -50,7 +50,7 @@ public:
 
 	Cycle toCycle() const override;
 
-	void shift(int shift) override;
+	void shift(int shift, std::size_t startIndex = 0) override;
 
 	void insertIntoStream(std::ostream &stream) const override;
 

@@ -216,4 +216,38 @@ TYPED_TEST(PermutationInterface, shift) {
 	ASSERT_TRUE(actual.isIdentity());
 	actual.shift(5);
 	ASSERT_TRUE(actual.isIdentity());
+
+
+	// Shifts with positive offsets
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 7, 3 } }));
+	actual.shift(1, 3);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 8, 4 } }));
+	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 5 } }));
+	actual.shift(1, 1);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 3 }, { 4, 6 } }));
+	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2, 4 }, { 3, 5 } }));
+	actual.shift(1, 4);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2, 5 }, { 3, 6 } }));
+	ASSERT_EQ(actual, expected);
+
+
+	// Shifts with positive offsets
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 6 } }));
+	actual.shift(-2, 4);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 4 } }));
+	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 4, 7 } }));
+	actual.shift(-1, 1);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 2, 3, 6 } }));
+	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle({ 6, 3, 7, 0 }));
+	actual.shift(-2, 1);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ 4, 1, 5, 0 }));
+	ASSERT_EQ(actual, expected);
 }

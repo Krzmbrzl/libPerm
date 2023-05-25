@@ -139,9 +139,17 @@ public:
 	 * indices involved in this permutation to by modified by adding the given shift to them.
 	 * E.g. shifting (2 3) by +2 will yield (4 5).
 	 *
-	 * Note: Shifting that will end up producing negative indices is undefined behavior
+	 * Notes:
+	 * - Shifting that will end up producing negative indices is undefined behavior
+	 * - When using negative shifts (with an offset), care must be taken in order to not
+	 *   produce non-sensical permutations: When choosing an offset in-between two permutation-
+	 *   related indices, the shift mustn't move the bigger index closer than one after the lower
+	 *   index. E.g. for (1 3) and an offset of 2, the shift must be >= -1.
+	 *
+	 * @param shift The amount of shift that shall be applied
+	 * @param startIndex Only shift indices that are greater or equal to this
 	 */
-	virtual void shift(int shift) = 0;
+	virtual void shift(int shift, std::size_t startIndex = 0) = 0;
 
 	/**
 	 * Inserts a string representation of this permutation into the given stream object.
