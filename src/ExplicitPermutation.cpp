@@ -130,18 +130,37 @@ Cycle ExplicitPermutation::toCycle() const {
 }
 
 void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
-	// Either insert new elements in the front or remove elements from the front, which are no longer needed
+	if (startOffset >= m_image.size()) {
+		return;
+	}
+
+	// Handle image points i -> j where i >= startOffset
 	if (shift >= 0) {
 		m_image.insert(m_image.begin() + startOffset, static_cast< std::size_t >(shift), 0);
 		std::iota(m_image.begin() + startOffset, m_image.begin() + startOffset + shift,
 				  static_cast< value_type >(startOffset));
 	} else {
+		const std::size_t upperBound = std::min(m_image.size(), startOffset + static_cast< std::size_t >(-shift) + 1);
+		for (std::size_t i = startOffset; i < upperBound; ++i) {
+			if (m_image.at(i) != static_cast< value_type >(i)) {
+				// This part of the to-be-deleted range is part of an actual permutation -> ensure that
+				// the information about this exchange is not lost.
+				// We know that there are at least abs(shift) elements to the left of the i-th position
+				// that map to themselves (prerequisite of this function). Thus, we can shift the exchange
+				// by simply moving it abs(shift) elements to the left.
+				m_image.at(i + shift) = m_image.at(i);
+			}
+		}
+
 		m_image.erase(m_image.begin() + startOffset,
-					  m_image.begin() + startOffset + std::min(m_image.size(), static_cast< std::size_t >(-shift)));
+					  m_image.begin() + startOffset
+						  + std::min(m_image.size() - startOffset, static_cast< std::size_t >(-shift)));
 	}
 
+	// Handle image points i -> j where j >= startOffset
 	for (std::size_t i = 0; i < m_image.size(); ++i) {
-		if (m_image[i] != i && m_image[i] >= static_cast< value_type >(startOffset)) {
+		if ((shift < 0 || m_image[i] != static_cast< value_type >(i))
+			&& m_image[i] >= static_cast< value_type >(startOffset)) {
 			assert(shift >= 0 || m_image[i] >= static_cast< value_type >(-shift));
 
 			m_image[i] += shift;
