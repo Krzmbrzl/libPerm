@@ -211,4 +211,9 @@ TYPED_TEST(PermutationInterface, shift) {
 	actual.shift(-7);
 	expected = PermCtor< Perm >::construct(perm::Cycle({ { 8, 9 }, { 15, 11 } }));
 	ASSERT_EQ(actual, expected);
+
+	actual = PermCtor< Perm >::construct(perm::Cycle());
+	ASSERT_TRUE(actual.isIdentity());
+	actual.shift(5);
+	ASSERT_TRUE(actual.isIdentity());
 }
