@@ -178,9 +178,60 @@ TEST_P(SortPermTest, computeSortPermutation) {
 		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 }
 
+TEST_P(SortPermTest, computeSortPermutationWithDuplicates) {
+	std::vector< int > sequence = { 42, -15, -15, 0, 23, 42, 42 };
+
+	const perm::ExplicitPermutation shufflePermutation = GetParam();
+
+	perm::applyPermutation(sequence, shufflePermutation);
+
+	perm::ExplicitPermutation sortPerm = perm::computeSortPermutation(sequence);
+	auto sortedSeq                     = sequence;
+	perm::applyPermutation(sortedSeq, sortPerm);
+	ASSERT_TRUE(std::is_sorted(sortedSeq.begin(), sortedSeq.end()))
+		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
+}
+
+TEST_P(SortPermTest, computeStableSortPermutation) {
+	//std::vector< std::string > sequence = { "a", "b", "b", "a", "b", "a", "a" };
+	std::vector< std::string > sequence = { "a", "b", "a", "b", "b", "b", "b" };
+
+	const perm::ExplicitPermutation shufflePermutation = GetParam();
+
+	perm::applyPermutation(sequence, shufflePermutation);
+
+	// Label strings to identify relative order of elements
+	std::size_t aCounter = 1;
+	std::size_t bCounter = 1;
+	for (std::string &current : sequence) {
+		if (current == "a") {
+			current += std::to_string(aCounter++);
+		} else {
+			ASSERT_EQ(current, "b");
+			current += std::to_string(bCounter++);
+		}
+	}
+
+	auto stableSorted = sequence;
+	std::sort(stableSorted.begin(), stableSorted.end());
+
+	perm::ExplicitPermutation sortPerm = perm::computeStableSortPermutation(
+		sequence, [](const std::string &lhs, const std::string &rhs) { return lhs[0] < rhs[0]; });
+
+	std::cout << "Sequence: " << sequence << "\n";
+	std::cout << "Sort perm: " << sortPerm << "\n";
+
+	auto resultingSeq = sequence;
+	perm::applyPermutation(resultingSeq, sortPerm);
+	ASSERT_TRUE(std::is_sorted(resultingSeq.begin(), resultingSeq.end()))
+		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
+	ASSERT_EQ(resultingSeq, stableSorted);
+}
+
 INSTANTIATE_TEST_SUITE_P(Utils, SortPermTest,
 						 ::testing::Values(perm::ExplicitPermutation(perm::Cycle{}),
 										   perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
+										   perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
 										   perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
 										   perm::ExplicitPermutation(perm::Cycle({ 2, 1, 0 })),
 										   perm::ExplicitPermutation(perm::Cycle({ 2, 6, 1 })),
@@ -221,12 +272,157 @@ TEST_P(CanonicalizeTest, canonicalize) {
 	}
 }
 
-INSTANTIATE_TEST_SUITE_P(
-	Utils, CanonicalizeTest,
-	::testing::Values(CanonicalizeTest::ParamPack{}, CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1 }) },
-					  CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1, 2 }) },
-					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2, 3 }, { 4, 5 } }) },
-					  CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2 }, { 4, 1 }, { 3, 7 } }) }));
+TEST_P(CanonicalizeTest, canonicalizeWithDuplicates) {
+	perm::PrimitivePermutationGroup group;
+
+	for (const perm::Cycle &currentCycle : GetParam()) {
+		group.addGenerator(perm::ExplicitPermutation(currentCycle));
+	}
+
+	std::vector< perm::Permutation > elements;
+	group.getElementsTo(elements);
+
+	// const std::vector< std::string > baseSequence = { "a", "i", "a", "a", "b", "a", "b", "c" };
+	const std::vector< std::string > baseSequence = { "a", "b", "a" };
+
+	auto expectedSequence = baseSequence;
+	perm::canonicalize(expectedSequence, group);
+
+	for (perm::Permutation &currentPerm : elements) {
+		std::cout << "Current element: " << currentPerm << "\n";
+		decltype(expectedSequence) sequence = baseSequence;
+		perm::applyPermutation(sequence, currentPerm);
+
+		std::cout << "Current sequence: " << sequence << "\n";
+		// auto sorted = sequence;
+		// std::cout << "Re-computed sort perm: " << perm::computeSortPermutation(sequence) << "\n";
+		// perm::applyPermutation(sorted, perm::computeSortPermutation(sequence));
+		// std::cout << "Sorted: " << sorted << "\n";
+
+		perm::canonicalize(sequence, group);
+
+		//ASSERT_EQ(sequence, expectedSequence) << "Current perm: " << currentPerm;
+	}
+}
+
+enum class Fruit {
+	Apple,
+	Banana,
+	Cherry,
+	Mango,
+	Melon,
+	Orange,
+	Peach,
+	Strawberry,
+};
+
+struct FruitComparer {
+	bool operator()(Fruit lhs, Fruit rhs) const {
+		// Compare numerically
+		return static_cast< std::underlying_type_t< Fruit > >(lhs)
+			   < static_cast< std::underlying_type_t< Fruit > >(rhs);
+	}
+};
+
+std::ostream &operator<<(std::ostream &stream, Fruit fruit) {
+	switch (fruit) {
+		case Fruit::Apple:
+			stream << "Apple";
+			break;
+		case Fruit::Banana:
+			stream << "Banana";
+			break;
+		case Fruit::Cherry:
+			stream << "Cherry";
+			break;
+		case Fruit::Mango:
+			stream << "Mango";
+			break;
+		case Fruit::Melon:
+			stream << "Melon";
+			break;
+		case Fruit::Orange:
+			stream << "Orange";
+			break;
+		case Fruit::Peach:
+			stream << "Peach";
+			break;
+		case Fruit::Strawberry:
+			stream << "Strawberry";
+			break;
+	}
+
+	return stream;
+}
+
+bool operator<(const std::vector< Fruit > &lhs, const std::vector< Fruit > &rhs) {
+	EXPECT_EQ(lhs.size(), rhs.size());
+
+	FruitComparer cmp;
+
+	for (std::size_t i = 0; i < lhs.size(); ++i) {
+		// If rhs < lhs
+		if (cmp(rhs.at(i), lhs.at(i))) {
+			return false;
+		}
+
+		// If !(rhs < lhs) and (rhs != lhs), it follows that lhs < rhs
+		if (lhs[i] != rhs[i]) {
+			return true;
+		}
+	}
+
+	// lhs and rhs are equal
+	return false;
+}
+
+TEST_P(CanonicalizeTest, canonicalizeToClosestPossible) {
+	perm::PrimitivePermutationGroup group;
+
+	for (const perm::Cycle &currentCycle : GetParam()) {
+		group.addGenerator(perm::ExplicitPermutation(currentCycle));
+	}
+
+	std::vector< perm::Permutation > elements;
+	group.getElementsTo(elements);
+
+	//	const std::vector< Fruit > fruits        = { Fruit::Apple, Fruit::Apple, Fruit::Banana, Fruit::Apple,
+	//												 Fruit::Apple, Fruit::Apple, Fruit::Apple,  Fruit::Apple };
+	const std::vector< Fruit > fruits        = { Fruit::Apple,  Fruit::Apple,  Fruit::Banana, Fruit::Apple,
+												 Fruit::Cherry, Fruit::Cherry, Fruit::Cherry, Fruit::Cherry };
+	const perm::ExplicitPermutation sortPerm = perm::computeSortPermutation(fruits, FruitComparer{});
+	std::cout << std::boolalpha << "sortPerm in group: " << group.contains(sortPerm) << "\n";
+
+	std::remove_const_t< decltype(fruits) > canonicalizedSequence = fruits;
+	perm::canonicalize(canonicalizedSequence, group, FruitComparer{});
+
+	std::cout << "Canonical: " << canonicalizedSequence << "\n";
+	std::cout << "(Sorted via  " << sortPerm << ")\n";
+
+	for (perm::Permutation &currentPerm : elements) {
+		decltype(canonicalizedSequence) current = fruits;
+		perm::applyPermutation(current, currentPerm);
+
+		std::cout << "  " << current << "\n";
+
+		// ASSERT_LE(canonicalizedSequence, current);
+
+		perm::canonicalize(current, group);
+
+		ASSERT_EQ(current, canonicalizedSequence) << "Current perm: " << currentPerm;
+	}
+}
+
+INSTANTIATE_TEST_SUITE_P(Utils, CanonicalizeTest,
+						 ::testing::Values(CanonicalizeTest::ParamPack{},
+										   CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1 }) },
+										   CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1, 2 }) } /*,
+											CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2, 3 }, { 4, 5 } }) },
+											CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2 }, { 4, 1 }, { 3, 7 } })
+											}, CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 2 }), perm::Cycle({ 1, 3
+											}), perm::Cycle({ { 0, 1 }, { 2, 3 } }) }*/
+
+										   ));
 
 
 

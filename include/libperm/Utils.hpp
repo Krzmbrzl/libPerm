@@ -19,11 +19,68 @@
 #include <type_traits>
 #include <vector>
 
+#include <iostream>
+
 namespace perm {
+
+namespace {
+
+	template< bool stable, typename Iterator,
+			  typename Compare = std::less< typename std::iterator_traits< Iterator >::value_type > >
+	ExplicitPermutation computeSortPermutationImpl(Iterator begin, Iterator end, Compare cmp = {}) {
+		static_assert(std::is_same_v< typename std::iterator_traits< Iterator >::iterator_category,
+									  std::random_access_iterator_tag >,
+					  "Can only process random-access iterators");
+
+		assert(std::distance(begin, end) >= 0);
+		std::vector< ExplicitPermutation::value_type > image(static_cast< std::size_t >(std::distance(begin, end)));
+		std::iota(image.begin(), image.end(), 0);
+
+		const auto cmpFunc = [&](ExplicitPermutation::value_type lhs, ExplicitPermutation::value_type rhs) {
+			assert(lhs < std::distance(begin, end));
+			assert(rhs < std::distance(begin, end));
+			return cmp(begin[lhs], begin[rhs]);
+		};
+
+		if constexpr (stable) {
+			std::stable_sort(image.begin(), image.end(), cmpFunc);
+		} else {
+			std::sort(image.begin(), image.end(), cmpFunc);
+		}
+
+		return ExplicitPermutation(std::move(image));
+	}
+
+} // namespace
+
 
 /**
  * Computes the permutation that, applied to the given range, will bring the elements in the provided
  * range into sorted order.
+ * Given a position i in the provided range, the image of i under the returned permutation describes
+ * the location of the ith element in the sorted version of this range.
+ *
+ * Note: In cases where the input range contains duplicates (as identified by the given comparator),
+ * the returned permutation is not unique.
+ *
+ * @tparam Iterator The iterator type describing start and end of the range
+ * @tparam Compare The comparator to use in order to determine the sorted order
+ * @param begin Iterator to the begin of the range
+ * @param end Iterator to the end of the range
+ * @param cmp An instance of the comparator to use
+ * @returns An ExplicitPermutation representing the permutation that will bring the range of elements
+ * into sorted order
+ */
+template< typename Iterator, typename Compare = std::less< typename std::iterator_traits< Iterator >::value_type > >
+ExplicitPermutation computeSortPermutation(Iterator begin, Iterator end, Compare cmp = {}) {
+	return computeSortPermutationImpl< false, Iterator, Compare >(begin, end, cmp);
+}
+
+
+/**
+ * Computes the permutation that, applied to the given range, will bring the elements in the provided
+ * range into sorted order. The relative order between elements that compare equal to each other will be
+ * preserved when applying this permutation.
  * Given a position i in the provided range, the image of i under the returned permutation describes
  * the location of the ith element in the sorted version of this range.
  *
@@ -36,30 +93,19 @@ namespace perm {
  * into sorted order
  */
 template< typename Iterator, typename Compare = std::less< typename std::iterator_traits< Iterator >::value_type > >
-ExplicitPermutation computeSortPermutation(Iterator begin, Iterator end, Compare cmp = {}) {
-	static_assert(
-		std::is_same_v< typename std::iterator_traits< Iterator >::iterator_category, std::random_access_iterator_tag >,
-		"Can only process random-access iterators");
-
-	assert(std::distance(begin, end) >= 0);
-	std::vector< ExplicitPermutation::value_type > image(static_cast< std::size_t >(std::distance(begin, end)));
-	std::iota(image.begin(), image.end(), 0);
-
-	std::sort(image.begin(), image.end(),
-			  [&](ExplicitPermutation::value_type lhs, ExplicitPermutation::value_type rhs) {
-				  assert(lhs < std::distance(begin, end));
-				  assert(rhs < std::distance(begin, end));
-				  return cmp(begin[lhs], begin[rhs]);
-			  });
-
-	return ExplicitPermutation(std::move(image));
+ExplicitPermutation computeStableSortPermutation(Iterator begin, Iterator end, Compare cmp = {}) {
+	return computeSortPermutationImpl< true, Iterator, Compare >(begin, end, cmp);
 }
+
 
 /**
  * Computes the permutation that, applied to the given container, will bring the elements in the provided
  * container into sorted order.
  * Given a position i in the provided container, the image of i under the returned permutation describes
  * the location of the ith element in the sorted version of this container.
+ *
+ * Note: In cases where the input range contains duplicates (as identified by the given comparator),
+ * the returned permutation is not unique.
  *
  * @tparam Container The container whose elements shall be considered (must provide random-access to its elements)
  * @tparam Compare The comparator to use in order to determine the sorted order
@@ -71,6 +117,26 @@ ExplicitPermutation computeSortPermutation(Iterator begin, Iterator end, Compare
 template< typename Container, typename Compare = std::less< typename Container::value_type > >
 ExplicitPermutation computeSortPermutation(const Container &container, Compare cmp = {}) {
 	return computeSortPermutation(container.cbegin(), container.cend(), cmp);
+}
+
+
+/**
+ * Computes the permutation that, applied to the given container, will bring the elements in the provided
+ * container into sorted order. The relative order between elements that compare equal to each other will be
+ * preserved when applying this permutation.
+ * Given a position i in the provided container, the image of i under the returned permutation describes
+ * the location of the ith element in the sorted version of this container.
+ *
+ * @tparam Container The container whose elements shall be considered (must provide random-access to its elements)
+ * @tparam Compare The comparator to use in order to determine the sorted order
+ * @param container A reference to the respective container
+ * @param cmp An instance of the comparator to use
+ * @returns An ExplicitPermutation representing the permutation that will bring the container's elements into sorted
+ * order
+ */
+template< typename Container, typename Compare = std::less< typename Container::value_type > >
+ExplicitPermutation computeStableSortPermutation(const Container &container, Compare cmp = {}) {
+	return computeStableSortPermutation(container.cbegin(), container.cend(), cmp);
 }
 
 
@@ -168,7 +234,9 @@ Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, con
 	// We require a fix point that serves as an anchor to determine the reference configuration
 	// and which can be reached by a known procedure for any given sequence of elements. Sorting the
 	// sequence with respect to the provided comparator fulfills this need.
-	const ExplicitPermutation sortPermutation = computeSortPermutation(begin, end, cmp);
+	const ExplicitPermutation sortPermutation = computeStableSortPermutation(begin, end, cmp);
+
+	std::cout << "Sort permutation: " << sortPermutation << std::endl;
 
 	// The canonicalization idea is this: Determine a way to permute the standard configuration into the searched-for
 	// canonical order of elements for the provided sequence. We can achieve this by considering how to reach the
@@ -177,12 +245,20 @@ Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, con
 	ExplicitPermutation cosetGenerator = sortPermutation;
 	cosetGenerator.invert();
 
+	auto rightCoset = group.rightCoset(cosetGenerator);
+	std::cout << "Right coset:\n";
+	for (auto current : rightCoset) {
+		std::cout << "  " << current << "\n";
+	}
+
 	// This we can then use to generate the left coset with the provided group, which will always be the same
 	// for starting configurations that can be transformed into each other using the elements of the provided group
 	// (and different in the other case).
 	// From this coset, we then select one element deterministically (always the same, for the same coset, regardless
 	// of the coset's order)
 	Permutation canonicalization = group.rightCosetRepresentative(cosetGenerator);
+
+	std::cout << "Canonical representative: " << canonicalization << "\n\n";
 
 	// Since we want to apply the canonicalization permutation to the original sequence rather than the standard
 	// configuration, we first have to (formally) transform the current sequence into the standard configuration, which
