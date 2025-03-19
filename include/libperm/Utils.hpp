@@ -19,8 +19,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <iostream>
-
 namespace perm {
 
 namespace {
@@ -231,12 +229,14 @@ template< typename Iterator, typename PermGroup,
 Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, const PermGroup &group, Compare cmp = {}) {
 	static_assert(std::is_base_of_v< AbstractPermutationGroup, PermGroup >, "Expected a proper permutation group");
 
+	// The canonicalization logic breaks when there are duplicate elements in the provided range
+	using SetType = std::set< typename std::iterator_traits< Iterator >::value_type, Compare >;
+	assert(static_cast< ssize_t >(SetType(begin, end).size()) == std::distance(begin, end));
+
 	// We require a fix point that serves as an anchor to determine the reference configuration
 	// and which can be reached by a known procedure for any given sequence of elements. Sorting the
 	// sequence with respect to the provided comparator fulfills this need.
 	const ExplicitPermutation sortPermutation = computeStableSortPermutation(begin, end, cmp);
-
-	std::cout << "Sort permutation: " << sortPermutation << std::endl;
 
 	// The canonicalization idea is this: Determine a way to permute the standard configuration into the searched-for
 	// canonical order of elements for the provided sequence. We can achieve this by considering how to reach the
@@ -245,20 +245,12 @@ Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, con
 	ExplicitPermutation cosetGenerator = sortPermutation;
 	cosetGenerator.invert();
 
-	auto rightCoset = group.rightCoset(cosetGenerator);
-	std::cout << "Right coset:\n";
-	for (auto current : rightCoset) {
-		std::cout << "  " << current << "\n";
-	}
-
-	// This we can then use to generate the left coset with the provided group, which will always be the same
+	// This we can then use to generate the right coset with the provided group, which will always be the same
 	// for starting configurations that can be transformed into each other using the elements of the provided group
 	// (and different in the other case).
 	// From this coset, we then select one element deterministically (always the same, for the same coset, regardless
 	// of the coset's order)
 	Permutation canonicalization = group.rightCosetRepresentative(cosetGenerator);
-
-	std::cout << "Canonical representative: " << canonicalization << "\n\n";
 
 	// Since we want to apply the canonicalization permutation to the original sequence rather than the standard
 	// configuration, we first have to (formally) transform the current sequence into the standard configuration, which

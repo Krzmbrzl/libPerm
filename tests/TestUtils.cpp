@@ -194,7 +194,7 @@ TEST_P(SortPermTest, computeSortPermutationWithDuplicates) {
 
 TEST_P(SortPermTest, computeStableSortPermutation) {
 	//std::vector< std::string > sequence = { "a", "b", "b", "a", "b", "a", "a" };
-	std::vector< std::string > sequence = { "a", "b", "a", "b", "b", "b", "b" };
+	std::vector< std::string > sequence = { "a", "b", "a", "a", "c", "c", "c", "c" };
 
 	const perm::ExplicitPermutation shufflePermutation = GetParam();
 
@@ -203,17 +203,20 @@ TEST_P(SortPermTest, computeStableSortPermutation) {
 	// Label strings to identify relative order of elements
 	std::size_t aCounter = 1;
 	std::size_t bCounter = 1;
+	std::size_t cCounter = 1;
 	for (std::string &current : sequence) {
 		if (current == "a") {
 			current += std::to_string(aCounter++);
-		} else {
-			ASSERT_EQ(current, "b");
+		} else if (current == "b") {
 			current += std::to_string(bCounter++);
+		} else {
+			ASSERT_EQ(current, "c");
+			current += std::to_string(cCounter++);
 		}
 	}
 
 	auto stableSorted = sequence;
-	std::sort(stableSorted.begin(), stableSorted.end());
+	std::stable_sort(stableSorted.begin(), stableSorted.end());
 
 	perm::ExplicitPermutation sortPerm = perm::computeStableSortPermutation(
 		sequence, [](const std::string &lhs, const std::string &rhs) { return lhs[0] < rhs[0]; });
@@ -271,6 +274,22 @@ TEST_P(CanonicalizeTest, canonicalize) {
 		ASSERT_EQ(sequence, expectedSequence) << "Current perm: " << currentPerm;
 	}
 }
+
+#if 0
+// The issue with canonnicalization in the presence of duplicates is that certain permutations that
+// have been performed on the original sequence are not (fully) observable by looking at how the
+// permuted sequence has to be transformed into the reference sequence (i.e. how it gets sorted).
+// This is, because the sequence [A, A, B] is sorted and it remains sorted if we apply (1,2) to it.
+// For cases in which the action of an element in a given group is completely unobservable, there is
+// no real issue as the canonicalizer will simply detect that the previous permutation was the identity
+// which is always an element of the group, so canonicalization will work.
+// However, if a permutation is only partially observable and the observed part on its own is not an
+// element of the group, there is no way for the canonicalizer to reverse-engineer the actually applied
+// permutation (which is required for the coset logic applied during canonicalization).
+//
+// A potential solution might be to somehow process the given group to elements that are fully observable
+// but without creating new reachable states that the original group didn't reach. At first glance, any
+// such filtering likely leads to the remaining/modified elements not forming a group.
 
 TEST_P(CanonicalizeTest, canonicalizeWithDuplicates) {
 	perm::PrimitivePermutationGroup group;
@@ -390,7 +409,7 @@ TEST_P(CanonicalizeTest, canonicalizeToClosestPossible) {
 	//												 Fruit::Apple, Fruit::Apple, Fruit::Apple,  Fruit::Apple };
 	const std::vector< Fruit > fruits        = { Fruit::Apple,  Fruit::Apple,  Fruit::Banana, Fruit::Apple,
 												 Fruit::Cherry, Fruit::Cherry, Fruit::Cherry, Fruit::Cherry };
-	const perm::ExplicitPermutation sortPerm = perm::computeSortPermutation(fruits, FruitComparer{});
+	const perm::ExplicitPermutation sortPerm = perm::computeStableSortPermutation(fruits, FruitComparer{});
 	std::cout << std::boolalpha << "sortPerm in group: " << group.contains(sortPerm) << "\n";
 
 	std::remove_const_t< decltype(fruits) > canonicalizedSequence = fruits;
@@ -407,11 +426,15 @@ TEST_P(CanonicalizeTest, canonicalizeToClosestPossible) {
 
 		// ASSERT_LE(canonicalizedSequence, current);
 
-		perm::canonicalize(current, group);
+		auto p = perm::computeCanonicalizationPermutation(current, group, FruitComparer{});
+		std::cout << "Canonicalization via " << p << "\n";
+
+		perm::canonicalize(current, group, FruitComparer{});
 
 		ASSERT_EQ(current, canonicalizedSequence) << "Current perm: " << currentPerm;
 	}
 }
+#endif
 
 INSTANTIATE_TEST_SUITE_P(Utils, CanonicalizeTest,
 						 ::testing::Values(CanonicalizeTest::ParamPack{},
