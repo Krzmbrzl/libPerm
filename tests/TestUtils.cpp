@@ -193,7 +193,7 @@ TEST_P(SortPermTest, computeSortPermutationWithDuplicates) {
 }
 
 TEST_P(SortPermTest, computeStableSortPermutation) {
-	//std::vector< std::string > sequence = { "a", "b", "b", "a", "b", "a", "a" };
+	// std::vector< std::string > sequence = { "a", "b", "b", "a", "b", "a", "a" };
 	std::vector< std::string > sequence = { "a", "b", "a", "a", "c", "c", "c", "c" };
 
 	const perm::ExplicitPermutation shufflePermutation = GetParam();
