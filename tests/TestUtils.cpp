@@ -520,3 +520,24 @@ INSTANTIATE_TEST_SUITE_P(
 		}
 	));
 // clang-format on
+
+struct TransformTest : ::testing::TestWithParam< std::tuple< std::vector< int >, std::vector< int > > > {
+	using ParamPack = std::tuple< std::vector< int >, std::vector< int > >;
+};
+
+TEST_P(TransformTest, computeTransformationPermutation) {
+	auto [from, to] = GetParam();
+
+	perm::Permutation transformPerm = perm::computeTransformationPermutation(from, to);
+
+	perm::applyPermutation(from, transformPerm);
+
+	ASSERT_EQ(from, to);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+	Utils, TransformTest,
+	::testing::Values(TransformTest::ParamPack({}, {}), TransformTest::ParamPack({ -1, 1 }, { 1, -1 }),
+					  TransformTest::ParamPack({ 8, 12, 4 }, { 4, 8, 12 }),
+					  TransformTest::ParamPack({ 0, -2, 16, 32, -42 }, { -42, 32, 16, -2, 0 }),
+					  TransformTest::ParamPack({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, { 0, 2, 3, 1, 4, 7, 6, 8, 5, 9 })));

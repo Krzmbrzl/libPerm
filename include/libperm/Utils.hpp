@@ -16,6 +16,7 @@
 #include <cassert>
 #include <iterator>
 #include <numeric>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 
@@ -425,6 +426,49 @@ PermGroup concatenate(const AbstractPermutationGroup &lhs, std::size_t lhsSize, 
 	}
 
 	return PermGroup(generators);
+}
+
+template< typename FromIt, typename ToIt,
+		  typename Compare = std::less< typename std::iterator_traits< FromIt >::value_type > >
+Permutation computeTransformationPermutation(FromIt fromBegin, FromIt fromEnd, ToIt toBegin, ToIt toEnd,
+											 Compare cmp = {}) {
+	static_assert(std::is_same_v< std::remove_cv_t< typename std::iterator_traits< FromIt >::value_type >,
+								  typename std::iterator_traits< ToIt >::value_type >,
+				  "Entry types must be the same");
+	if (std::distance(fromBegin, fromEnd) != std::distance(toBegin, toEnd)) {
+		throw std::logic_error("Sequences must have equal lengths in order for a transformation permutation to exist");
+	}
+
+	assert(std::is_permutation(fromBegin, fromEnd, toBegin));
+
+	// From
+	//   | \sortFrom
+	// p |  ----------- sorted
+	//   | / sortTo
+	//  To
+	//  We want p that transforms From into To
+	//  We compute it, by computing sortFrom and sortTo which can be used to compute
+	//  p via p = (sortTo)^(-1) sortFrom
+	//  (composition from right to left since the permutations act on sequences)
+
+	Permutation sortFrom = computeStableSortPermutation(fromBegin, fromEnd, cmp);
+	Permutation sortTo   = computeStableSortPermutation(toBegin, toEnd, cmp);
+
+	sortTo->invert();
+	sortTo->postMultiply(sortFrom);
+
+	return sortTo;
+}
+
+template< typename FromContainer, typename ToContainer,
+		  typename Compare = std::less< typename FromContainer::value_type > >
+Permutation computeTransformationPermutation(const FromContainer &from, const ToContainer &to, Compare cmp = {}) {
+	static_assert(std::is_same_v< std::remove_cv_t< typename FromContainer::value_type >,
+								  std::remove_cv_t< typename ToContainer::value_type > >,
+				  "Entry types must be the same");
+	using std::begin;
+	using std::end;
+	return computeTransformationPermutation(begin(from), end(from), begin(to), end(to), cmp);
 }
 
 
