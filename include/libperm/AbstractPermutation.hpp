@@ -10,7 +10,6 @@
 
 #include <ostream>
 #include <string>
-#include <vector>
 
 namespace perm {
 
