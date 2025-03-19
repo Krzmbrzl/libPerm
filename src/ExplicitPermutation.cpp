@@ -134,14 +134,14 @@ void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
 		return;
 	}
 
-	auto begin = m_image.begin() + static_cast< ssize_t >(startOffset);
+	auto begin = m_image.begin() + static_cast< std::ptrdiff_t >(startOffset);
 
 	// Handle image points i -> j where i >= startOffset
 	if (shift >= 0) {
 		m_image.insert(begin, static_cast< std::size_t >(shift), 0);
 
 		// Insert invalidates iterators
-		begin = m_image.begin() + static_cast< ssize_t >(startOffset);
+		begin = m_image.begin() + static_cast< std::ptrdiff_t >(startOffset);
 
 		std::iota(begin, begin + shift, static_cast< value_type >(startOffset));
 	} else {
@@ -157,9 +157,9 @@ void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
 			}
 		}
 
-		m_image.erase(
-			begin,
-			begin + static_cast< ssize_t >(std::min(m_image.size() - startOffset, static_cast< std::size_t >(-shift))));
+		m_image.erase(begin, begin
+								 + static_cast< std::ptrdiff_t >(
+									 std::min(m_image.size() - startOffset, static_cast< std::size_t >(-shift))));
 	}
 
 	// Handle image points i -> j where j >= startOffset

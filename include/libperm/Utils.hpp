@@ -232,7 +232,7 @@ Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, con
 
 	// The canonicalization logic breaks when there are duplicate elements in the provided range
 	using SetType [[maybe_unused]] = std::set< typename std::iterator_traits< Iterator >::value_type, Compare >;
-	assert(static_cast< ssize_t >(SetType(begin, end).size()) == std::distance(begin, end));
+	assert(static_cast< std::ptrdiff_t >(SetType(begin, end).size()) == std::distance(begin, end));
 
 	// We require a fix point that serves as an anchor to determine the reference configuration
 	// and which can be reached by a known procedure for any given sequence of elements. Sorting the
