@@ -239,6 +239,11 @@ TYPED_TEST(PermutationInterface, shift) {
 	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 6 } }));
 	ASSERT_EQ(actual, expected);
 
+	actual = PermCtor< Perm >::construct(perm::Cycle({ 0, 1 }));
+	actual.shift(5, 1);
+	expected = PermCtor< Perm >::construct(perm::Cycle({ 0, 6 }));
+	ASSERT_EQ(actual, expected);
+
 
 	// Shifts with negative offsets
 	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 6 } }));
