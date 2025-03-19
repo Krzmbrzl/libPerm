@@ -10,7 +10,7 @@
 #include "libperm/AbstractPermutationGroup.hpp"
 #include "libperm/Permutation.hpp"
 
-#include <initializer_list>
+#include <cassert>
 #include <iosfwd>
 #include <iterator>
 #include <type_traits>
@@ -27,9 +27,10 @@ public:
 	PrimitivePermutationGroup(Iterator begin, Iterator end) : PrimitivePermutationGroup() {
 		static_assert(std::is_convertible_v< Perm, Permutation >,
 					  "Can only use permutation classes that are convertible to Permutation");
+		assert(std::distance(begin, end) >= 0);
 
 		std::vector< Permutation > generators;
-		generators.reserve(std::distance(begin, end));
+		generators.reserve(static_cast< std::size_t >(std::distance(begin, end)));
 
 		while (begin != end) {
 			generators.emplace_back(*begin);

@@ -27,7 +27,7 @@ TYPED_TEST(SpecialGroupsTest, Sym) {
 	using Group = typename TypeParam::Group;
 	using Perm  = typename TypeParam::Perm;
 
-	for (unsigned int n : { 0, 1, 2, 3, 4, 5, 6 }) {
+	for (unsigned int n : { 0u, 1u, 2u, 3u, 4u, 5u, 6u }) {
 		Group group = perm::Sym< Group, Perm >(n);
 
 		ASSERT_EQ(group.order(), perm::details::factorial(n)) << "Failed for n = " << static_cast< unsigned int >(n);
