@@ -134,11 +134,16 @@ void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
 		return;
 	}
 
+	auto begin = m_image.begin() + static_cast< ssize_t >(startOffset);
+
 	// Handle image points i -> j where i >= startOffset
 	if (shift >= 0) {
-		m_image.insert(m_image.begin() + startOffset, static_cast< std::size_t >(shift), 0);
-		std::iota(m_image.begin() + startOffset, m_image.begin() + startOffset + shift,
-				  static_cast< value_type >(startOffset));
+		m_image.insert(begin, static_cast< std::size_t >(shift), 0);
+
+		// Insert invalidates iterators
+		begin = m_image.begin() + static_cast< ssize_t >(startOffset);
+
+		std::iota(begin, begin + shift, static_cast< value_type >(startOffset));
 	} else {
 		const std::size_t upperBound = std::min(m_image.size(), startOffset + static_cast< std::size_t >(-shift) + 1);
 		for (std::size_t i = startOffset; i < upperBound; ++i) {
@@ -148,13 +153,13 @@ void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
 				// We know that there are at least abs(shift) elements to the left of the i-th position
 				// that map to themselves (prerequisite of this function). Thus, we can shift the exchange
 				// by simply moving it abs(shift) elements to the left.
-				m_image.at(i + shift) = m_image.at(i);
+				m_image.at(i - static_cast< std::size_t >(-shift)) = m_image.at(i);
 			}
 		}
 
-		m_image.erase(m_image.begin() + startOffset,
-					  m_image.begin() + startOffset
-						  + std::min(m_image.size() - startOffset, static_cast< std::size_t >(-shift)));
+		m_image.erase(
+			begin,
+			begin + static_cast< ssize_t >(std::min(m_image.size() - startOffset, static_cast< std::size_t >(-shift))));
 	}
 
 	// Handle image points i -> j where j >= startOffset
@@ -163,7 +168,11 @@ void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
 			&& m_image[i] >= static_cast< value_type >(startOffset)) {
 			assert(shift >= 0 || m_image[i] >= static_cast< value_type >(-shift));
 
-			m_image[i] += shift;
+			if (shift >= 0) {
+				m_image[i] += static_cast< value_type >(shift);
+			} else {
+				m_image[i] -= static_cast< value_type >(-shift);
+			}
 		}
 	}
 
