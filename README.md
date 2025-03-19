@@ -10,6 +10,7 @@ unmaintained at this point). Additionally the following literature has been used
 - T. Rehn, "Fundamental Permutation Group Algorithms For Symmetry Computation", Diploma thesis, Otto-von-Guericke University Magdeburg (2010)
 - L. R. U. Manssur et al., "Group-theoretic approach for symbolic tensor manipulation", _Int. J. Mod. Phys. C_, 13, **7**, 859-879 (DOI: 10.1142/S0129183102004571)
 - G. Butler, "Fundamental Algorithms for Permutation Groups", _Springer_, 1st edition, ISBN: 3-540-54955-2
+- W. Myrvoldm F. Ruskey, "Ranking and unranking permutations in linear time", _Inform. Process. Lett._, **79**, 281-284 (DOI: 10.1016/S0020-0190(01)00141-7)
 
 ## Building
 

@@ -19,6 +19,7 @@ if(LIBPERM_TESTS)
 		"TestPermutationInterface.cpp"
 		"TestPermutationGroupInterface.cpp"
 		"TestPrimitivePermutationGroup.cpp"
+		"TestRank.cpp"
 		"TestSpecialGroups.cpp"
 		"TestUtils.cpp"
 	)
