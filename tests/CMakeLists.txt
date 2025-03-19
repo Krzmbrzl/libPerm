@@ -24,6 +24,12 @@ if(LIBPERM_TESTS)
 		"TestUtils.cpp"
 	)
 
+	if (MSVC)
+		# MSVC is buggy and gets confused about some template syntax when using
+		# unity builds for the tests.
+		set_target_properties(libPermTest PROPERTIES UNITY_BUILD OFF)
+	endif()
+
 	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm::libperm)
 
 	target_include_directories(libPermTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
