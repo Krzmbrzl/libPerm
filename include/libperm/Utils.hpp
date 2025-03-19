@@ -230,7 +230,7 @@ Permutation computeCanonicalizationPermutation(Iterator begin, Iterator end, con
 	static_assert(std::is_base_of_v< AbstractPermutationGroup, PermGroup >, "Expected a proper permutation group");
 
 	// The canonicalization logic breaks when there are duplicate elements in the provided range
-	using SetType = std::set< typename std::iterator_traits< Iterator >::value_type, Compare >;
+	using SetType [[maybe_unused]] = std::set< typename std::iterator_traits< Iterator >::value_type, Compare >;
 	assert(static_cast< ssize_t >(SetType(begin, end).size()) == std::distance(begin, end));
 
 	// We require a fix point that serves as an anchor to determine the reference configuration
