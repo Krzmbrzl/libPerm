@@ -6,21 +6,9 @@
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
 #include <libperm/SpecialGroups.hpp>
+#include <libperm/details/Math.hpp>
 
 #include <gtest/gtest.h>
-
-#include <cstdint>
-
-
-std::size_t factorial(unsigned int num) {
-	std::size_t fac = 1;
-
-	for (std::size_t i = 1; i <= num; ++i) {
-		fac *= i;
-	}
-
-	return fac;
-}
 
 
 template< typename G, typename P > struct TypeHolder {
@@ -42,7 +30,7 @@ TYPED_TEST(SpecialGroupsTest, Sym) {
 	for (unsigned int n : { 0, 1, 2, 3, 4, 5, 6 }) {
 		Group group = perm::Sym< Group, Perm >(n);
 
-		ASSERT_EQ(group.order(), factorial(n)) << "Failed for n = " << static_cast< unsigned int >(n);
+		ASSERT_EQ(group.order(), perm::details::factorial(n)) << "Failed for n = " << static_cast< unsigned int >(n);
 	}
 }
 
@@ -79,7 +67,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 	// If all ranges consist of only a single element, then the resulting group only contains the identity element
 	Group expectedGroup;
 	Signs signs = countSigns(expectedGroup);
-	ASSERT_EQ(expectedGroup.order(), factorial(1));
+	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(1));
 	ASSERT_EQ(signs.positive, 1);
 	ASSERT_EQ(signs.negative, 0);
 
@@ -90,7 +78,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 	// Antisymmetry of a range of two elements
 	expectedGroup.setGenerators({ Perm(perm::Cycle({ 0, 1 }), -1) });
 	signs = countSigns(expectedGroup);
-	ASSERT_EQ(expectedGroup.order(), factorial(2));
+	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(2));
 	ASSERT_EQ(signs.positive, signs.negative);
 
 	actualGroup = perm::antisymmetricRanges< Group, Perm >({ { 0, 1 } });
@@ -100,7 +88,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 	// Antisymmetry of a range of three elements
 	expectedGroup.setGenerators({ Perm(perm::Cycle({ 0, 1 }), -1), Perm(perm::Cycle({ 0, 2 }), -1) });
 	signs = countSigns(expectedGroup);
-	ASSERT_EQ(expectedGroup.order(), factorial(3));
+	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(3));
 	ASSERT_EQ(signs.positive, signs.negative);
 
 	actualGroup = perm::antisymmetricRanges< Group, Perm >({ { 0, 2 } });
@@ -111,7 +99,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 	expectedGroup.setGenerators(
 		{ Perm(perm::Cycle({ 1, 2 }), -1), Perm(perm::Cycle({ 1, 3 }), -1), Perm(perm::Cycle({ 5, 6 }), -1) });
 	signs = countSigns(expectedGroup);
-	ASSERT_EQ(expectedGroup.order(), factorial(3) * factorial(2));
+	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(3) * perm::details::factorial(2));
 	ASSERT_EQ(signs.positive, signs.negative);
 
 	actualGroup = perm::antisymmetricRanges< Group, Perm >({ { 1, 3 }, { 5, 6 } });

@@ -13,4 +13,5 @@ target_sources(libperm
 		"PrimitivePermutationGroup.cpp"
 
 		"details/SignedPermutation.cpp"
+		"details/Math.cpp"
 )

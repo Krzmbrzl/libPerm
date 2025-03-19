@@ -7,6 +7,7 @@
 #include <libperm/DiminoAlgorithm.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Permutation.hpp>
+#include <libperm/details/Math.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -14,14 +15,6 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
-
-constexpr std::size_t faculty(std::size_t i) {
-	if (i == 0) {
-		return 1;
-	} else {
-		return i * faculty(i - 1);
-	}
-}
 
 void print(const std::vector< perm::Permutation > &perms) {
 	std::cout << "{\n";
@@ -176,7 +169,7 @@ TEST(DiminoAlgorithm, generateGroupOrder) {
 
 	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
 
-	ASSERT_EQ(elements.size(), faculty(6));
+	ASSERT_EQ(elements.size(), perm::details::factorial(6));
 
 
 
