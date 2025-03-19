@@ -22,7 +22,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	googletest
 	GIT_REPOSITORY https://github.com/google/googletest
-	GIT_TAG        release-1.12.1
+	GIT_TAG        v1.16.0
 	GIT_SHALLOW    true
 )
 
