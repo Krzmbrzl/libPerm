@@ -46,4 +46,5 @@ get_compiler_flags(
 	OUTPUT_VARIABLE COMPILER_FLAGS
 )
 
-add_compile_options(${COMPILER_FLAGS})
+add_library(libperm_compiler_flags INTERFACE)
+target_compile_options(libperm_compiler_flags INTERFACE $<BUILD_INTERFACE:${COMPILER_FLAGS}>)
