@@ -19,7 +19,7 @@ jobs:
                   fetch-depth: 1
 
             - name: Get CMake
-              uses: lukka/get-cmake@v3.20.1
+              uses: lukka/get-cmake@v3.23.0
 
             - name: Setup MSVC
               if: ${{ contains(matrix.os, 'windows') }}
