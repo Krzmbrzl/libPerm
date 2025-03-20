@@ -10,7 +10,12 @@ check_ipo_supported(RESULT LTO_DEFAULT)
 
 
 option(LIBPERM_LTO "Whether to use link-time optimizations (if available)" ${LTO_DEFAULT})
-option(LIBPERM_DISABLE_WARNINGS "Whether to disable compiler warnings" OFF)
+if (PROJECT_IS_TOP_LEVEL)
+	set(DEFAULT_DISABLE_WARNINGS OFF)
+else()
+	set(DEFAULT_DISABLE_WARNINGS ON)
+endif()
+option(LIBPERM_DISABLE_WARNINGS "Whether to disable compiler warnings" ${DEFAULT_DISABLE_WARNINGS})
 option(LIBPERM_WARNINGS_AS_ERRORS "Whether to disable compiler warnings" OFF)
 
 

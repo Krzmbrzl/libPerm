@@ -3,7 +3,7 @@
 # LICENSE file at the root of the libPerm source tree or at
 # <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-option(LIBPERM_EXAMPLES "Whether to build the examples" OFF)
+option(LIBPERM_EXAMPLES "Whether to build the examples" ${PROJECT_IS_TOP_LEVEL})
 
 if (NOT LIBPERM_EXAMPLES)
 	return()

@@ -4,7 +4,7 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 
-#include "AbstractPermutation.hpp"
+#include "libperm/AbstractPermutation.hpp"
 
 #include <sstream>
 

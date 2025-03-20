@@ -3,7 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-#include "Cycle.hpp"
+#include "libperm/Cycle.hpp"
 
 #include <algorithm>
 #include <cassert>
