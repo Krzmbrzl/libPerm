@@ -10,6 +10,7 @@ FetchContent_Declare(
 	GIT_REPOSITORY https://github.com/Krzmbrzl/cmake-compiler-flags.git
 	GIT_TAG        v2.0.0
 	GIT_SHALLOW    true
+	EXCLUDE_FROM_ALL
 )
 
 FetchContent_Declare(
@@ -17,6 +18,7 @@ FetchContent_Declare(
 	GIT_REPOSITORY https://github.com/Krzmbrzl/polymorphic_variant.git
 	GIT_TAG        v1.3.0
 	GIT_SHALLOW    true
+	EXCLUDE_FROM_ALL
 )
 
 FetchContent_Declare(
@@ -24,6 +26,7 @@ FetchContent_Declare(
 	GIT_REPOSITORY https://github.com/google/googletest
 	GIT_TAG        v1.16.0
 	GIT_SHALLOW    true
+	EXCLUDE_FROM_ALL
 )
 
 message(STATUS "Fetching and building dependencies...")
