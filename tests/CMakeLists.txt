@@ -34,5 +34,5 @@ if(LIBPERM_TESTS)
 
 	target_include_directories(libPermTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
-	gtest_discover_tests(libPermTest)
+	gtest_discover_tests(libPermTest TEST_PREFIX "libPerm/")
 endif()
