@@ -10,7 +10,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The type of build to produce")
 
 
 project(libperm,
-	VERSION "1.8.0"
+	VERSION "1.9.0"
 	LANGUAGES "CXX"
 )
 
