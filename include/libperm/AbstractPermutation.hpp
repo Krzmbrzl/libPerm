@@ -77,12 +77,6 @@ public:
 	 */
 	virtual bool isIdentity() const;
 
-	/**
-	 * @see postMultiply
-	 */
-	[[deprecated("Prefer using the more explicit postMultiply function")]] void
-		multiply(const AbstractPermutation &other);
-
 	/*
 	 * Inverts this permutation in-place
 	 */

@@ -115,12 +115,6 @@ public:
 	virtual Permutation rightCosetRepresentative(const AbstractPermutation &perm) const = 0;
 
 	/**
-	 * @see rightCosetRepresentative
-	 */
-	[[deprecated("Prefer using rightCosetRepresentative")]] Permutation
-		getCanonicalCosetRepresentative(const AbstractPermutation &perm = ExplicitPermutation()) const;
-
-	/**
 	 * @returns Whether the two given groups are equal
 	 */
 	friend bool operator==(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);

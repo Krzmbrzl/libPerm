@@ -14,15 +14,6 @@
 namespace perm {
 
 class ExplicitPermutation : public details::SignedPermutation {
-public:
-	/**
-	 * Construct an ExplicitPermutation object off the given (disjoint) cycle notation.
-	 *
-	 * @param cycle The Cycle to construct this perm from
-	 * @param sign The sign associated with the to-be-constructed perm
-	 */
-	[[deprecated("Prefer using the corresponding constructor directly")]] static ExplicitPermutation
-		fromCycle(const Cycle &cycle, int sign = 1);
 
 	explicit ExplicitPermutation(int sign = 1);
 	explicit ExplicitPermutation(std::vector< value_type > image, int sign = 1);
