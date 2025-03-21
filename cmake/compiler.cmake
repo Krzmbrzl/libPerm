@@ -19,9 +19,9 @@ option(LIBPERM_DISABLE_WARNINGS "Whether to disable compiler warnings" ${DEFAULT
 option(LIBPERM_WARNINGS_AS_ERRORS "Whether to disable compiler warnings" OFF)
 
 
-# Use cpp17 and error if that is not available
-if (NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 17)
-	set(CMAKE_CXX_STANDARD 17)
+# Use cpp20 and error if that is not available
+if (NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 20)
+	set(CMAKE_CXX_STANDARD 20)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

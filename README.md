@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml/badge.svg)](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml)
 
-A C++17 library for representing and handling of permutation groups.
+A C++20 library for representing and handling of permutation groups.
 
 This library has been heavily inspired by https://github.com/tremlin/PermLib (which seems to aim at solving essentially the same problem but targeting
 an older C++ standard and additionally uses a different philosophy on how and where to use dynamic memory allocations. Plus the project seems to be
@@ -16,7 +16,7 @@ unmaintained at this point). Additionally the following literature has been used
 
 ### Requirements
 
-- An ISO C++17 conform compiler and standard library implementation
+- An ISO C++20 conform compiler and standard library implementation
 - [cmake](https://cmake.org/) v3.23 or more recent
 
 All other dependencies will be fetched automatically while running cmake (requires an active internet connection). These dependencies are
