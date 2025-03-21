@@ -3,6 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 
 #include <gtest/gtest.h>
@@ -12,11 +13,11 @@
 TEST(ExplicitPermutation, construction) {
 	perm::ExplicitPermutation perm;
 
-	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::value_type >(0));
+	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::image_type >(0));
 	ASSERT_TRUE(perm.isIdentity());
 	ASSERT_EQ(perm.sign(), 1);
 
-	perm = perm::ExplicitPermutation(std::vector< perm::ExplicitPermutation::value_type >{});
+	perm = perm::ExplicitPermutation(std::vector< perm::ExplicitPermutation::image_type >{});
 	ASSERT_TRUE(perm.isIdentity());
 	ASSERT_EQ(perm.sign(), 1);
 
@@ -26,11 +27,11 @@ TEST(ExplicitPermutation, construction) {
 
 	perm = perm::ExplicitPermutation({ 1, 2, 0 });
 
-	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::value_type >(2));
-	std::vector< perm::AbstractPermutation::value_type > expectedImage = { 1, 2, 0 };
+	ASSERT_EQ(perm.maxElement(), static_cast< perm::AbstractPermutation::image_type >(2));
+	std::vector< perm::AbstractPermutation::image_type > expectedImage = { 1, 2, 0 };
 	ASSERT_EQ(perm.image(), expectedImage);
 
-	perm          = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }));
+	perm          = perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 }));
 	expectedImage = { 1, 2, 3, 0 };
 	ASSERT_EQ(perm.image(), expectedImage);
 }
@@ -48,50 +49,50 @@ TEST(ExplicitPermutation, equality) {
 
 TEST(ExplicitPermutation, preMultiply) {
 	perm::ExplicitPermutation id;
-	perm::ExplicitPermutation p1 = perm::ExplicitPermutation(perm::Cycle({ 1, 2, 3 }));
-	perm::ExplicitPermutation p2 = perm::ExplicitPermutation(perm::Cycle({ 3, 4, 1 }));
+	perm::ExplicitPermutation p1 = perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2, 3 }));
+	perm::ExplicitPermutation p2 = perm::ExplicitPermutation(perm::DisjointCycles({ 3, 4, 1 }));
 
 	auto copy = p1;
 	copy.preMultiply(id);
 	ASSERT_EQ(copy, p1);
 
 	p1.preMultiply(p2);
-	ASSERT_EQ(p1, perm::ExplicitPermutation(perm::Cycle({ 2, 3, 4 })));
+	ASSERT_EQ(p1, perm::ExplicitPermutation(perm::DisjointCycles({ 2, 3, 4 })));
 
 	// Multiplication with self
 	p2.preMultiply(p2);
-	ASSERT_EQ(p2, perm::ExplicitPermutation(perm::Cycle({ 1, 4, 3 })));
+	ASSERT_EQ(p2, perm::ExplicitPermutation(perm::DisjointCycles({ 1, 4, 3 })));
 }
 
 TEST(ExplicitPermutation, postMultiply) {
 	perm::ExplicitPermutation id;
-	perm::ExplicitPermutation p1 = perm::ExplicitPermutation(perm::Cycle({ 1, 2, 3 }));
-	perm::ExplicitPermutation p2 = perm::ExplicitPermutation(perm::Cycle({ 3, 4, 1 }));
+	perm::ExplicitPermutation p1 = perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2, 3 }));
+	perm::ExplicitPermutation p2 = perm::ExplicitPermutation(perm::DisjointCycles({ 3, 4, 1 }));
 
 	auto copy = p1;
 	copy.postMultiply(id);
 	ASSERT_EQ(copy, p1);
 
 	p1.postMultiply(p2);
-	ASSERT_EQ(p1, perm::ExplicitPermutation(perm::Cycle({ 1, 2, 4 })));
+	ASSERT_EQ(p1, perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2, 4 })));
 
 	// Multiplication with self
 	p2.postMultiply(p2);
-	ASSERT_EQ(p2, perm::ExplicitPermutation(perm::Cycle({ 1, 4, 3 })));
+	ASSERT_EQ(p2, perm::ExplicitPermutation(perm::DisjointCycles({ 1, 4, 3 })));
 }
 
 TEST(ExplicitPermutation, binary_multiply_operator) {
 	const perm::ExplicitPermutation id;
 	const perm::ExplicitPermutation p1({ 2, 0, 1, 3 });
 	const perm::ExplicitPermutation p2({ 0, 1, 3, 2 });
-	const perm::ExplicitPermutation p3 = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }));
-	const perm::ExplicitPermutation p4 = perm::ExplicitPermutation(perm::Cycle({ 0, 1 }));
+	const perm::ExplicitPermutation p3 = perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 }));
+	const perm::ExplicitPermutation p4 = perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 }));
 
 	const perm::AbstractPermutation &p1Abstract = p1;
 	const perm::AbstractPermutation &p2Abstract = p2;
 
 	const perm::ExplicitPermutation r1({ 3, 0, 1, 2 });
-	const perm::ExplicitPermutation r2 = perm::ExplicitPermutation(perm::Cycle({ 1, 2, 3 }));
+	const perm::ExplicitPermutation r2 = perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2, 3 }));
 
 	ASSERT_NE(id, p1);
 	ASSERT_NE(p1, p2);
@@ -111,7 +112,7 @@ TEST(ExplicitPermutation, binary_multiply_operator) {
 	ASSERT_EQ(p1Abstract * p2, r1);
 }
 
-struct MultiplicationTest : ::testing::TestWithParam< std::tuple< perm::Cycle, perm::Cycle > > {};
+struct MultiplicationTest : ::testing::TestWithParam< std::tuple< perm::DisjointCycles, perm::DisjointCycles > > {};
 
 TEST_P(MultiplicationTest, consistency) {
 	const perm::ExplicitPermutation p1 = perm::ExplicitPermutation(std::get< 0 >(GetParam()));
@@ -153,15 +154,16 @@ TEST_P(MultiplicationTest, consistency) {
 
 INSTANTIATE_TEST_SUITE_P(
 	ExplicitPermutation, MultiplicationTest,
-	::testing::Combine(::testing::Values(perm::Cycle({ 0, 1 }), perm::Cycle({ { 2, 4 }, { 0, 3 } }),
-										 perm::Cycle({ 0, 2, 3, 5 }), perm::Cycle({ { 0, 1 }, { 2, 3 }, { 4, 5, 6 } })),
-					   ::testing::Values(perm::Cycle(), perm::Cycle({ { 0, 5, 3 }, { 1, 2, 4 } }),
-										 perm::Cycle({ 0, 1, 2, 3, 4, 5, 6 }),
-										 perm::Cycle({ { 2, 1 }, { 0, 5, 3, 4 } }))));
+	::testing::Combine(::testing::Values(perm::DisjointCycles({ 0, 1 }), perm::DisjointCycles({ { 2, 4 }, { 0, 3 } }),
+										 perm::DisjointCycles({ 0, 2, 3, 5 }),
+										 perm::DisjointCycles({ { 0, 1 }, { 2, 3 }, { 4, 5, 6 } })),
+					   ::testing::Values(perm::DisjointCycles(), perm::DisjointCycles({ { 0, 5, 3 }, { 1, 2, 4 } }),
+										 perm::DisjointCycles({ 0, 1, 2, 3, 4, 5, 6 }),
+										 perm::DisjointCycles({ { 2, 1 }, { 0, 5, 3, 4 } }))));
 
 
-struct InvertTest : ::testing::TestWithParam< std::tuple< perm::Cycle, perm::Cycle > > {
-	using ParamPack = std::tuple< perm::Cycle, perm::Cycle >;
+struct InvertTest : ::testing::TestWithParam< std::tuple< perm::DisjointCycles, perm::DisjointCycles > > {
+	using ParamPack = std::tuple< perm::DisjointCycles, perm::DisjointCycles >;
 };
 
 TEST_P(InvertTest, invert) {
@@ -197,10 +199,11 @@ TEST_P(InvertTest, invert) {
 	ASSERT_EQ(original * perm, identity);
 }
 
-INSTANTIATE_TEST_SUITE_P(ExplicitPermutation, InvertTest,
-						 ::testing::Values(InvertTest::ParamPack(perm::Cycle({ 0, 1 }), perm::Cycle({ 0, 1 })),
-										   InvertTest::ParamPack(perm::Cycle({ 0, 1, 2 }), perm::Cycle({ 0, 2, 1 })),
-										   InvertTest::ParamPack(perm::Cycle({ { 0, 1, 2 }, { 3, 4 } }),
-																 perm::Cycle({ { 0, 2, 1 }, { 3, 4 } })),
-										   InvertTest::ParamPack(perm::Cycle({ { 1, 3, 4 }, { 7, 8, 2, 5 } }),
-																 perm::Cycle({ { 1, 4, 3 }, { 2, 8, 7, 5 } }))));
+INSTANTIATE_TEST_SUITE_P(
+	ExplicitPermutation, InvertTest,
+	::testing::Values(InvertTest::ParamPack(perm::DisjointCycles({ 0, 1 }), perm::DisjointCycles({ 0, 1 })),
+					  InvertTest::ParamPack(perm::DisjointCycles({ 0, 1, 2 }), perm::DisjointCycles({ 0, 2, 1 })),
+					  InvertTest::ParamPack(perm::DisjointCycles({ { 0, 1, 2 }, { 3, 4 } }),
+											perm::DisjointCycles({ { 0, 2, 1 }, { 3, 4 } })),
+					  InvertTest::ParamPack(perm::DisjointCycles({ { 1, 3, 4 }, { 7, 8, 2, 5 } }),
+											perm::DisjointCycles({ { 1, 4, 3 }, { 2, 8, 7, 5 } }))));

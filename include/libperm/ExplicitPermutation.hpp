@@ -6,32 +6,37 @@
 #ifndef LIBPERM_EXPLICITPERMUTATION_HPP_
 #define LIBPERM_EXPLICITPERMUTATION_HPP_
 
-#include "libperm/Cycle.hpp"
+#include "libperm/DisjointCycles.hpp"
 #include "libperm/details/SignedPermutation.hpp"
 
+#include <initializer_list>
 #include <vector>
 
 namespace perm {
 
 class ExplicitPermutation : public details::SignedPermutation {
+private:
+	using container_type = std::vector< image_type >;
 
+public:
 	explicit ExplicitPermutation(int sign = 1);
-	explicit ExplicitPermutation(std::vector< value_type > image, int sign = 1);
-	ExplicitPermutation(const Cycle &cycle, int sign = 1);
+	explicit ExplicitPermutation(std::initializer_list< image_type > image, int sign = 1);
+	explicit ExplicitPermutation(std::vector< image_type > image, int sign = 1);
+	ExplicitPermutation(const DisjointCycles &cycles, int sign = 1);
 	ExplicitPermutation(const ExplicitPermutation &other) = default;
 	ExplicitPermutation(ExplicitPermutation &&other)      = default;
 	~ExplicitPermutation();
 	ExplicitPermutation &operator=(const ExplicitPermutation &other) = default;
 
-	value_type maxElement() const override;
+	image_type maxElement() const override;
 
-	value_type image(value_type value) const override;
+	image_type image(image_type value) const override;
 
 	/**
 	 * @returns The image of the set 0..n under this permutation where n is the largest number that this permutation
 	 * actually permutes.
 	 */
-	const std::vector< value_type > &image() const;
+	const std::vector< image_type > &image() const;
 
 	void invert() override;
 
@@ -39,7 +44,7 @@ class ExplicitPermutation : public details::SignedPermutation {
 
 	void postMultiply(const AbstractPermutation &other) override;
 
-	Cycle toCycle() const override;
+	DisjointCycles toDisjointCycles(bool keep1cycles = true) const override;
 
 	void shift(int shift, std::size_t startIndex = 0) override;
 
@@ -50,7 +55,7 @@ class ExplicitPermutation : public details::SignedPermutation {
 	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);
 
 protected:
-	std::vector< value_type > m_image;
+	std::vector< image_type > m_image;
 
 	/**
 	 * Multiplies this perm by itself

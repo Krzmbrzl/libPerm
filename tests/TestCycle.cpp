@@ -5,72 +5,67 @@
 
 #include <libperm/Cycle.hpp>
 
+#include <compare>
+#include <tuple>
+
 #include <gtest/gtest.h>
 
 TEST(Cycle, construction) {
 	perm::Cycle c1;
-	// (1,2)
-	perm::Cycle c2({ 0, 1 });
-	// (1,2)(3,4)
-	perm::Cycle c3({ { 0, 1 }, { 2, 3 } });
+	ASSERT_EQ(c1.size(), 1);
 
-	ASSERT_EQ(c1.begin(), c1.end());
-	ASSERT_EQ(*c2.begin(), *c3.begin());
+	perm::Cycle c2({ 4 });
+	ASSERT_EQ(c2.size(), 1);
+	ASSERT_EQ(c2[0], 4);
+
+	perm::Cycle c3({ 1, 2, 3 });
+	ASSERT_EQ(c3.size(), 3);
 }
 
-TEST(Cycle, toImage) {
-	// This simply represents the identity ()
-	perm::Cycle c1;
-	perm::Cycle c2({ 0, 1 });
-	perm::Cycle c3({ 2, 1, 3 });
-	perm::Cycle c4({ { 0, 1 }, { 2, 3 } });
-	// This is a quirky (read: non-disjoint) way of writing down (1,2,3)
-	perm::Cycle c5({ { 0, 1 }, { 1, 2 } });
+TEST(Cycle, canonicalOrder) {
+	perm::Cycle c1({ 1, 2, 3 });
+	ASSERT_EQ(c1.at(0), 3);
+	ASSERT_EQ(c1.at(1), 1);
+	ASSERT_EQ(c1.at(2), 2);
 
-	std::vector< unsigned int > expectedImage = { 0 };
-	ASSERT_EQ(c1.toImage< unsigned int >(), expectedImage);
+	perm::Cycle c2({ 4, 3, 5, 1 });
+	ASSERT_EQ(c2.at(0), 5);
+	ASSERT_EQ(c2.at(1), 1);
+	ASSERT_EQ(c2.at(2), 4);
+	ASSERT_EQ(c2.at(3), 3);
 
-	expectedImage = { 1, 0 };
-	ASSERT_EQ(c2.toImage< unsigned int >(), expectedImage);
-
-	expectedImage = { 0, 3, 1, 2 };
-	ASSERT_EQ(c3.toImage< unsigned int >(), expectedImage);
-
-	expectedImage = { 1, 0, 3, 2 };
-	ASSERT_EQ(c4.toImage< unsigned int >(), expectedImage);
-
-	expectedImage = { 1, 2, 0 };
-	ASSERT_EQ(c5.toImage< unsigned int >(), expectedImage);
+	perm::Cycle c3({ 3, 2 });
+	ASSERT_EQ(c3.at(0), 3);
+	ASSERT_EQ(c3.at(1), 2);
 }
 
-TEST(Cycle, equality) {
-	ASSERT_EQ(perm::Cycle(), perm::Cycle());
+struct CycleTest : ::testing::TestWithParam< std::tuple< perm::Cycle, perm::Cycle, std::strong_ordering > > {
+	using ParamPack = std::tuple< perm::Cycle, perm::Cycle, std::strong_ordering >;
+};
 
-	perm::Cycle c1({ 0, 1 });
-	perm::Cycle c2({ 1, 0 });
-	ASSERT_EQ(c1, c2);
+TEST_P(CycleTest, comparison) {
+	const auto [lhs, rhs, expectedOrder] = GetParam();
 
-	c1 = perm::Cycle({ { 0, 1 }, { 1, 2 } });
-	c2 = perm::Cycle({ 0, 1, 2 });
-	ASSERT_EQ(c1, c2);
+	ASSERT_EQ(lhs <=> rhs, expectedOrder);
+
+	if (expectedOrder == std::strong_ordering::equal) {
+		ASSERT_EQ(lhs, rhs);
+		ASSERT_EQ(rhs, lhs);
+		ASSERT_LE(lhs, rhs);
+		ASSERT_LE(rhs, lhs);
+		ASSERT_GE(lhs, rhs);
+		ASSERT_GE(rhs, lhs);
+	} else if (expectedOrder == std::strong_ordering::greater) {
+		ASSERT_GT(lhs, rhs);
+		ASSERT_LT(rhs, lhs);
+	} else if (expectedOrder == std::strong_ordering::less) {
+		ASSERT_LT(lhs, rhs);
+		ASSERT_GT(rhs, lhs);
+	}
 }
 
-TEST(Cycle, fromImage) {
-	std::vector< perm::Cycle::value_type > image = {};
-	perm::Cycle expected;
-	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
-
-	image = { 0, 1 };
-	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
-
-	image    = { 1, 0 };
-	expected = perm::Cycle({ 0, 1 });
-	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
-
-	image = { 1, 0, 2 };
-	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
-
-	image    = { 1, 2, 0 };
-	expected = perm::Cycle({ 0, 1, 2 });
-	ASSERT_EQ(perm::Cycle::fromImage(image), expected);
-}
+INSTANTIATE_TEST_SUITE_P(Cycle, CycleTest,
+						 ::testing::Values(CycleTest::ParamPack({ 0, 1 }, { 1, 0 }, std::strong_ordering::equal),
+										   CycleTest::ParamPack({ 0, 1, 2 }, { 2, 1, 0 }, std::strong_ordering::less),
+										   CycleTest::ParamPack({ 3, 0, 2, 1 }, { 0, 1, 2, 3 },
+																std::strong_ordering::greater)));

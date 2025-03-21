@@ -7,86 +7,67 @@
 
 #include <algorithm>
 #include <cassert>
+#include <ostream>
+#include <utility>
 
 namespace perm {
 
-Cycle::Cycle(std::vector< Cycle::value_type > cycle) {
-	m_cycles.push_back(std::move(cycle));
-}
-
-Cycle::Cycle(std::vector< std::vector< Cycle::value_type > > cycles) : m_cycles(std::move(cycles)) {
+Cycle::Cycle() : m_cycle(1, 0) {
 }
 
 Cycle::iterator Cycle::begin() {
-	return m_cycles.begin();
+	return m_cycle.begin();
 }
-
 Cycle::iterator Cycle::end() {
-	return m_cycles.end();
+	return m_cycle.end();
 }
-
 Cycle::const_iterator Cycle::begin() const {
-	return m_cycles.begin();
+	return m_cycle.begin();
 }
-
 Cycle::const_iterator Cycle::end() const {
-	return m_cycles.end();
+	return m_cycle.end();
 }
-
 Cycle::const_iterator Cycle::cbegin() const {
-	return m_cycles.cbegin();
+	return m_cycle.cbegin();
 }
-
 Cycle::const_iterator Cycle::cend() const {
-	return m_cycles.cend();
+	return m_cycle.cend();
 }
 
-bool operator==(const Cycle &lhs, const Cycle &rhs) {
-	return lhs.maxElement() == rhs.maxElement() && lhs.toImage< unsigned int >() == rhs.toImage< unsigned int >();
+std::size_t Cycle::size() const {
+	return m_cycle.size();
 }
 
-bool operator!=(const Cycle &lhs, const Cycle &rhs) {
-	return !(lhs == rhs);
+Cycle::image_type Cycle::at(std::size_t pos) const {
+	return m_cycle.at(pos);
+}
+
+Cycle::image_type Cycle::operator[](std::size_t pos) const {
+	assert(pos < m_cycle.size());
+	return m_cycle[pos];
 }
 
 std::ostream &operator<<(std::ostream &stream, const Cycle &cycle) {
-	bool isIdentity = true;
-	for (const std::vector< Cycle::value_type > &currentCycle : cycle.m_cycles) {
-		if (currentCycle.size() == 1) {
-			continue;
-		}
+	stream << "{";
+	for (std::size_t i = 0; i < cycle.size(); ++i) {
+		stream << cycle[i];
 
-		isIdentity = false;
-
-		stream << "( ";
-		for (Cycle::value_type currentValue : currentCycle) {
-			stream << currentValue << " ";
+		if (i + 1 < cycle.size()) {
+			stream << ", ";
 		}
-		stream << ")";
 	}
 
-	if (isIdentity) {
-		stream << "()";
-	}
-
-	return stream;
+	return stream << "}";
 }
 
-Cycle::value_type Cycle::maxElement() const {
-	Cycle::value_type max = 0;
-
-	for (const std::vector< Cycle::value_type > &currentCycle : m_cycles) {
-		auto maxElement = std::max_element(currentCycle.begin(), currentCycle.end());
-
-		if (maxElement == currentCycle.end()) {
-			continue;
-		}
-
-		max = std::max(max, *maxElement);
+void Cycle::ensureCanonicalOrder() {
+	auto it = std::max_element(m_cycle.begin(), m_cycle.end());
+	if (it == m_cycle.end() || it == m_cycle.begin()) {
+		return;
 	}
 
-	return max;
+	// Make sure the cycle starts with the biggest element
+	std::rotate(m_cycle.begin(), it, m_cycle.end());
 }
-
 
 } // namespace perm

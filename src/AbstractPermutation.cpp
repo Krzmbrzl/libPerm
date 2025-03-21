@@ -10,7 +10,7 @@
 
 namespace perm {
 
-AbstractPermutation::value_type AbstractPermutation::operator[](value_type value) const {
+AbstractPermutation::image_type AbstractPermutation::operator[](image_type value) const {
 	return image(value);
 }
 
@@ -39,9 +39,9 @@ bool AbstractPermutation::isIdentity() const {
 		return false;
 	}
 
-	value_type n = maxElement();
+	image_type n = maxElement();
 	// Check whether every point i in the set 0..n-1 is mapped to itself
-	for (value_type i = 0; i < n; ++i) {
+	for (image_type i = 0; i < n; ++i) {
 		if (image(i) != i) {
 			return false;
 		}
@@ -50,16 +50,12 @@ bool AbstractPermutation::isIdentity() const {
 	return true;
 }
 
-void AbstractPermutation::multiply(const AbstractPermutation &other) {
-	postMultiply(other);
-}
-
 bool AbstractPermutation::equals(const AbstractPermutation &other) const {
 	if (sign() != other.sign() || maxElement() != other.maxElement()) {
 		return false;
 	}
 
-	for (value_type i = 0; i < maxElement(); ++i) {
+	for (image_type i = 0; i < maxElement(); ++i) {
 		if (image(i) != other.image(i)) {
 			return false;
 		}

@@ -12,8 +12,8 @@
 #include <utility>
 
 struct RankTest
-	: ::testing::TestWithParam< std::pair< std::size_t, std::vector< perm::ExplicitPermutation::value_type > > > {
-	using ParamPack = std::pair< std::size_t, std::vector< perm::ExplicitPermutation::value_type > >;
+	: ::testing::TestWithParam< std::pair< std::size_t, std::vector< perm::ExplicitPermutation::image_type > > > {
+	using ParamPack = std::pair< std::size_t, std::vector< perm::ExplicitPermutation::image_type > >;
 };
 
 TEST_P(RankTest, rank) {

@@ -3,7 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-#include <libperm/Cycle.hpp>
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Permutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
@@ -18,17 +18,17 @@ TEST(PrimitivePermutationGroup, construction) {
 	// The identity element is always contained in a group
 	ASSERT_EQ(group.order(), 1);
 
-	group = perm::PrimitivePermutationGroup({ perm::ExplicitPermutation(perm::Cycle({ 0, 1 })) });
+	group = perm::PrimitivePermutationGroup({ perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })) });
 
 	ASSERT_EQ(group.order(), 2);
 
-	std::vector< perm::ExplicitPermutation > generators = { perm::Cycle({ 0, 1 }) };
+	std::vector< perm::ExplicitPermutation > generators = { perm::DisjointCycles({ 0, 1 }) };
 
 	perm::PrimitivePermutationGroup group2(generators.begin(), generators.end());
 
 	ASSERT_EQ(group, group2);
 
-	perm::PrimitivePermutationGroup group3({ perm::ExplicitPermutation(perm::Cycle({ 0, 1 })) });
+	perm::PrimitivePermutationGroup group3({ perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })) });
 
 	ASSERT_EQ(group, group3);
 }

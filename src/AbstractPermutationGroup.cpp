@@ -7,10 +7,6 @@
 
 namespace perm {
 
-Permutation AbstractPermutationGroup::getCanonicalCosetRepresentative(const AbstractPermutation &perm) const {
-	return rightCosetRepresentative(perm);
-}
-
 bool operator==(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs) {
 	if (lhs.order() != rhs.order()) {
 		return false;

@@ -14,6 +14,7 @@ if(LIBPERM_TESTS)
 
 	add_executable(libPermTest
 		"TestCycle.cpp"
+		"TestDisjointCycles.cpp"
 		"TestDiminoAlgorithm.cpp"
 		"TestExplicitPermutation.cpp"
 		"TestPermutationInterface.cpp"

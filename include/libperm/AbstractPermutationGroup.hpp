@@ -34,7 +34,7 @@ public:
 	 * @param point The point to calculate the orbit of
 	 * @returns The computed orbit
 	 */
-	virtual std::vector< AbstractPermutation::value_type > orbit(AbstractPermutation::value_type point) const = 0;
+	virtual std::vector< AbstractPermutation::image_type > orbit(AbstractPermutation::image_type point) const = 0;
 
 	/**
 	 * @returns The order of this group (the amount of elements in it)

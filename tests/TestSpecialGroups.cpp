@@ -3,6 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
 #include <libperm/SpecialGroups.hpp>
@@ -76,7 +77,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 
 
 	// Antisymmetry of a range of two elements
-	expectedGroup.setGenerators({ Perm(perm::Cycle({ 0, 1 }), -1) });
+	expectedGroup.setGenerators({ Perm(perm::DisjointCycles({ 0, 1 }), -1) });
 	signs = countSigns(expectedGroup);
 	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(2));
 	ASSERT_EQ(signs.positive, signs.negative);
@@ -86,7 +87,7 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 
 
 	// Antisymmetry of a range of three elements
-	expectedGroup.setGenerators({ Perm(perm::Cycle({ 0, 1 }), -1), Perm(perm::Cycle({ 0, 2 }), -1) });
+	expectedGroup.setGenerators({ Perm(perm::DisjointCycles({ 0, 1 }), -1), Perm(perm::DisjointCycles({ 0, 2 }), -1) });
 	signs = countSigns(expectedGroup);
 	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(3));
 	ASSERT_EQ(signs.positive, signs.negative);
@@ -96,8 +97,8 @@ TYPED_TEST(SpecialGroupsTest, antisymmetricRanges) {
 
 
 	// Antisymmetry of two disjoint ranges of three and two elements respectively
-	expectedGroup.setGenerators(
-		{ Perm(perm::Cycle({ 1, 2 }), -1), Perm(perm::Cycle({ 1, 3 }), -1), Perm(perm::Cycle({ 5, 6 }), -1) });
+	expectedGroup.setGenerators({ Perm(perm::DisjointCycles({ 1, 2 }), -1), Perm(perm::DisjointCycles({ 1, 3 }), -1),
+								  Perm(perm::DisjointCycles({ 5, 6 }), -1) });
 	signs = countSigns(expectedGroup);
 	ASSERT_EQ(expectedGroup.order(), perm::details::factorial(3) * perm::details::factorial(2));
 	ASSERT_EQ(signs.positive, signs.negative);

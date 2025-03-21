@@ -4,7 +4,7 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 #include "libperm/AbstractPermutation.hpp"
-#include "libperm/Cycle.hpp"
+#include "libperm/DisjointCycles.hpp"
 #include "libperm/ExplicitPermutation.hpp"
 #include "libperm/PrimitivePermutationGroup.hpp"
 #include "libperm/Utils.hpp"
@@ -20,10 +20,10 @@
 #include <unordered_set>
 #include <vector>
 
-perm::PrimitivePermutationGroup asGroup(const std::vector< perm::Cycle > &generators) {
+perm::PrimitivePermutationGroup asGroup(const std::vector< perm::DisjointCycles > &generators) {
 	perm::PrimitivePermutationGroup group;
 
-	for (const perm::Cycle &currentCycle : generators) {
+	for (const perm::DisjointCycles &currentCycle : generators) {
 		group.addGenerator(perm::ExplicitPermutation(currentCycle));
 	}
 
@@ -37,13 +37,13 @@ TEST(Utils, applyPermutation) {
 
 	// Turn into question
 	auto sequence = mainSequence;
-	perm::applyPermutation(sequence, perm::ExplicitPermutation(perm::Cycle({ 0, 1 })));
+	perm::applyPermutation(sequence, perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })));
 	decltype(sequence) expectedSequence = { "am", "I", "a", "sentence" };
 	ASSERT_EQ(sequence, expectedSequence);
 
 	// Gibberish
 	sequence                       = mainSequence;
-	perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::Cycle({ 3, 1, 2 }));
+	perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::DisjointCycles({ 3, 1, 2 }));
 	perm::applyPermutation(sequence, perm);
 	expectedSequence = { "I", "a", "sentence", "am" };
 	ASSERT_EQ(sequence, expectedSequence);
@@ -61,7 +61,7 @@ TEST(Utils, applyPermutation) {
 	ASSERT_EQ(sequence, expectedSequence);
 
 	// Yoda question
-	perm::ExplicitPermutation yodaQuestionTransformer = perm::ExplicitPermutation(perm::Cycle({ 2, 3 }));
+	perm::ExplicitPermutation yodaQuestionTransformer = perm::ExplicitPermutation(perm::DisjointCycles({ 2, 3 }));
 	perm::applyPermutation(sequence, yodaQuestionTransformer);
 	expectedSequence = { "a", "sentence", "am", "I" };
 	ASSERT_EQ(sequence, expectedSequence);
@@ -84,28 +84,28 @@ TEST(Utils, applyPermutation) {
 
 TEST(Utils, applyPermutation_consistency) {
 	// Ensure applyPermutation is consistent with the permutation's image
-	std::vector< perm::AbstractPermutation::value_type > sequence = { 0, 1, 2, 3, 4, 5 };
-	const perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 5, 3 }));
+	std::vector< perm::AbstractPermutation::image_type > sequence = { 0, 1, 2, 3, 4, 5 };
+	const perm::ExplicitPermutation perm = perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 5, 3 }));
 
 	perm::applyPermutation(sequence, perm);
 
 	ASSERT_EQ(sequence, perm.image());
 }
 
-struct UtilsTest : testing::TestWithParam< std::vector< perm::AbstractPermutation::value_type > > {
-	using ParamPack = std::vector< perm::AbstractPermutation::value_type >;
+struct UtilsTest : testing::TestWithParam< std::vector< perm::AbstractPermutation::image_type > > {
+	using ParamPack = std::vector< perm::AbstractPermutation::image_type >;
 };
 
 TEST_P(UtilsTest, applyPermutation) {
-	const std::vector< perm::AbstractPermutation::value_type > mainSequence = { 0, 1, 2, 3, 4, 5, 6 };
+	const std::vector< perm::AbstractPermutation::image_type > mainSequence = { 0, 1, 2, 3, 4, 5, 6 };
 
 	const perm::ExplicitPermutation permutation(GetParam());
 	const perm::AbstractPermutation &abstractPerm = permutation;
 
-	std::vector< perm::AbstractPermutation::value_type > expectedSequence(mainSequence.size());
+	std::vector< perm::AbstractPermutation::image_type > expectedSequence(mainSequence.size());
 	for (std::size_t i = 0; i < mainSequence.size(); ++i) {
-		perm::AbstractPermutation::value_type image =
-			permutation.image(static_cast< perm::AbstractPermutation::value_type >(i));
+		perm::AbstractPermutation::image_type image =
+			permutation.image(static_cast< perm::AbstractPermutation::image_type >(i));
 		expectedSequence[i] = mainSequence[image];
 	}
 
@@ -129,7 +129,7 @@ TEST(Utils, computeSortPermutation) {
 	// A few hand-coded tests
 	std::vector< int > sequence = { 1, 3, 2 };
 
-	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation(perm::Cycle({ 1, 2 })));
+	ASSERT_EQ(perm::computeSortPermutation(sequence), perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2 })));
 	ASSERT_EQ(perm::computeSortPermutation(sequence, std::greater< int >{}), perm::ExplicitPermutation({ 1, 2, 0 }));
 
 	sequence = { 42, 12, -13, 0, 21 };
@@ -162,7 +162,7 @@ TEST_P(SortPermTest, computeSortPermutation) {
 		<< "Computed sort permutation " << sortPerm << " did not sort " << sequence;
 
 
-	const perm::ExplicitPermutation secondShuffle = perm::ExplicitPermutation(perm::Cycle({ 1, 6, 4 }));
+	const perm::ExplicitPermutation secondShuffle = perm::ExplicitPermutation(perm::DisjointCycles({ 1, 6, 4 }));
 	perm::applyPermutation(sequence, secondShuffle);
 
 	// Remember that composition order is reversed when applying to sequences
@@ -231,25 +231,26 @@ TEST_P(SortPermTest, computeStableSortPermutation) {
 	ASSERT_EQ(resultingSeq, stableSorted);
 }
 
-INSTANTIATE_TEST_SUITE_P(Utils, SortPermTest,
-						 ::testing::Values(perm::ExplicitPermutation(perm::Cycle{}),
-										   perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
-										   perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
-										   perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
-										   perm::ExplicitPermutation(perm::Cycle({ 2, 1, 0 })),
-										   perm::ExplicitPermutation(perm::Cycle({ 2, 6, 1 })),
-										   perm::ExplicitPermutation(perm::Cycle({ { 0, 1, 2 }, { 4, 5 } })),
-										   perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 1, 5 }, { 2, 4 } }))));
+INSTANTIATE_TEST_SUITE_P(
+	Utils, SortPermTest,
+	::testing::Values(perm::ExplicitPermutation(perm::DisjointCycles{}),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2 })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2 })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ 2, 1, 0 })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ 2, 6, 1 })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1, 2 }, { 4, 5 } })),
+					  perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 3 }, { 1, 5 }, { 2, 4 } }))));
 
 
-struct CanonicalizeTest : ::testing::TestWithParam< std::vector< perm::Cycle > > {
-	using ParamPack = std::vector< perm::Cycle >;
+struct CanonicalizeTest : ::testing::TestWithParam< std::vector< perm::DisjointCycles > > {
+	using ParamPack = std::vector< perm::DisjointCycles >;
 };
 
 TEST_P(CanonicalizeTest, canonicalize) {
 	perm::PrimitivePermutationGroup group;
 
-	for (const perm::Cycle &currentCycle : GetParam()) {
+	for (const perm::DisjointCycles &currentCycle : GetParam()) {
 		group.addGenerator(perm::ExplicitPermutation(currentCycle));
 	}
 
@@ -257,9 +258,9 @@ TEST_P(CanonicalizeTest, canonicalize) {
 	group.getElementsTo(elements);
 
 	const perm::ExplicitPermutation shufflePermutation =
-		perm::ExplicitPermutation(perm::Cycle({ { 1, 2 }, { 3, 5, 0 } }));
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 1, 2 }, { 3, 5, 0 } }));
 
-	std::vector< perm::AbstractPermutation::value_type > baseSequence = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	std::vector< perm::AbstractPermutation::image_type > baseSequence = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	perm::applyPermutation(baseSequence, shufflePermutation);
 
 	decltype(baseSequence) expectedSequence = baseSequence;
@@ -294,7 +295,7 @@ TEST_P(CanonicalizeTest, canonicalize) {
 TEST_P(CanonicalizeTest, canonicalizeWithDuplicates) {
 	perm::PrimitivePermutationGroup group;
 
-	for (const perm::Cycle &currentCycle : GetParam()) {
+	for (const perm::DisjointCycles &currentCycle : GetParam()) {
 		group.addGenerator(perm::ExplicitPermutation(currentCycle));
 	}
 
@@ -398,7 +399,7 @@ bool operator<(const std::vector< Fruit > &lhs, const std::vector< Fruit > &rhs)
 TEST_P(CanonicalizeTest, canonicalizeToClosestPossible) {
 	perm::PrimitivePermutationGroup group;
 
-	for (const perm::Cycle &currentCycle : GetParam()) {
+	for (const perm::DisjointCycles &currentCycle : GetParam()) {
 		group.addGenerator(perm::ExplicitPermutation(currentCycle));
 	}
 
@@ -438,12 +439,13 @@ TEST_P(CanonicalizeTest, canonicalizeToClosestPossible) {
 
 INSTANTIATE_TEST_SUITE_P(Utils, CanonicalizeTest,
 						 ::testing::Values(CanonicalizeTest::ParamPack{},
-										   CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1 }) },
-										   CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 1, 2 }) } /*,
-											CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2, 3 }, { 4, 5 } }) },
-											CanonicalizeTest::ParamPack{ perm::Cycle({ { 0, 2 }, { 4, 1 }, { 3, 7 } })
-											}, CanonicalizeTest::ParamPack{ perm::Cycle({ 0, 2 }), perm::Cycle({ 1, 3
-											}), perm::Cycle({ { 0, 1 }, { 2, 3 } }) }*/
+										   CanonicalizeTest::ParamPack{ perm::DisjointCycles({ 0, 1 }) },
+										   CanonicalizeTest::ParamPack{ perm::DisjointCycles({ 0, 1, 2 }) }
+										   /*,
+CanonicalizeTest::ParamPack{ perm::DisjointCycles({ { 0, 2, 3 }, { 4, 5 } }) },
+CanonicalizeTest::ParamPack{ perm::DisjointCycles({ { 0, 2 }, { 4, 1 }, { 3, 7 } })
+}, CanonicalizeTest::ParamPack{ perm::DisjointCycles({ 0, 2 }), perm::DisjointCycles({ 1, 3
+}), perm::DisjointCycles({ { 0, 1 }, { 2, 3 } }) }*/
 
 										   ));
 
@@ -489,34 +491,34 @@ INSTANTIATE_TEST_SUITE_P(
 	Utils, ConcatenateTest,
 	::testing::Values(
 		ConcatenateTest::ParamPack{perm::PrimitivePermutationGroup{}, {4}, perm::PrimitivePermutationGroup{}, {42}, perm::PrimitivePermutationGroup{}},
-		ConcatenateTest::ParamPack{asGroup({perm::Cycle({0,1})}), {1}, asGroup({perm::Cycle({4,2})}), {4}, perm::PrimitivePermutationGroup{}},
+		ConcatenateTest::ParamPack{asGroup({perm::DisjointCycles({0,1})}), {1}, asGroup({perm::DisjointCycles({4,2})}), {4}, perm::PrimitivePermutationGroup{}},
 		ConcatenateTest::ParamPack{
-			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3})}),
+			asGroup({perm::DisjointCycles({0,1}),  perm::DisjointCycles({2,3})}),
 			{1},
-			asGroup({perm::Cycle({4,2}), perm::Cycle({{0,1}, {3,5}})}),
+			asGroup({perm::DisjointCycles({4,2}), perm::DisjointCycles({{0,1}, {3,5}})}),
 			{4},
-			asGroup({perm::Cycle({1,2}), perm::Cycle({{7,8}, {10,11}})})
+			asGroup({perm::DisjointCycles({1,2}), perm::DisjointCycles({{7,8}, {10,11}})})
 		},
 		ConcatenateTest::ParamPack{
-			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3})}),
+			asGroup({perm::DisjointCycles({0,1}),  perm::DisjointCycles({2,3})}),
 			{5},
-			asGroup({perm::Cycle({4,2}), perm::Cycle({{0,1}, {3,5}})}),
+			asGroup({perm::DisjointCycles({4,2}), perm::DisjointCycles({{0,1}, {3,5}})}),
 			{},
-			asGroup({perm::Cycle({0,1}),  perm::Cycle({2,3}), perm::Cycle({12,10}), perm::Cycle({{8,9}, {11,13}})})
+			asGroup({perm::DisjointCycles({0,1}),  perm::DisjointCycles({2,3}), perm::DisjointCycles({12,10}), perm::DisjointCycles({{8,9}, {11,13}})})
 		},
 		ConcatenateTest::ParamPack{
-			asGroup({perm::Cycle({0,4,6})}),
+			asGroup({perm::DisjointCycles({0,4,6})}),
 			{2,5,10},
-			asGroup({perm::Cycle({4,2}), perm::Cycle({1,5,9})}),
+			asGroup({perm::DisjointCycles({4,2}), perm::DisjointCycles({1,5,9})}),
 			{3,4},
-			asGroup({perm::Cycle({0,3,4}), perm::Cycle({7,9,13})})
+			asGroup({perm::DisjointCycles({0,3,4}), perm::DisjointCycles({7,9,13})})
 		},
 		ConcatenateTest::ParamPack{
-			asGroup({perm::Cycle({1,4,6}), perm::Cycle({4,6})}),
+			asGroup({perm::DisjointCycles({1,4,6}), perm::DisjointCycles({4,6})}),
 			{0,5},
-			asGroup({perm::Cycle({2,3}), perm::Cycle({3,4})}),
+			asGroup({perm::DisjointCycles({2,3}), perm::DisjointCycles({3,4})}),
 			{0,1,5},
-			asGroup({perm::Cycle({0,3,4}), perm::Cycle({3,4}), perm::Cycle({6,7}), perm::Cycle({7,8})})
+			asGroup({perm::DisjointCycles({0,3,4}), perm::DisjointCycles({3,4}), perm::DisjointCycles({6,7}), perm::DisjointCycles({7,8})})
 		}
 	));
 // clang-format on

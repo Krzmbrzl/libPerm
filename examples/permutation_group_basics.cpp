@@ -4,7 +4,7 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 #include <libperm/AbstractPermutationGroup.hpp>
-#include <libperm/Cycle.hpp>
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Permutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
@@ -35,8 +35,8 @@ void printGroup(const perm::AbstractPermutationGroup &group) {
 
 int main() {
 	// Together these two generators generate Sym(4) - the symmetric group of degree 4
-	perm::Permutation generator1(perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 })));
-	perm::Permutation generator2(perm::ExplicitPermutation(perm::Cycle({ 2, 3 })));
+	perm::Permutation generator1(perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1, 2, 3 } })));
+	perm::Permutation generator2(perm::ExplicitPermutation(perm::DisjointCycles({ { 2, 3 } })));
 
 	std::cout << std::boolalpha;
 
@@ -73,15 +73,15 @@ int main() {
 
 	// Compute the orbit of a point under the action of a group
 	std::cout << "The orbit of the point 2 under above group is" << std::endl << "{ ";
-	for (perm::AbstractPermutation::value_type point : group.orbit(2)) {
+	for (perm::AbstractPermutation::image_type point : group.orbit(2)) {
 		std::cout << point << ", ";
 	}
 	std::cout << "}" << std::endl;
 
 
 	// Check membership of a given permutation
-	perm::ExplicitPermutation perm1 = perm::ExplicitPermutation(perm::Cycle({ { 1, 2 }, { 0, 3 } }));
-	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation(perm::Cycle({ 1, 4 }));
+	perm::ExplicitPermutation perm1 = perm::ExplicitPermutation(perm::DisjointCycles{ { 1, 2 }, { 0, 3 } });
+	perm::ExplicitPermutation perm2 = perm::ExplicitPermutation(perm::DisjointCycles{ { 1, 4 } });
 	std::cout << "Group contains " << perm1 << ": " << group.contains(perm1) << std::endl;
 	std::cout << "Group contains " << perm2 << ": " << group.contains(perm2) << std::endl;
 

@@ -3,8 +3,8 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
-#include <libperm/Cycle.hpp>
 #include <libperm/DiminoAlgorithm.hpp>
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Permutation.hpp>
 #include <libperm/details/Math.hpp>
@@ -30,14 +30,14 @@ void print(const std::vector< perm::Permutation > &perms) {
 TEST(DiminoAlgorithm, generateGroupElements) {
 	std::vector< perm::Permutation > generators;
 
-	generators = { perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 })) };
+	generators = { perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 })) };
 
 	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
 	std::vector< perm::ExplicitPermutation > expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 3, 2, 1 })),
+		perm::ExplicitPermutation({}),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 2 }, { 1, 3 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 3, 2, 1 })),
 	};
 
 	ASSERT_EQ(elements.size(), expectedElements.size());
@@ -49,14 +49,14 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 				   perm::ExplicitPermutation(perm::Cycle({ 2, 3, 4, 5 })) };
 
 	expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 3, 4, 5 })),
-		perm::ExplicitPermutation(perm::Cycle({ { 2, 4 }, { 3, 5 } })),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 5, 4, 3 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 3, 4, 5 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 4 }, { 3, 5 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 5, 4, 3 } })),
+		perm::ExplicitPermutation({}),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 3, 4, 5 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 2, 4 }, { 3, 5 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 5, 4, 3 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 3, 4, 5 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 4 }, { 3, 5 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 5, 4, 3 } })),
 	};
 
 	elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -68,16 +68,16 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 
 
 
-	generators = { perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
-				   perm::ExplicitPermutation(perm::Cycle({ 0, 1 })) };
+	generators = { perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2 })),
+				   perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })) };
 
 	expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 2, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation({}),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2 })),
 	};
 
 	elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -89,16 +89,16 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 
 
 
-	generators = { perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
-				   perm::ExplicitPermutation(perm::Cycle({ 0, 1 })) };
+	generators = { perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2 })),
+				   perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })) };
 
 	expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 1, 2 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 2, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 2 })),
+		perm::ExplicitPermutation(),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 1, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2 })),
 	};
 
 	elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -111,23 +111,23 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 
 
 	generators = {
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 3 } })),
-		perm::ExplicitPermutation(perm::Cycle({ 3, 4 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 3 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 3, 4 })),
 	};
 
 	expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 3, 4 })),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 3 })),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 3, 4 })),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 4, 3 })),
-		perm::ExplicitPermutation(perm::Cycle({ 2, 4 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 3, 4 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 3 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 3, 4 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 4, 3 } })),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 1 }, { 2, 4 } })),
+		perm::ExplicitPermutation(),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 3, 4 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 3 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 3, 4 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 4, 3 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 2, 4 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 3, 4 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 3 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 3, 4 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 4, 3 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1 }, { 2, 4 } })),
 	};
 
 	elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -141,14 +141,14 @@ TEST(DiminoAlgorithm, generateGroupElements) {
 TEST(DiminoAlgorithm, generateGroupElementsSigned) {
 	std::vector< perm::Permutation > generators;
 
-	generators = { perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }), -1) };
+	generators = { perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 }), -1) };
 
 	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
 	std::vector< perm::ExplicitPermutation > expectedElements = {
-		perm::ExplicitPermutation(perm::Cycle()),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2, 3 }), -1),
-		perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 1, 3 } })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 3, 2, 1 }), -1),
+		perm::ExplicitPermutation(),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1, 2, 3 }), -1),
+		perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 2 }, { 1, 3 } })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 3, 2, 1 }), -1),
 	};
 
 	ASSERT_EQ(elements.size(), expectedElements.size());
@@ -162,9 +162,9 @@ TEST(DiminoAlgorithm, generateGroupOrder) {
 
 	// These generators generate the complete symmetric group of order 6 (Sym(6))
 	std::vector< perm::Permutation > generators = {
-		perm::ExplicitPermutation(perm::Cycle({ 0, 5, 2 })),
-		perm::ExplicitPermutation(perm::Cycle({ 4, 5 })),
-		perm::ExplicitPermutation(perm::Cycle({ 1, 3, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 5, 2 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 4, 5 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 1, 3, 2 })),
 	};
 
 	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -174,8 +174,8 @@ TEST(DiminoAlgorithm, generateGroupOrder) {
 
 
 	generators = {
-		perm::ExplicitPermutation(perm::Cycle({ 0, 2, 4, 6 })),
-		perm::ExplicitPermutation(perm::Cycle({ 0, 1 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2, 4, 6 })),
+		perm::ExplicitPermutation(perm::DisjointCycles({ 0, 1 })),
 	};
 
 	elements = perm::DiminoAlgorithm::generateGroupElements(generators);
@@ -186,7 +186,7 @@ TEST(DiminoAlgorithm, generateGroupOrder) {
 TEST(DiminoAlgorithm, extendGroup) {
 	std::vector< perm::Permutation > generators;
 
-	generators.push_back(perm::ExplicitPermutation(perm::Cycle({ 0, 3 })));
+	generators.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ 0, 3 })));
 
 	std::vector< perm::Permutation > elements = perm::DiminoAlgorithm::generateGroupElements(generators);
 	std::vector< perm::ExplicitPermutation > expectedElements = {
@@ -199,10 +199,10 @@ TEST(DiminoAlgorithm, extendGroup) {
 
 
 
-	generators.push_back(perm::ExplicitPermutation(perm::Cycle({ 1, 4 })));
+	generators.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ 1, 4 })));
 
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ 1, 4 })));
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 1, 4 } })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ 1, 4 })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 3 }, { 1, 4 } })));
 
 	ASSERT_TRUE(perm::DiminoAlgorithm::extendGroup(elements, generators, generators.size() - 1));
 	ASSERT_EQ(elements.size(), expectedElements.size());
@@ -210,12 +210,12 @@ TEST(DiminoAlgorithm, extendGroup) {
 
 
 
-	generators.push_back(perm::ExplicitPermutation(perm::Cycle({ 2, 5 })));
+	generators.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ 2, 5 })));
 
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ 2, 5 })));
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ { 1, 4 }, { 2, 5 } })));
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 2, 5 } })));
-	expectedElements.push_back(perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 1, 4 }, { 2, 5 } })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ 2, 5 })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ { 1, 4 }, { 2, 5 } })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 3 }, { 2, 5 } })));
+	expectedElements.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 3 }, { 1, 4 }, { 2, 5 } })));
 
 	ASSERT_TRUE(perm::DiminoAlgorithm::extendGroup(elements, generators, generators.size() - 1));
 	ASSERT_EQ(elements.size(), expectedElements.size());
@@ -224,7 +224,7 @@ TEST(DiminoAlgorithm, extendGroup) {
 
 	// Use one of the already contained elements as a "new" generator
 	// Thus, extending should be a no-op
-	generators.push_back(perm::ExplicitPermutation(perm::Cycle({ { 0, 3 }, { 2, 5 } })));
+	generators.push_back(perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 3 }, { 2, 5 } })));
 
 	ASSERT_FALSE(perm::DiminoAlgorithm::extendGroup(elements, generators, generators.size() - 1));
 	ASSERT_EQ(elements.size(), expectedElements.size());

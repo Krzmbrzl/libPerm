@@ -3,6 +3,7 @@
 // LICENSE file at the root of the libPerm source tree or at
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Utils.hpp>
 
@@ -48,8 +49,8 @@ int main() {
 	// Now some random scrambling
 	// This will be applied by two consecutively applied permutations
 
-	perm::ExplicitPermutation first  = perm::ExplicitPermutation(perm::Cycle({ 0, 1, 2 }));
-	perm::ExplicitPermutation second = perm::ExplicitPermutation(perm::Cycle({ 2, 3 }));
+	perm::ExplicitPermutation first  = perm::ExplicitPermutation(perm::DisjointCycles({ { 0, 1, 2 } }));
+	perm::ExplicitPermutation second = perm::ExplicitPermutation(perm::DisjointCycles({ { 2, 3 } }));
 
 	perm::applyPermutation(myVec, first);
 	std::cout << "After first permutation:" << std::endl;

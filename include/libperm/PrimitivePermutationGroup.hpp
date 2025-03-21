@@ -47,8 +47,8 @@ public:
 	PrimitivePermutationGroup &operator=(PrimitivePermutationGroup &&) = default;
 
 
-	virtual std::vector< AbstractPermutation::value_type >
-		orbit(AbstractPermutation::value_type point) const override final;
+	virtual std::vector< AbstractPermutation::image_type >
+		orbit(AbstractPermutation::image_type point) const override final;
 
 	virtual std::size_t order() const override final;
 

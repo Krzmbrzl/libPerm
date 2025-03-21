@@ -23,12 +23,12 @@ PrimitivePermutationGroup::PrimitivePermutationGroup(std::vector< Permutation > 
 	setGenerators(std::move(generators));
 }
 
-std::vector< AbstractPermutation::value_type >
-	PrimitivePermutationGroup::orbit(AbstractPermutation::value_type point) const {
-	std::vector< AbstractPermutation::value_type > orbit;
+std::vector< AbstractPermutation::image_type >
+	PrimitivePermutationGroup::orbit(AbstractPermutation::image_type point) const {
+	std::vector< AbstractPermutation::image_type > orbit;
 
 	for (const Permutation &current : m_elements) {
-		AbstractPermutation::value_type image = current->image(point);
+		AbstractPermutation::image_type image = current->image(point);
 
 		if (std::find(orbit.begin(), orbit.end(), image) == orbit.end()) {
 			orbit.push_back(std::move(image));
@@ -140,11 +140,11 @@ struct Canonicalizer {
 		 * ascending order. Therefore, we can simply compare two images numerically to determine if one comes before the
 		 * other in B.
 		 */
-		const AbstractPermutation::value_type n = std::max(lhs->maxElement(), rhs->maxElement());
+		const AbstractPermutation::image_type n = std::max(lhs->maxElement(), rhs->maxElement());
 
-		for (AbstractPermutation::value_type i = 0; i <= n; ++i) {
-			AbstractPermutation::value_type lhsImage = lhs->image(i);
-			AbstractPermutation::value_type rhsImage = rhs->image(i);
+		for (AbstractPermutation::image_type i = 0; i <= n; ++i) {
+			AbstractPermutation::image_type lhsImage = lhs->image(i);
+			AbstractPermutation::image_type rhsImage = rhs->image(i);
 			if (lhsImage != rhsImage) {
 				return lhsImage < rhsImage;
 			}

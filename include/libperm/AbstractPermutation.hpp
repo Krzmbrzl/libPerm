@@ -6,9 +6,9 @@
 #ifndef LIBPERM_ABSTRACTPERMUTATION_HPP_
 #define LIBPERM_ABSTRACTPERMUTATION_HPP_
 
-#include "libperm/Cycle.hpp"
+#include "libperm/DisjointCycles.hpp"
 
-#include <ostream>
+#include <iosfwd>
 #include <string>
 
 namespace perm {
@@ -26,7 +26,7 @@ public:
 	/**
 	 * The data type of the values of the set that this permutation shall work on
 	 */
-	using value_type = unsigned int;
+	using image_type = unsigned int;
 
 	AbstractPermutation()          = default;
 	virtual ~AbstractPermutation() = default;
@@ -34,7 +34,7 @@ public:
 	/**
 	 * @returns The image of the given value under the operation of this permutation
 	 */
-	value_type operator[](value_type value) const;
+	image_type operator[](image_type value) const;
 
 	/**
 	 * @returns Whether lhs and rhs are considered to be equal
@@ -65,12 +65,12 @@ public:
 	/**
 	 * @returns The biggest element that this permutation acts on
 	 */
-	virtual value_type maxElement() const = 0;
+	virtual image_type maxElement() const = 0;
 
 	/**
 	 * @returns The image of the given value under the operation of this permutation
 	 */
-	virtual value_type image(value_type value) const = 0;
+	virtual image_type image(image_type value) const = 0;
 
 	/**
 	 * @returns Whether this permutation represents the identity permutation
@@ -123,9 +123,11 @@ public:
 	virtual std::string toString() const;
 
 	/**
-	 * @returns A Cycle representation of this permutation
+	 * @param keep1cycles Whether to explicitly represent cycles of size 1
+	 *
+	 * @returns A DisjointCycle representation of this permutation
 	 */
-	virtual Cycle toCycle() const = 0;
+	virtual DisjointCycles toDisjointCycles(bool keep1cycles = true) const = 0;
 
 	/**
 	 * Shifts this permutation by the given amount. In this context, "shifting" means offsetting the

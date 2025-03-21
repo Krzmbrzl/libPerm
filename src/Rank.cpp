@@ -21,8 +21,8 @@ std::size_t rank(const AbstractPermutation &perm, std::size_t num_elements) {
 		return 0;
 	}
 
-	std::vector< AbstractPermutation::value_type > image(num_elements);
-	for (AbstractPermutation::value_type i = 0; i < num_elements; ++i) {
+	std::vector< AbstractPermutation::image_type > image(num_elements);
+	for (AbstractPermutation::image_type i = 0; i < num_elements; ++i) {
 		image[i] = perm.image(i);
 	}
 
@@ -32,7 +32,7 @@ std::size_t rank(const AbstractPermutation &perm, std::size_t num_elements) {
 	decltype(image) inverse_image = inverse.image();
 
 	for (std::size_t i = inverse_image.size(); i < num_elements; ++i) {
-		inverse_image.push_back(static_cast< AbstractPermutation::value_type >(i));
+		inverse_image.push_back(static_cast< AbstractPermutation::image_type >(i));
 	}
 
 	assert(inverse_image.size() == image.size());
@@ -59,7 +59,7 @@ Permutation unrank(std::size_t rank, std::size_t num_elements) {
 	assert(rank <= details::factorial(num_elements));
 
 	// Initialize as identity
-	std::vector< AbstractPermutation::value_type > image(num_elements);
+	std::vector< AbstractPermutation::image_type > image(num_elements);
 	std::iota(image.begin(), image.end(), 0);
 
 	for (std::size_t i = num_elements; i > 0; --i) {

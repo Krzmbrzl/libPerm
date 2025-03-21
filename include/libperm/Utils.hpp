@@ -32,10 +32,10 @@ namespace {
 					  "Can only process random-access iterators");
 
 		assert(std::distance(begin, end) >= 0);
-		std::vector< ExplicitPermutation::value_type > image(static_cast< std::size_t >(std::distance(begin, end)));
+		std::vector< ExplicitPermutation::image_type > image(static_cast< std::size_t >(std::distance(begin, end)));
 		std::iota(image.begin(), image.end(), 0);
 
-		const auto cmpFunc = [&](ExplicitPermutation::value_type lhs, ExplicitPermutation::value_type rhs) {
+		const auto cmpFunc = [&](ExplicitPermutation::image_type lhs, ExplicitPermutation::image_type rhs) {
 			assert(lhs < std::distance(begin, end));
 			assert(rhs < std::distance(begin, end));
 			return cmp(begin[lhs], begin[rhs]);
@@ -162,17 +162,20 @@ void applyPermutation(Iterator begin, Iterator end, const Permutation &perm) {
 	static_assert(!std::is_const_v< typename std::iterator_traits< Iterator >::value_type >,
 				  "Can't apply permutation to a range of const elements");
 
-	Cycle cycles = [&]() {
+	DisjointCycles cycles = [&]() {
 		if constexpr (std::is_same_v< Permutation, perm::Permutation >) {
 			// When using perm::Permutation, we have to use operator-> to access member functions
-			return perm->toCycle();
+			return perm->toDisjointCycles();
 		} else {
-			return perm.toCycle();
+			return perm.toDisjointCycles();
 		}
 	}();
 
-	for (const std::vector< Cycle::value_type > &currentCycle : cycles) {
-		assert(!currentCycle.empty());
+	for (const Cycle &currentCycle : cycles) {
+		if (currentCycle.size() < 2) {
+			continue;
+		}
+
 		Cycle::value_type baseIndex = currentCycle[0];
 
 		// We always store the element that has to be moved next in the first element
@@ -358,8 +361,8 @@ PermGroup concatenate(const AbstractPermutationGroup &lhs, std::size_t lhsSize, 
 		bool include = true;
 
 		for (auto currentExclude : excludedIndices) {
-			if (currentPerm->image(static_cast< AbstractPermutation::value_type >(currentExclude))
-				!= static_cast< AbstractPermutation::value_type >(currentExclude)) {
+			if (currentPerm->image(static_cast< AbstractPermutation::image_type >(currentExclude))
+				!= static_cast< AbstractPermutation::image_type >(currentExclude)) {
 				// This permutation is acting on an excluded position -> this won't be part of the resulting symmetry
 				include = false;
 				break;
@@ -399,8 +402,8 @@ PermGroup concatenate(const AbstractPermutationGroup &lhs, std::size_t lhsSize, 
 		bool include = true;
 
 		for (auto currentExclude : excludedIndices) {
-			if (currentPerm->image(static_cast< AbstractPermutation::value_type >(currentExclude))
-				!= static_cast< AbstractPermutation::value_type >(currentExclude)) {
+			if (currentPerm->image(static_cast< AbstractPermutation::image_type >(currentExclude))
+				!= static_cast< AbstractPermutation::image_type >(currentExclude)) {
 				// This permutation is acting on an excluded position -> this won't be part of the resulting symmetry
 				include = false;
 				break;

@@ -4,7 +4,7 @@
 // <https://github.com/Krzmbrzl/libPerm/blob/develop/LICENSE>.
 
 #include <libperm/AbstractPermutation.hpp>
-#include <libperm/Cycle.hpp>
+#include <libperm/DisjointCycles.hpp>
 #include <libperm/ExplicitPermutation.hpp>
 
 #include <gtest/gtest.h>
@@ -16,7 +16,7 @@ using PermutationTypes = ::testing::Types< perm::ExplicitPermutation >;
 
 
 template< typename T > struct PermCtor {
-	static T construct(const perm::Cycle &cycle) { return T(cycle); }
+	static T construct(const perm::DisjointCycles &cycle) { return T(cycle); }
 };
 
 
@@ -30,15 +30,15 @@ TYPED_TEST_SUITE(PermutationInterface, PermutationTypes, );
 TYPED_TEST(PermutationInterface, equality) {
 	using Perm = TypeParam;
 
-	std::vector< perm::Cycle > cycles = {
-		perm::Cycle(),
-		perm::Cycle({ 1, 2 }),
-		perm::Cycle({ 0, 2, 1 }),
-		perm::Cycle({ { 0, 3, 5 }, { 2, 4, 1 } }),
+	std::vector< perm::DisjointCycles > cycles = {
+		perm::DisjointCycles(),
+		perm::DisjointCycles({ 1, 2 }),
+		perm::DisjointCycles({ 0, 2, 1 }),
+		perm::DisjointCycles({ { 0, 3, 5 }, { 2, 4, 1 } }),
 	};
 
-	for (const perm::Cycle &outer : cycles) {
-		for (const perm::Cycle &inner : cycles) {
+	for (const perm::DisjointCycles &outer : cycles) {
+		for (const perm::DisjointCycles &inner : cycles) {
 			const Perm p1 = PermCtor< Perm >::construct(outer);
 			const Perm p2 = PermCtor< Perm >::construct(inner);
 
@@ -64,25 +64,25 @@ TYPED_TEST(PermutationInterface, equality) {
 TYPED_TEST(PermutationInterface, image) {
 	using Perm = TypeParam;
 
-	const Perm p = PermCtor< Perm >::construct(perm::Cycle({ { 1, 3, 4 }, { 2, 5 } }));
+	const Perm p = PermCtor< Perm >::construct(perm::DisjointCycles({ { 1, 3, 4 }, { 2, 5 } }));
 
 	const perm::AbstractPermutation &perm = p;
 
-	ASSERT_EQ(perm[2], static_cast< perm::AbstractPermutation::value_type >(5));
-	ASSERT_EQ(perm.image(4), static_cast< perm::AbstractPermutation::value_type >(1));
+	ASSERT_EQ(perm[2], static_cast< perm::AbstractPermutation::image_type >(5));
+	ASSERT_EQ(perm.image(4), static_cast< perm::AbstractPermutation::image_type >(1));
 
 	// We can also get images of points outside the actual permutation's action range
-	ASSERT_EQ(perm[42], static_cast< perm::AbstractPermutation::value_type >(42));
-	ASSERT_EQ(perm.image(42), static_cast< perm::AbstractPermutation::value_type >(42));
+	ASSERT_EQ(perm[42], static_cast< perm::AbstractPermutation::image_type >(42));
+	ASSERT_EQ(perm.image(42), static_cast< perm::AbstractPermutation::image_type >(42));
 }
 
 
 TYPED_TEST(PermutationInterface, multiplication) {
 	using Perm = TypeParam;
 
-	const Perm identity = PermCtor< Perm >::construct(perm::Cycle());
-	const Perm basePerm = PermCtor< Perm >::construct(perm::Cycle({ 0, 2, 3 }));
-	const Perm factor   = PermCtor< Perm >::construct(perm::Cycle({ 1, 2, 4 }));
+	const Perm identity = PermCtor< Perm >::construct(perm::DisjointCycles());
+	const Perm basePerm = PermCtor< Perm >::construct(perm::DisjointCycles({ 0, 2, 3 }));
+	const Perm factor   = PermCtor< Perm >::construct(perm::DisjointCycles({ 1, 2, 4 }));
 
 	{
 		// operator *=
@@ -90,7 +90,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm *= factor;
-		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 4, 1, 2, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::DisjointCycles({ 0, 4, 1, 2, 3 })));
 	}
 	{
 		// postMultiply
@@ -98,7 +98,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm.postMultiply(factor);
-		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 4, 1, 2, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::DisjointCycles({ 0, 4, 1, 2, 3 })));
 	}
 	{
 		// preMultiply
@@ -106,7 +106,7 @@ TYPED_TEST(PermutationInterface, multiplication) {
 		perm::AbstractPermutation &perm = p;
 
 		perm.preMultiply(factor);
-		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::Cycle({ 0, 2, 4, 1, 3 })));
+		ASSERT_EQ(perm, perm::ExplicitPermutation(perm::DisjointCycles({ 0, 2, 4, 1, 3 })));
 	}
 	{
 		// Multiply with identity
@@ -127,22 +127,22 @@ TYPED_TEST(PermutationInterface, multiplication) {
 TYPED_TEST(PermutationInterface, maxElement) {
 	using Perm = TypeParam;
 
-	const Perm p1 = PermCtor< Perm >::construct(perm::Cycle());
-	const Perm p2 = PermCtor< Perm >::construct(perm::Cycle({ 4, 5 }));
+	const Perm p1 = PermCtor< Perm >::construct(perm::DisjointCycles());
+	const Perm p2 = PermCtor< Perm >::construct(perm::DisjointCycles({ 4, 5 }));
 
 	const perm::AbstractPermutation &perm1 = p1;
 	const perm::AbstractPermutation &perm2 = p2;
 
-	ASSERT_EQ(perm1.maxElement(), static_cast< perm::AbstractPermutation::value_type >(0));
-	ASSERT_EQ(perm2.maxElement(), static_cast< perm::AbstractPermutation::value_type >(5));
+	ASSERT_EQ(perm1.maxElement(), static_cast< perm::AbstractPermutation::image_type >(0));
+	ASSERT_EQ(perm2.maxElement(), static_cast< perm::AbstractPermutation::image_type >(5));
 }
 
 
 TYPED_TEST(PermutationInterface, isIdentity) {
 	using Perm = TypeParam;
 
-	const Perm p1 = PermCtor< Perm >::construct(perm::Cycle());
-	const Perm p2 = PermCtor< Perm >::construct(perm::Cycle({ 4, 5 }));
+	const Perm p1 = PermCtor< Perm >::construct(perm::DisjointCycles());
+	const Perm p2 = PermCtor< Perm >::construct(perm::DisjointCycles({ 4, 5 }));
 
 	const perm::AbstractPermutation &perm1 = p1;
 	const perm::AbstractPermutation &perm2 = p2;
@@ -155,8 +155,8 @@ TYPED_TEST(PermutationInterface, isIdentity) {
 TYPED_TEST(PermutationInterface, invert) {
 	using Perm = TypeParam;
 
-	Perm p                     = PermCtor< Perm >::construct(perm::Cycle({ 3, 2, 5, 7 }));
-	const Perm expectedInverse = PermCtor< Perm >::construct(perm::Cycle({ 7, 5, 2, 3 }));
+	Perm p                     = PermCtor< Perm >::construct(perm::DisjointCycles({ 3, 2, 5, 7 }));
+	const Perm expectedInverse = PermCtor< Perm >::construct(perm::DisjointCycles({ 7, 5, 2, 3 }));
 
 	perm::AbstractPermutation &perm = p;
 
@@ -169,7 +169,7 @@ TYPED_TEST(PermutationInterface, invert) {
 TYPED_TEST(PermutationInterface, sign) {
 	using Perm = TypeParam;
 
-	Perm p = PermCtor< Perm >::construct(perm::Cycle({ 1, 2 }));
+	Perm p = PermCtor< Perm >::construct(perm::DisjointCycles({ 1, 2 }));
 
 	perm::AbstractPermutation &perm = p;
 
@@ -185,104 +185,104 @@ TYPED_TEST(PermutationInterface, sign) {
 }
 
 
-TYPED_TEST(PermutationInterface, toCycle) {
+TYPED_TEST(PermutationInterface, toDisjointCycles) {
 	using Perm = TypeParam;
 
-	const perm::Cycle cycle({ { 1, 2, 4, 5 }, { 3, 7, 6 }, { 9, 8 } });
+	const perm::DisjointCycles cycle({ { 1, 2, 4, 5 }, { 3, 7, 6 }, { 9, 8 } });
 	const Perm p                          = PermCtor< Perm >::construct(cycle);
 	const perm::AbstractPermutation &perm = p;
 
-	ASSERT_EQ(perm.toCycle(), cycle);
+	ASSERT_EQ(perm.toDisjointCycles(), cycle);
 }
 
 TYPED_TEST(PermutationInterface, shift) {
 	using Perm = TypeParam;
 
-	Perm actual = PermCtor< Perm >::construct(perm::Cycle({ 0, 1 }));
+	Perm actual = PermCtor< Perm >::construct(perm::DisjointCycles({ 0, 1 }));
 	actual.shift(3);
-	Perm expected = PermCtor< Perm >::construct(perm::Cycle({ 3, 4 }));
+	Perm expected = PermCtor< Perm >::construct(perm::DisjointCycles({ 3, 4 }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 7, 3 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 7, 3 } }));
 	actual.shift(15);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 15, 16 }, { 22, 18 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 15, 16 }, { 22, 18 } }));
 	ASSERT_EQ(actual, expected);
 
 	actual.shift(-7);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 8, 9 }, { 15, 11 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 8, 9 }, { 15, 11 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle());
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles());
 	ASSERT_TRUE(actual.isIdentity());
 	actual.shift(5);
 	ASSERT_TRUE(actual.isIdentity());
 
 
 	// Shifts with positive offsets
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 7, 3 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 7, 3 } }));
 	actual.shift(1, 3);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 8, 4 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 8, 4 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 5 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2 }, { 3, 5 } }));
 	actual.shift(1, 1);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 3 }, { 4, 6 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 3 }, { 4, 6 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2, 4 }, { 3, 5 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2, 4 }, { 3, 5 } }));
 	actual.shift(1, 4);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2, 5 }, { 3, 6 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2, 5 }, { 3, 6 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 5 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 5 } }));
 	actual.shift(1, 5);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 6 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 6 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ 0, 1 }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ 0, 1 }));
 	actual.shift(5, 1);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ 0, 6 }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ 0, 6 }));
 	ASSERT_EQ(actual, expected);
 
 
 	// Shifts with negative offsets
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 6 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2 }, { 3, 6 } }));
 	actual.shift(-2, 4);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 4 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2 }, { 3, 4 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 2 }, { 3, 4, 7 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 2 }, { 3, 4, 7 } }));
 	actual.shift(-1, 1);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 2, 3, 6 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 2, 3, 6 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ 6, 3, 7, 0 }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ 6, 3, 7, 0 }));
 	actual.shift(-2, 1);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ 4, 1, 5, 0 }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ 4, 1, 5, 0 }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 5 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 5 } }));
 	actual.shift(-1, 5);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 4 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 4 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 6 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 6 } }));
 	actual.shift(-1, 6);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 5 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 5 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 6 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 6 } }));
 	actual.shift(-2, 6);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 4 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 4 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 6, 7 } }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 6, 7 } }));
 	actual.shift(-2, 6);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ { 0, 1 }, { 3, 4, 5 } }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ { 0, 1 }, { 3, 4, 5 } }));
 	ASSERT_EQ(actual, expected);
 
-	actual = PermCtor< Perm >::construct(perm::Cycle({ 2, 3 }));
+	actual = PermCtor< Perm >::construct(perm::DisjointCycles({ 2, 3 }));
 	actual.shift(-1, 2);
-	expected = PermCtor< Perm >::construct(perm::Cycle({ 1, 2 }));
+	expected = PermCtor< Perm >::construct(perm::DisjointCycles({ 1, 2 }));
 	ASSERT_EQ(actual, expected);
 }
