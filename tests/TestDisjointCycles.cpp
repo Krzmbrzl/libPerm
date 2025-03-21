@@ -101,7 +101,7 @@ TEST_P(FromImageTest, fromImage) {
 	}
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
 	DisjointCycles, FromImageTest,
 	::testing::Values(FromImageTest::ParamPack({}, { { 0 } }, 1), FromImageTest::ParamPack({}, { { 0 }, { 1 } }, 2),
 					  FromImageTest::ParamPack({}, { { 0 }, { 1 }, { 2 } }, 3),
