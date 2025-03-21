@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml/badge.svg)](https://github.com/Krzmbrzl/libPerm/actions/workflows/build.yml)
 
-A C++20 library for representing and handling of permutation groups.
+A C++20 library for representing and handling of permutations and permutation groups.
 
 This library has been heavily inspired by https://github.com/tremlin/PermLib (which seems to aim at solving essentially the same problem but targeting
 an older C++ standard and additionally uses a different philosophy on how and where to use dynamic memory allocations. Plus the project seems to be
