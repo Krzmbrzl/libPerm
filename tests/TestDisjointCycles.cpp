@@ -83,30 +83,31 @@ INSTANTIATE_TEST_SUITE_P(
 					  ComparisonTest::ParamPack({ { 0, 1 }, { 1, 2 } }, { { 0, 1, 2 } }, std::strong_ordering::equal),
 					  ComparisonTest::ParamPack({ { 0, 1 } }, { { 0, 1, 2 } }, std::strong_ordering::less)));
 
-TEST(DisjointCycles, fromImage) {
-	std::vector< int > image = {};
-	perm::DisjointCycles expected;
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image), expected);
+struct FromImageTest : ::testing::TestWithParam< std::tuple< std::vector< int >, perm::DisjointCycles, std::size_t > > {
+	using ParamPack = std::tuple< std::vector< int >, perm::DisjointCycles, std::size_t >;
+};
 
-	image = { 0, 1 };
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image), expected);
+TEST_P(FromImageTest, fromImage) {
+	const auto [image, expectedCycle, num_elements] = GetParam();
 
-	image    = { 0, 1 };
-	expected = perm::DisjointCycles({ { 0 }, { 1 } });
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image, true), expected);
+	for (std::size_t N : std::vector< std::size_t >{ 0, num_elements }) {
+		const perm::DisjointCycles actual = perm::DisjointCycles::fromImage(image, N);
 
-	image    = { 1, 0 };
-	expected = perm::DisjointCycles({ 0, 1 });
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image), expected);
+		ASSERT_EQ(actual, expectedCycle);
 
-	image = { 1, 0, 2 };
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image), expected);
-
-	image    = { 1, 0, 2 };
-	expected = perm::DisjointCycles({ { 0, 1 }, { 2 } });
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image, true), expected);
-
-	image    = { 1, 2, 0 };
-	expected = perm::DisjointCycles({ 0, 1, 2 });
-	ASSERT_EQ(perm::DisjointCycles::fromImage(image), expected);
+		if (N != 0) {
+			ASSERT_EQ(actual.size(), expectedCycle.size());
+		}
+	}
 }
+
+INSTANTIATE_TEST_CASE_P(
+	DisjointCycles, FromImageTest,
+	::testing::Values(FromImageTest::ParamPack({}, { { 0 } }, 1), FromImageTest::ParamPack({}, { { 0 }, { 1 } }, 2),
+					  FromImageTest::ParamPack({}, { { 0 }, { 1 }, { 2 } }, 3),
+					  FromImageTest::ParamPack({}, { { 0 }, { 1 }, { 2 } }, 3),
+					  FromImageTest::ParamPack({ 0, 1 }, { { 0 }, { 1 }, { 2 } }, 3),
+					  FromImageTest::ParamPack({ 1, 0 }, { { 0, 1 }, { 2 }, { 3 } }, 4),
+					  FromImageTest::ParamPack({ 1, 0, 2 }, { { 0, 1 }, { 2 } }, 3),
+					  FromImageTest::ParamPack({ 1, 2, 0 }, { { 0, 1, 2 } }, 3),
+					  FromImageTest::ParamPack({ 1, 2, 0 }, { { 0, 1, 2 }, { 3 }, { 4 }, { 5 } }, 6)));

@@ -44,7 +44,7 @@ public:
 
 	void postMultiply(const AbstractPermutation &other) override;
 
-	DisjointCycles toDisjointCycles(bool keep1cycles = true) const override;
+	DisjointCycles toDisjointCycles(std::size_t N = 0) const override;
 
 	void shift(int shift, std::size_t startIndex = 0) override;
 

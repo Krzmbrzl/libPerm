@@ -123,11 +123,12 @@ public:
 	virtual std::string toString() const;
 
 	/**
-	 * @param keep1cycles Whether to explicitly represent cycles of size 1
+	 * @param N The number of elements this permutation acts on. Can be zero in order to let N
+	 *          be deduced to the minimum possible value.
 	 *
 	 * @returns A DisjointCycle representation of this permutation
 	 */
-	virtual DisjointCycles toDisjointCycles(bool keep1cycles = true) const = 0;
+	virtual DisjointCycles toDisjointCycles(std::size_t N = 0) const = 0;
 
 	/**
 	 * Shifts this permutation by the given amount. In this context, "shifting" means offsetting the

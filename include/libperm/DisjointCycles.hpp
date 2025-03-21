@@ -26,14 +26,16 @@ public:
 	using value_type     = container_type::value_type;
 	using iterator       = container_type::iterator;
 	using const_iterator = container_type::const_iterator;
-
 	/**
 	 * Decomposes the given image of a permutation into disjoint cycles.
+	 *
+	 * @param N Number of entries the represented permutation acts on. Can be zero to indicate that
+	 *          the value shall be deduced to the minimum possible value.
 	 *
 	 * @return The corresponding disjoint cycle representation
 	 */
 	template< typename Range >
-	static DisjointCycles fromImage(const Range &image, bool keep1cycles = false) requires std::ranges::range< Range > {
+	static DisjointCycles fromImage(const Range &image, std::size_t N = 0) requires std::ranges::range< Range > {
 		using std::ranges::begin;
 		using std::ranges::end;
 
@@ -64,7 +66,7 @@ public:
 				j = image[static_cast< std::size_t >(j)];
 			}
 
-			if (currentCycle.size() > 1 || keep1cycles) {
+			if (currentCycle.size() > 1 || N > 0) {
 				cycles.emplace_back(std::move(currentCycle));
 			}
 
@@ -74,7 +76,30 @@ public:
 			}
 		}
 
+		for (std::size_t i = visited.size(); i < N; ++i) {
+			// Add missing 1-cycles
+			cycles.emplace_back(Cycle({ static_cast< Cycle::image_type >(i) }));
+#ifndef NDEBUG
+			// To make assertion work
+			visited.insert(static_cast< image_type >(i));
+#endif
+		}
+
+		assert(N == 0 || visited.size() == N);
+
 		return DisjointCycles(std::move(cycles));
+	}
+
+	/**
+	 * @param image The image of the permutation that shall be decomposed
+	 * @param keep1cycles Whether to explicitly keep cycles of size 1
+	 *
+	 * @see fromImage
+	 */
+	template< typename Range >
+	static DisjointCycles fromImage(const Range &image, bool keep1cycles) requires std::ranges::range< Range > {
+		using std::ranges::size;
+		return fromImage(image, keep1cycles ? size(image) : 0);
 	}
 
 	DisjointCycles() = default;

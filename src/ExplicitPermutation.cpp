@@ -127,8 +127,8 @@ void ExplicitPermutation::postMultiply(const AbstractPermutation &other) {
 	reduceImageRepresentation();
 }
 
-DisjointCycles ExplicitPermutation::toDisjointCycles(bool keep1cycles) const {
-	return DisjointCycles::fromImage(m_image, keep1cycles);
+DisjointCycles ExplicitPermutation::toDisjointCycles(std::size_t N) const {
+	return DisjointCycles::fromImage(m_image, N);
 }
 
 void ExplicitPermutation::shift(int shift, std::size_t startOffset) {
