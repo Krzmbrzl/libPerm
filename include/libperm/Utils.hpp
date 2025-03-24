@@ -442,7 +442,7 @@ Permutation computeTransformationPermutation(FromIt fromBegin, FromIt fromEnd, T
 		throw std::logic_error("Sequences must have equal lengths in order for a transformation permutation to exist");
 	}
 
-	assert(std::is_permutation(fromBegin, fromEnd, toBegin));
+	assert(std::is_permutation(fromBegin, fromEnd, toBegin, cmp));
 
 	// From
 	//   | \sortFrom
