@@ -442,7 +442,13 @@ Permutation computeTransformationPermutation(FromIt fromBegin, FromIt fromEnd, T
 		throw std::logic_error("Sequences must have equal lengths in order for a transformation permutation to exist");
 	}
 
-	assert(std::is_permutation(fromBegin, fromEnd, toBegin, cmp));
+	assert(std::is_permutation(fromBegin, fromEnd, toBegin, [&](const auto &lhs, const auto &rhs) {
+		// The comparator provided to this function compares whether one element is less than the other.
+		// However, is_permutation expects a comparator checking whether one element is the same as the other.
+		// Thus, we just use the < comparison to build an equality check.
+		// (lhs < rhs == rhs < lhs) can only be true, if lhs == rhs.
+		return cmp(lhs, rhs) == cmp(rhs, lhs);
+	}));
 
 	// From
 	//   | \sortFrom
