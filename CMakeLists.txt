@@ -98,3 +98,9 @@ if (LIBPERM_INSTALL)
 		COMPONENT libperm_development
 	)
 endif()
+
+# Make lib consumable from build directory without installing
+export(TARGETS libperm
+	NAMESPACE libperm::
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/libperm-targets.cmake"
+)
