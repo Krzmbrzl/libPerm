@@ -31,7 +31,8 @@ if(LIBPERM_TESTS)
 		set_target_properties(libPermTest PROPERTIES UNITY_BUILD OFF)
 	endif()
 
-	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm::libperm $<BUILD_INTERFACE:libperm_compiler_flags>)
+	target_link_libraries(libPermTest PRIVATE gmock gtest_main libperm::libperm)
+	set_internal_build_flags(libPermTest)
 
 	target_include_directories(libPermTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 

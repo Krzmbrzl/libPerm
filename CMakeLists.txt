@@ -28,7 +28,7 @@ endif()
 
 add_library(libperm STATIC)
 set_target_properties(libperm PROPERTIES PREFIX "")
-target_link_libraries(libperm PRIVATE $<BUILD_INTERFACE:libperm_compiler_flags>)
+set_internal_build_flags(libperm)
 
 add_library(libperm::libperm ALIAS libperm)
 

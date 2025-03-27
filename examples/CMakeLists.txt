@@ -17,7 +17,8 @@ function(add_example)
 	cmake_parse_arguments(LIBPERM_EXAMPLE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	add_executable(${LIBPERM_EXAMPLE_TARGET} ${LIBPERM_EXAMPLE_SOURCES})
-	target_link_libraries(${LIBPERM_EXAMPLE_TARGET} PRIVATE libperm::libperm $<BUILD_INTERFACE:libperm_compiler_flags>)
+	target_link_libraries(${LIBPERM_EXAMPLE_TARGET} PRIVATE libperm::libperm)
+	set_internal_build_flags(${LIBPERM_EXAMPLE_TARGET})
 	set_target_properties(${LIBPERM_EXAMPLE_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 endfunction()
 
