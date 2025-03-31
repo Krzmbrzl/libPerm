@@ -16,7 +16,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	polymorphic_variant
 	GIT_REPOSITORY https://github.com/Krzmbrzl/polymorphic_variant.git
-	GIT_TAG        v1.5.0
+	GIT_TAG        v1.5.1
 	GIT_SHALLOW    true
 	EXCLUDE_FROM_ALL
 )
