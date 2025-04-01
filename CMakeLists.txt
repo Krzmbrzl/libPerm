@@ -26,7 +26,7 @@ if (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 endif()
 
-add_library(libperm STATIC)
+add_library(libperm)
 set_target_properties(libperm PROPERTIES PREFIX "")
 set_internal_build_flags(libperm)
 
