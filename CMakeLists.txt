@@ -26,7 +26,7 @@ if (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 endif()
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 option(LIBPERM_SHARED "Whether to build libPerm as a shared (instead of a static) library" ${BUILD_SHARED_LIBS})
 if (LIBPERM_SHARED)
 	set(LIB_TYPE "SHARED")
