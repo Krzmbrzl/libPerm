@@ -51,4 +51,10 @@ function(set_internal_build_flags TARGET)
 		TARGET "${TARGET}"
 		${FLAGS_TO_ENABLE}
 	)
+
+	if (WIN32 AND MSVC)
+		# Suppress weird warning about not being able to use STL types for member variables
+		# in exported classes. We assume that STL types remain stable!
+		target_compile_options("${TARGET}" PRIVATE /wd4251)
+	endif()
 endfunction()
