@@ -54,6 +54,7 @@ might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIBPERM_EXAMPLES=ON 
 | `LIBPERM_EXAMPLES` | Whether to build the example applications | `OFF` |
 | `LIBPERM_DISABLE_WARNINGS` | Whether to disable all warnings related to `libPerm` source files | `OFF` |
 | `LIBPERM_WARNINGS_AS_ERRORS` | Whether to treat compiler warnings as errors | `OFF` |
+| `LIBPERM_SHARED` | Whether to build the library as a shared rather than a static library | `OFF` |
 
 
 ## Documentation
