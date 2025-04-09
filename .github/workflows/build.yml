@@ -8,6 +8,7 @@ jobs:
             fail-fast: false
             matrix:
                 build_type: [ Release, Debug ]
+                library_type: [shared, static]
                 os: [ ubuntu-22.04, ubuntu-24.04, windows-2022, windows-2025, macos-14, macos-15 ]
 
         runs-on: ${{ matrix.os }}
@@ -31,7 +32,12 @@ jobs:
                   cmakeListsOrSettingsJson: 'CMakeListsTxtAdvanced' # Required to respect cmakeAppendedArgs
                   cmakeBuildType: ${{ matrix.build_type }}
                   buildDirectory: 'build'
-                  cmakeAppendedArgs: -G Ninja -DLIBPERM_WARNINGS_AS_ERRORS=ON -DLIBPERM_EXAMPLES=ON -DCMAKE_UNITY_BUILD=ON
+                  cmakeAppendedArgs: >
+                    -G Ninja
+                    -DLIBPERM_WARNINGS_AS_ERRORS=ON
+                    -DLIBPERM_EXAMPLES=ON
+                    -DCMAKE_UNITY_BUILD=ON 
+                    -DLIBPERM_SHARED=${{ matrix.library_type == 'shared' }}
 
             - name: Run tests
               run: cd build && ctest --output-on-failure .
