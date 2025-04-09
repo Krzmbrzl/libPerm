@@ -17,3 +17,17 @@ target_sources(libperm
 		"details/SignedPermutation.cpp"
 		"details/Math.cpp"
 )
+
+include(GenerateExportHeader)
+
+generate_export_header(libperm
+	EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/include/libperm/libperm_macros.hpp"
+	BASE_NAME LIBPERM
+)
+
+target_sources(libperm
+	PUBLIC
+		FILE_SET headers TYPE HEADERS
+		BASE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include"
+		FILES "${CMAKE_CURRENT_BINARY_DIR}/include/libperm/libperm_macros.hpp"
+)

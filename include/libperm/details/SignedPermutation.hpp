@@ -7,6 +7,7 @@
 #define LIBPERM_DETAILS_SIGNEDPERMUTATION_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 namespace perm::details {
 
@@ -17,7 +18,7 @@ namespace perm::details {
  * child classes will call the parent implementations before adding their own functionality for overridden
  * functions.
  */
-class SignedPermutation : public AbstractPermutation {
+class LIBPERM_EXPORT SignedPermutation : public AbstractPermutation {
 public:
 	static constexpr const bool is_signed = true;
 

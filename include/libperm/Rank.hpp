@@ -8,6 +8,7 @@
 
 #include "libperm/AbstractPermutation.hpp"
 #include "libperm/Permutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 namespace perm {
 
@@ -22,7 +23,7 @@ namespace perm {
  *
  * @see unrank
  */
-std::size_t rank(const AbstractPermutation &perm, std::size_t num_elements);
+LIBPERM_EXPORT std::size_t rank(const AbstractPermutation &perm, std::size_t num_elements);
 
 /**
  * Given the rank of a permutation as well as the number of elements it is supposed to act
@@ -34,7 +35,7 @@ std::size_t rank(const AbstractPermutation &perm, std::size_t num_elements);
  *
  * @see rank
  */
-Permutation unrank(std::size_t rank, std::size_t num_elements);
+LIBPERM_EXPORT Permutation unrank(std::size_t rank, std::size_t num_elements);
 
 } // namespace perm
 

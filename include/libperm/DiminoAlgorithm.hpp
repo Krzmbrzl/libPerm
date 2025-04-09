@@ -7,6 +7,7 @@
 #define LIBPERM_DOMINOALGORITHM_HPP_
 
 #include "libperm/Permutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <vector>
 
@@ -30,7 +31,7 @@ namespace DiminoAlgorithm {
 	 * @param The list of generators of G
 	 * @returns A list of elements of G
 	 */
-	std::vector< Permutation > generateGroupElements(const std::vector< Permutation > &S);
+	LIBPERM_EXPORT std::vector< Permutation > generateGroupElements(const std::vector< Permutation > &S);
 
 	/**
 	 * Given a subgroup H of a group G (H <= G) and a set of generators S = < S_H, s > such that
@@ -45,7 +46,7 @@ namespace DiminoAlgorithm {
 	 *     with i = i + 1, until all generators are accounted for.
 	 * @returns Whether the new generator has caused an extension of H. That is: it was not redundant
 	 */
-	bool extendGroup(std::vector< Permutation > &H, const std::vector< Permutation > &S, std::size_t i);
+	LIBPERM_EXPORT bool extendGroup(std::vector< Permutation > &H, const std::vector< Permutation > &S, std::size_t i);
 
 } // namespace DiminoAlgorithm
 

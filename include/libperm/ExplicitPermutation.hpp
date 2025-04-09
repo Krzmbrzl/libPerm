@@ -8,13 +8,14 @@
 
 #include "libperm/DisjointCycles.hpp"
 #include "libperm/details/SignedPermutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <initializer_list>
 #include <vector>
 
 namespace perm {
 
-class ExplicitPermutation : public details::SignedPermutation {
+class LIBPERM_EXPORT ExplicitPermutation : public details::SignedPermutation {
 private:
 	using container_type = std::vector< image_type >;
 
@@ -50,9 +51,9 @@ public:
 
 	void insertIntoStream(std::ostream &stream) const override;
 
-	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const AbstractPermutation &rhs);
-	friend ExplicitPermutation operator*(const AbstractPermutation &lhs, const ExplicitPermutation &rhs);
-	friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);
+	LIBPERM_EXPORT friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const AbstractPermutation &rhs);
+	LIBPERM_EXPORT friend ExplicitPermutation operator*(const AbstractPermutation &lhs, const ExplicitPermutation &rhs);
+	LIBPERM_EXPORT friend ExplicitPermutation operator*(const ExplicitPermutation &lhs, const ExplicitPermutation &rhs);
 
 protected:
 	std::vector< image_type > m_image;

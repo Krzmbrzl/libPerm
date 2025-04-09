@@ -7,6 +7,7 @@
 #define LIBPERM_DETAILS_UNSIGNEDPERMUTATION_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <cassert>
 
@@ -17,7 +18,7 @@ namespace perm::details {
  * to explicitly carry a sign property.
  * Children of this class will always report to have a sign of +1.
  */
-class UnsignedPermutation : public AbstractPermutation {
+class LIBPERM_EXPORT UnsignedPermutation : public AbstractPermutation {
 public:
 	static constexpr const bool is_signed = false;
 

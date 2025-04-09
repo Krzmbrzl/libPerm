@@ -9,6 +9,7 @@
 #include "libperm/AbstractPermutation.hpp"
 #include "libperm/AbstractPermutationGroup.hpp"
 #include "libperm/Permutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <cassert>
 #include <iosfwd>
@@ -18,7 +19,7 @@
 
 namespace perm {
 
-class PrimitivePermutationGroup : public AbstractPermutationGroup {
+class LIBPERM_EXPORT PrimitivePermutationGroup : public AbstractPermutationGroup {
 public:
 	PrimitivePermutationGroup();
 	PrimitivePermutationGroup(std::vector< Permutation > generators);
@@ -70,7 +71,7 @@ public:
 
 	virtual Permutation rightCosetRepresentative(const AbstractPermutation &perm) const override;
 
-	friend std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &group);
+	LIBPERM_EXPORT friend std::ostream &operator<<(std::ostream &stream, const PrimitivePermutationGroup &group);
 
 protected:
 	std::vector< Permutation > m_generators;
