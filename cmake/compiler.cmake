@@ -27,6 +27,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN hidden)
+
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${LIBPERM_LTO})
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
@@ -48,4 +51,10 @@ function(set_internal_build_flags TARGET)
 		TARGET "${TARGET}"
 		${FLAGS_TO_ENABLE}
 	)
+
+	if (WIN32 AND MSVC)
+		# Suppress weird warning about not being able to use STL types for member variables
+		# in exported classes. We assume that STL types remain stable!
+		target_compile_options("${TARGET}" PRIVATE /wd4251)
+	endif()
 endfunction()

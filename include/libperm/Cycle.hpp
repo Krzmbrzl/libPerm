@@ -6,6 +6,8 @@
 #ifndef LIBPERM_CYCLE_HPP_
 #define LIBPERM_CYCLE_HPP_
 
+#include <libperm/libperm_macros.hpp>
+
 #include <cassert>
 #include <compare>
 #include <initializer_list>
@@ -19,7 +21,7 @@ namespace perm {
 /**
  * An individual cycle
  */
-class Cycle {
+class LIBPERM_EXPORT Cycle {
 public:
 	using image_type = unsigned int;
 
@@ -64,7 +66,7 @@ public:
 	std::strong_ordering operator<=>(const Cycle &other) const = default;
 	bool operator==(const Cycle &other) const                  = default;
 
-	friend std::ostream &operator<<(std::ostream &stream, const Cycle &cycle);
+	LIBPERM_EXPORT friend std::ostream &operator<<(std::ostream &stream, const Cycle &cycle);
 
 private:
 	container_type m_cycle;

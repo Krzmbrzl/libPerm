@@ -7,21 +7,21 @@
 #define LIBPERM_ABSTRACTPERMUTATIONGROUP_HPP_
 
 #include "libperm/AbstractPermutation.hpp"
-#include "libperm/ExplicitPermutation.hpp"
 #include "libperm/Permutation.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <vector>
 
 namespace perm {
 
-enum class PermutationGroupType {
+enum class LIBPERM_EXPORT PermutationGroupType {
 	Primitive,
 };
 
 /**
  * Class describing the general interface of a permutation group.
  */
-class AbstractPermutationGroup {
+class LIBPERM_EXPORT AbstractPermutationGroup {
 public:
 	constexpr AbstractPermutationGroup(PermutationGroupType type) : m_type(type) {}
 	virtual ~AbstractPermutationGroup() = default;
@@ -117,12 +117,12 @@ public:
 	/**
 	 * @returns Whether the two given groups are equal
 	 */
-	friend bool operator==(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
+	LIBPERM_EXPORT friend bool operator==(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
 
 	/**
 	 * @returns Whether the two given groups are unequal
 	 */
-	friend bool operator!=(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
+	LIBPERM_EXPORT friend bool operator!=(const AbstractPermutationGroup &lhs, const AbstractPermutationGroup &rhs);
 
 protected:
 	PermutationGroupType m_type;

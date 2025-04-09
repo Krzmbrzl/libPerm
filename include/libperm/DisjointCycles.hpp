@@ -2,6 +2,7 @@
 #define LIBPERM_DISJOINT_CYCLES_HPP
 
 #include "libperm/Cycle.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <cassert>
 #include <compare>
@@ -18,7 +19,7 @@ namespace perm {
 /**
  * Representation of a permutation in terms of disjoint cycles
  */
-class DisjointCycles {
+class LIBPERM_EXPORT DisjointCycles {
 private:
 	using container_type = std::vector< Cycle >;
 
@@ -177,7 +178,7 @@ public:
 		return image;
 	}
 
-	friend std::ostream &operator<<(std::ostream &stream, const DisjointCycles &cycles);
+	LIBPERM_EXPORT friend std::ostream &operator<<(std::ostream &stream, const DisjointCycles &cycles);
 
 protected:
 	container_type m_cycles;

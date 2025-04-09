@@ -7,6 +7,7 @@
 #define LIBPERM_ABSTRACTPERMUTATION_HPP_
 
 #include "libperm/DisjointCycles.hpp"
+#include "libperm/libperm_macros.hpp"
 
 #include <iosfwd>
 #include <string>
@@ -21,7 +22,7 @@ namespace perm {
  * That means, that permutations represented through this interface also have a sign associated with them
  * that can be read out and manipulated as an orthogonal property to the standard permutation properties.
  */
-class AbstractPermutation {
+class LIBPERM_EXPORT AbstractPermutation {
 public:
 	/**
 	 * The data type of the values of the set that this permutation shall work on
@@ -39,11 +40,11 @@ public:
 	/**
 	 * @returns Whether lhs and rhs are considered to be equal
 	 */
-	friend bool operator==(const AbstractPermutation &lhs, const AbstractPermutation &rhs);
+	LIBPERM_EXPORT friend bool operator==(const AbstractPermutation &lhs, const AbstractPermutation &rhs);
 	/**
 	 * @returns Whether lhs and rhs are considered to be unequal
 	 */
-	friend bool operator!=(const AbstractPermutation &lhs, const AbstractPermutation &rhs);
+	LIBPERM_EXPORT friend bool operator!=(const AbstractPermutation &lhs, const AbstractPermutation &rhs);
 
 	/**
 	 * Multiplies the lhs permutation with rhs and modifies lhs in-place.
@@ -55,12 +56,12 @@ public:
 	 *
 	 * @see postMultiply
 	 */
-	friend AbstractPermutation &operator*=(AbstractPermutation &lhs, const AbstractPermutation &rhs);
+	LIBPERM_EXPORT friend AbstractPermutation &operator*=(AbstractPermutation &lhs, const AbstractPermutation &rhs);
 
 	/**
 	 * Inserts a string representation of this permutation into the given stream
 	 */
-	friend std::ostream &operator<<(std::ostream &stream, const AbstractPermutation &perm);
+	LIBPERM_EXPORT friend std::ostream &operator<<(std::ostream &stream, const AbstractPermutation &perm);
 
 	/**
 	 * @returns The biggest element that this permutation acts on

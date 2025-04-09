@@ -6,11 +6,13 @@
 #ifndef LIBPERM_MATH_HPP_
 #define LIBPERM_MATH_HPP_
 
+#include <libperm/libperm_macros.hpp>
+
 #include <cstddef>
 
 namespace perm::details {
 
-std::size_t factorial(std::size_t n);
+LIBPERM_EXPORT std::size_t factorial(std::size_t n);
 
 }
 
