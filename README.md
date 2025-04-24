@@ -49,7 +49,7 @@ might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIBPERM_EXAMPLES=ON 
 | **Option** | **Description** | **Default** |
 | ---------- | --------------- | ----------- |
 | `CMAKE_BUILD_TYPE` | The type of the build. Most common choices are either `Debug` or `Release` | `Release` |
-| `LIBPERM_LTO` | Whether to enable [link time optimization](http://johanengelen.github.io/ldc/2016/11/10/Link-Time-Optimization-LDC.html) (LTO) in `Release` builds | `ON`, if supported |
+| `LIBPERM_LTO` | Whether to enable [link time optimization](http://johanengelen.github.io/ldc/2016/11/10/Link-Time-Optimization-LDC.html) (LTO) in `Release` builds when building as a shared library | `ON`, if supported |
 | `LIBPERM_TESTS` | Whether to build test cases | `ON` |
 | `LIBPERM_EXAMPLES` | Whether to build the example applications | `OFF` |
 | `LIBPERM_DISABLE_WARNINGS` | Whether to disable all warnings related to `libPerm` source files | `OFF` |

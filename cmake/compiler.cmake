@@ -31,8 +31,16 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN hidden)
 
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${LIBPERM_LTO})
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
+if (LIBPERM_SHARED)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${LIBPERM_LTO})
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
+elseif (LIBPERM_LTO)
+	# Enabling LTO for a static library on its own doesn't make sense
+	# (creating a static lib doesn't involve any linking) but can
+	# cause issues if the consuming project isn't using LTO.
+	# See https://github.com/Krzmbrzl/libPerm/issues/5
+	message(STATUS "Skipping configuration of libPerm-specific LTO setup when built as a static library -> Global CMAKE_INTERPROCEDURAL_OPTIMIZATION takes effect.")
+endif()
 
 
 function(set_internal_build_flags TARGET)
