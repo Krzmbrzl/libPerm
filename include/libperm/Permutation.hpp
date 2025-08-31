@@ -11,6 +11,8 @@
 
 #include <pv/polymorphic_variant.hpp>
 
+#include <type_traits>
+
 namespace perm {
 
 /**
@@ -23,5 +25,9 @@ namespace perm {
 using Permutation = pv::polymorphic_variant< AbstractPermutation, ExplicitPermutation >;
 
 } // namespace perm
+
+
+template<>
+struct pv::infer_operator_overloads<perm::AbstractPermutation> : std::true_type {};
 
 #endif // LIBPERM_PERMUTATION_HPP_

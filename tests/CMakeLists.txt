@@ -21,6 +21,7 @@ if(LIBPERM_TESTS)
 		"TestPermutationGroupInterface.cpp"
 		"TestPrimitivePermutationGroup.cpp"
 		"TestRank.cpp"
+		"TestSchreierSims.cpp"
 		"TestSpecialGroups.cpp"
 		"TestUtils.cpp"
 	)

@@ -13,6 +13,7 @@ target_sources(libperm
 		"ExplicitPermutation.cpp"
 		"PrimitivePermutationGroup.cpp"
 		"Rank.cpp"
+		"SchreierSims.cpp"
 
 		"details/SignedPermutation.cpp"
 		"details/Math.cpp"
